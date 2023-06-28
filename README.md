@@ -63,6 +63,7 @@ RENEE comes bundled with pre-built reference files for the following genomes:
 | mm10_M21 | Mus musculus (mouse) | [GRCm38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode Release M21](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21/gencode.vM21.annotation.gtf.gz) |
 
 > **Warning:** This section contains FTP links for downloading each reference file.  Open the link in a new tab to start a download. 
+
 > **Note:** Release 30 for hg38 and Release M21 for mm10 were the only annotation versions available at the time of writing this documentation. Newer annotations versions may be added upon request and may be already available. Please contact [Vishal Koparde](mailto:vishal.koparde@nih.gov) for details.
 
 #### 2.3 Dependencies
@@ -89,16 +90,14 @@ RENEE run --help
 # Do not run this on the head node!
 # Grab an interactive node
 sinteractive --mem=110g --cpus-per-task=12 --gres=lscratch:200
-module purge
-module load singularity snakemake
+module load ccbrpipeliner
 RENEE run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode local
 
 # @slurm: uses slurm and singularity execution method
 # The slurm MODE will submit jobs to the cluster.
 # It is recommended running RENEE in this mode.
-module purge
-module load singularity snakemake
-./RENEE run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode slurm
+module load ccbrpipeliner
+RENEE run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode slurm
 ```
 
 ### 5. References  
