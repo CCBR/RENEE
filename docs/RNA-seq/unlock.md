@@ -1,19 +1,19 @@
-# <code>rna-seek <b>unlock</b></code>
+# <code>renee <b>unlock</b></code>
 
 ## 1. About 
-The `rna-seek` executable is composed of several inter-related sub commands. Please see `rna-seek -h` for all available options.
+The `renee` executable is composed of several inter-related sub commands. Please see `renee -h` for all available options.
 
-This part of the documentation describes options and concepts for <code>rna-seek <b>unlock</b></code> sub command in more detail. With minimal configuration, the **`unlock`** sub command enables you to unlock a pipeline output directory. 
+This part of the documentation describes options and concepts for <code>renee <b>unlock</b></code> sub command in more detail. With minimal configuration, the **`unlock`** sub command enables you to unlock a pipeline output directory. 
 
 If the pipeline fails ungracefully, it maybe required to unlock the working directory before proceeding again. Snakemake will inform a user when it maybe necessary to unlock a working directory with an error message stating: `Error: Directory cannot be locked`. 
 
 Please verify that the pipeline is not running before running this command. If the pipeline is currently running, the workflow manager will report the working directory is locked. The is the default behavior of snakemake, and it is normal. Do NOT run this command if the pipeline is still running! Please kill the master job and it's child jobs prior to running this command.
 
-Unlocking an RNA-seek pipeline output directory is fast and easy! In its most basic form, <code>rna-seek <b>run</b></code> only has *one required inputs*.
+Unlocking an RENEE pipeline output directory is fast and easy! In its most basic form, <code>renee <b>run</b></code> only has *one required inputs*.
 
 ## 2. Synopsis
 ```text
-$ ./rna-seek unlock [-h] --output OUTPUT
+$ renee unlock [-h] --output OUTPUT
 ```
 
 The synopsis for this command shows its parameters and their usage. Optional parameters are shown in square brackets.
@@ -49,8 +49,8 @@ Each of the following arguments are optional and do not need to be provided.
 # Step 0.) Grab an interactive node (do not run on head node)
 srun -N 1 -n 1 --time=12:00:00 -p interactive --mem=8gb  --cpus-per-task=4 --pty bash
 module purge
-module load singularity snakemake
+module load ccbrpipeliner
 
 # Step 1.) Unlock a pipeline output directory
-rna-seek unlock --output /data/$USER/RNA_hg38
+renee unlock --output /data/$USER/RNA_hg38
 ```

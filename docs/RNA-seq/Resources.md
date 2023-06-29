@@ -1,6 +1,6 @@
 ## 1. Reference genomes 
 
-On [Biowulf](https://hpc.nih.gov/), RNA-seek comes bundled with the following pre-built [GENCODE](https://www.gencodegenes.org/)<sup>1</sup> reference genomes:    
+On [Biowulf](https://hpc.nih.gov/), RENEE comes bundled with the following pre-built [GENCODE](https://www.gencodegenes.org/)<sup>1</sup> reference genomes:    
 
 <!---
 Bundled Biowulf Reference Genomes 
@@ -15,7 +15,7 @@ Bundled Biowulf Reference Genomes
 
 However, building new reference genomes is easy! 
 
-If you do not have access to Biowulf or you are looking for a reference genome and/or annotation **_that is currently not available_**, it can be built with RNA-seek's build sub-command. Given a genomic FASTA file (ref.fa) and a GTF file (genes.gtf), `rna-seek build` will create all of the required reference files to run the RNA-seek pipeline. Once the build pipeline completes, you can supply the newly generated reference.json to the `--genome` of `rna-seek run`. For more information, please see the help page for the run and build sub commands.
+If you do not have access to Biowulf or you are looking for a reference genome and/or annotation **_that is currently not available_**, it can be built with RENEE's build sub-command. Given a genomic FASTA file (ref.fa) and a GTF file (genes.gtf), `renee build` will create all of the required reference files to run the RENEE pipeline. Once the build pipeline completes, you can supply the newly generated reference.json to the `--genome` of `renee run`. For more information, please see the help page for the run and build sub commands.
 
 ## 2. Tools and versions
 
@@ -44,7 +44,7 @@ If you do not have access to Biowulf or you are looking for a reference genome a
 ## 3. Acknowledgements
 
 ### 3.1 Biowulf 
-If you [utilized NIH's Biowulf cluster](https://hpc.nih.gov/Research/) to run RNA-seek, *please do not forget to provide an acknowlegement*! 
+If you [utilized NIH's Biowulf cluster](https://hpc.nih.gov/Research/) to run RENEE, *please do not forget to provide an acknowlegement*! 
 
 
 > The continued growth and support of NIH's Biowulf cluster is dependent upon its demonstrable value to the NIH Intramural Research Program. If you publish research that involved significant use of Biowulf, please cite the cluster.

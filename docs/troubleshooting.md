@@ -1,6 +1,6 @@
 If you are experiencing an issue, please read through this list first before contacting our team.
 
-We have compiled this FAQ from the most common problems. If you are running into an issue that is not on this page, please feel free to [reach out to our team](https://github.com/skchronicles/RNA-seek/issues).
+We have compiled this FAQ from the most common problems. If you are running into an issue that is not on this page, please feel free to [reach out to our team](https://github.com/CCBR/RENEE/issues).
 
 ## Job Status
 
@@ -120,7 +120,7 @@ Once you've ensured that all running jobs have been stopped, you need to unlock 
 
 ```bash
 # Load Dependencies
-modue load singularity snakemake
+modue load ccbrpipeliner
 
 # Unlock the working directory
 rna-seek unlock --output /path/to/working/dir

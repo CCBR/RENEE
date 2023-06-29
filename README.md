@@ -17,7 +17,7 @@ An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
 ### 1. Introduction  
 RNA-sequencing (*RNA-seq*) has a wide variety of applications. This popular transcriptome profiling technique can be used to quantify gene and isoform expression, detect alternative splicing events, predict gene-fusions, call variants and much more.
 
-**RENEE** is a comprehensive, open-source RNA-seq pipeline that relies on technologies like [Docker<sup>20</sup>](https://www.docker.com/why-docker) and [Singularity<sup>21</sup>](https://singularity.lbl.gov/) to maintain the highest-level of reproducibility. The pipeline consists of a series of data processing and quality-control steps orchestrated by [Snakemake<sup>19</sup>](https://snakemake.readthedocs.io/en/stable/), a flexible and scalable workflow management system, to submit jobs to a cluster or cloud provider. 
+**RENEE** is a comprehensive, open-source RNA-seq pipeline that relies on technologies like [Docker<sup>20</sup>](https://www.docker.com/why-docker) and [Singularity<sup>21</sup>... now called Apptainer](https://apptainer.org/docs/) to maintain the highest-level of reproducibility. The pipeline consists of a series of data processing and quality-control steps orchestrated by [Snakemake<sup>19</sup>](https://snakemake.readthedocs.io/en/stable/), a flexible and scalable workflow management system, to submit jobs to a cluster or cloud provider. 
 
 ![RENEE_overview_diagram](./resources/overview.svg)  
 <sup>**Fig 1. Run locally on a compute instance, on-premise using a cluster, or on the cloud using AWS.** A user can define the method or mode of execution. The pipeline can submit jobs to a cluster using a job scheduler like SLURM, or run on AWS using Tibanna (feature coming soon!). A hybrid approach ensures the pipeline is accessible to all users. As an optional step, relevelant output files and metadata can be stored in object storage using HPC DME (NIH users) or Amazon S3 for archival purposes (coming soon!).</sup> 
@@ -78,7 +78,7 @@ RENEE comes bundled with pre-built reference files for the following genomes:
 # RENEE is configured to use different execution backends: local or slurm
 # view the help page for more information
 module load ccbrpipeliner
-RENEE run --help
+renee run --help
 
 # @local: uses local singularity execution method
 # The local MODE will run serially on compute
@@ -91,13 +91,13 @@ RENEE run --help
 # Grab an interactive node
 sinteractive --mem=110g --cpus-per-task=12 --gres=lscratch:200
 module load ccbrpipeliner
-RENEE run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode local
+renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode local
 
 # @slurm: uses slurm and singularity execution method
 # The slurm MODE will submit jobs to the cluster.
 # It is recommended running RENEE in this mode.
 module load ccbrpipeliner
-RENEE run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode slurm
+renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode slurm
 ```
 
 ### 5. References  

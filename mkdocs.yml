@@ -1,17 +1,17 @@
 # Project Information
-site_name: RNA-seek Documentation
-site_author: Skyler Kuhn
+site_name: RENEE Documentation
+site_author: CCBR
 site_description: >-
-  RNA-seek is an open-source, reproducible, and scalable best
+  RENEE is an open-source, reproducible, and scalable best
   practices pipeline for analyzing RNA-sequencing data. 
 
 # Repository
-repo_name: CCBR/RNA-seek
-repo_url: https://github.com/skchronicles/RNA-seek
-edit_uri: https://github.com/skchronicles/RNA-seek/edit/master/docs/
+repo_name: CCBR/RENEE
+repo_url: https://github.com/CCBR/RENEE
+edit_uri: https://github.com/CCBR/RENEE/edit/master/docs/
 
 # Copyright
-copyright: Copyright &copy; 2021 CCBR
+copyright: Copyright &copy; 2023 CCBR
 
 # Configuration
 theme:
