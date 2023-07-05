@@ -2,21 +2,21 @@
 set -eu
 
 function usage() { cat << EOF
-runner: Job submission wrapper script for the RNA-seek pipeline.
+runner: Job submission wrapper script for the RENEE pipeline.
 USAGE:
   runner <MODE> [OPTIONS] -j MASTER_JOB_NAME -b SINGULARITY_BIND_PATHS
 SYNOPSIS:
-  This script creates/submits the RNA-seek master job to the cluster. The master job
+  This script creates/submits the RENEE master job to the cluster. The master job
 acts as the pipeline's main controller or its main process. This main job dictates
 how subsequent jobs are submitted to the cluster via the SLURM job scheduler. Support
 for additional job schedulers (i.e. PBS, SGE, LSF, Tibanna) may be added in the future.
-  The main entry point of the pipeline 'rna-seek' calls this job submission wrapper script.
-As so, this script can be used to by-pass 'rna-seek' for a previously failed run; meaning,
+  The main entry point of the pipeline 'renee' calls this job submission wrapper script.
+As so, this script can be used to by-pass 'renee' for a previously failed run; meaning,
 it can be used to re-run the pipeline to pick back off where the last failure occurred
 or re-start the pipeline.
-  Please Note: it is highly recommended to use 'rna-seek'; it is the main entry point
-and preferred entry point of the RNA-seek pipeline. If you are experience error, it
-maybe due to improperly mounting singularity bind paths which 'rna-seek' will internally
+  Please Note: it is highly recommended to use 'renee'; it is the main entry point
+and preferred entry point of the RENEE pipeline. If you are experience error, it
+maybe due to improperly mounting singularity bind paths which 'renee' will internally
 handle.
 
 Required Positional Argument:
@@ -24,11 +24,11 @@ Required Positional Argument:
                         Valid mode options include: <slurm>
                          a) slurm: uses slurm and singularity snakemake backend.
                              The slurm EXECUTOR will submit jobs to the cluster.
-                             It is recommended running RNA-seek in this mode as
+                             It is recommended running RENEE in this mode as
                              most of the steps are computationally intensive.
 Required Arguments:
   -j, --job-name [Type: Str]    Name of pipeline's master job.
-  -b, --bind-paths [Type:Path]  Singularity bind paths. The RNA-seek pipeline uses
+  -b, --bind-paths [Type:Path]  Singularity bind paths. The RENEE pipeline uses
                                  singaularity images for exection. Bind paths are
                                  used to mount the host filesystem to the container's
                                  filesystem. Multiple bind paths can be provided
@@ -36,7 +36,7 @@ Required Arguments:
                                  of the pipeline internally collects and aggregates
                                  bindpaths to mount to the container's filesystem.
                                  If you are manually running this script or by-passing
-                                 rna-seek, you will need to provide the bindpaths of
+                                 renee, you will need to provide the bindpaths of
                                  the rawdata directory(s) along with the pipeline's
                                  output directory. Please see example usage below.
   -t, --tmp-dir [Type:Path]      Temporary directory. The pipeline generates
@@ -56,7 +56,7 @@ OPTIONS:
   -h, --help     [Type: Bool]  Displays usage and help information.
 Example:
   $ runner slurm -h
-  $ runner slurm -j RNA-seek_hg38 -b "/scratch/$USER/rawdata,/scratch/$USER/RNA_hg38,/data/CCBR_Pipeliner/db/PipeDB/,/lscratch,/fdb"
+  $ runner slurm -j RENEE_hg38 -b "/scratch/$USER/rawdata,/scratch/$USER/RNA_hg38,/data/CCBR_Pipeliner/db/PipeDB/,/lscratch,/fdb"
 Version:
   0.1.0
 EOF
@@ -160,7 +160,7 @@ function submit(){
     slurm)
           # Create directory for logfiles
           mkdir -p "$3"/logfiles/slurmfiles/
-          CLUSTER_OPTS="sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name={params.rname}"
+          CLUSTER_OPTS="sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}"
           # Check if NOT running on Biowulf
           # Assumes other clusters do NOT 
           # have GRES for local node disk,
@@ -232,7 +232,7 @@ function main(){
   Arguments[c]="${Arguments[c]%/}" # clean outdir path (remove trailing '/')
 
   # Print pipeline metadata prior to running
-  echo -e "\nRNA-seek\t$(date)"
+  echo -e "\nRENEE\t$(date)"
   echo -e "Running pipeline with the following parameters:"
   for key in "${!Arguments[@]}"; do echo -e "\t${key}\t${Arguments["$key"]}"; done
 

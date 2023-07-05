@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# This is a wrapper for spook python script
+# It:
+# - loads require modules
+# - parses the variables directly to the python script
+
+SCRIPTNAME="$0"
+SCRIPTDIRNAME=$(readlink -f $(dirname "$SCRIPTNAME"))
+
+# add "bin" to PATH
+if [[ ":$PATH:" != *":${SCRIPTDIRNAME}:"* ]];then
+	export PATH=${PATH}:${SCRIPTDIRNAME}
+fi
+
+TOOLDIR=$(dirname "$SCRIPTDIRNAME")
+TOOLNAME=$(basename "$SCRIPTNAME")
+echo $TOOLNAME
+
+# load required modules
+module purge
+module load singularity snakemake
+
+${TOOLDIR}/${TOOLNAME} "$@" || true
+
