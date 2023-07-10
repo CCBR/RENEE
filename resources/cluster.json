@@ -4,7 +4,10 @@
 		"mem": "48g",
 		"partition": "norm",
 		"threads": "4",
-		"time": "4-00:00:00"
+		"time": "4-00:00:00",
+        "name"      : "{rule}.{wildcards}",
+        "output"    : "logfiles/slurmfiles/${{SLURM_JOBID}}.%j.{rule}.{wildcards}.out",
+        "error"     : "logfiles/slurmfiles/${{SLURM_JOBID}}.%j.{rule}.{wildcards}.err"
 	},
 	"bam2bw_rnaseq_pe": {
 		"mem": "40g",

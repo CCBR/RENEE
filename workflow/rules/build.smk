@@ -65,7 +65,7 @@ def str_bool(s):
 # Global Workflow variables
 configfile:join("config","build.yml")
 GENOME=config["GENOME"].strip().replace(' ', '')
-READLENGTHS=config["READLENGTHS"]
+# READLENGTHS=config["READLENGTHS"]
 REFFA=config["REFFA"]
 GTFFILE=config["GTFFILE"]
 GTFVER=config["GTFVER"].strip().replace(' ', '')

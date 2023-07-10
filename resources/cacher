@@ -2,7 +2,7 @@
 set -euo pipefail
 
 function usage() { cat << EOF
-cacher: RNA-seek job submission wrapper script for caching remote file or resources.
+cacher: RENEE job submission wrapper script for caching remote file or resources.
 USAGE:
   cacher <MODE> [OPTIONS] -s SIF_CACHE -i IMAGE_URIS -t TMP_DIR
 SYNOPSIS:
@@ -10,18 +10,18 @@ SYNOPSIS:
 how subsequent resources are pulled onto the cluster's filesystem. cacher utilizes SLURM
 to avoid pull into resources on a compute node but support for additional job schedulers 
 (i.e. PBS, SGE, LSF, Tibanna) may be added in the near future.
-  The main entry point of the pipeline 'rna-seek' calls this job submission wrapper script.
-As so, this script can be used to manually by-pass 'rna-seek' for a previously failed cache.
-  Please Note: it is highly recommended to use 'rna-seek'; it is the main entry point
-and preferred entry point of the RNA-seek pipeline. If you are experience error, it
-maybe due to improperly mounting singularity bind paths which 'rna-seek' will internally
+  The main entry point of the pipeline 'renee' calls this job submission wrapper script.
+As so, this script can be used to manually by-pass 'renee' for a previously failed cache.
+  Please Note: it is highly recommended to use 'renee'; it is the main entry point
+and preferred entry point of the RENEE pipeline. If you are experience error, it
+maybe due to improperly mounting singularity bind paths which 'renee' will internally
 handle.
 Required Positional Argument:
   [1] MODE  [Type: Str] Define the snakemake executor mode.
                         Valid mode options include: <slurm>
                          a) slurm: uses slurm and singularity snakemake backend.
                              The slurm EXECUTOR will submit jobs to the cluster.
-                             It is recommended running RNA-seek in this mode as
+                             It is recommended running RENEE in this mode as
                              most of the steps are computationally intensive.
 Required Arguments:
   -s, --sif-cache   [Type: Path]  Path to output directory to cache remote resources.
@@ -205,11 +205,11 @@ function main(){
   tmp=$(abspath "${tmp}")
 
   # Print cli options prior to running
-  echo -e "RNA-seek cache \t$(date)"
+  echo -e "RENEE cache \t$(date)"
   echo -e "Running with the following parameters:"
   for key in "${!Arguments[@]}"; do echo -e "\t${key}\t${Arguments["$key"]}"; done
 
-  # Pull remote resources into RNA-seek cache 
+  # Pull remote resources into RENEE cache 
   # Cache remote image from DockerHub
   # INPUT $1 = Snakemake Mode of execution
   # INPUT $2 = Cache output directory

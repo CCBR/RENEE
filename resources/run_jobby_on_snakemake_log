@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+snakemakelog=$1
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+jobids=$(grep --color=never "^Submitted .* with external jobid" $snakemakelog | awk '{print $NF}'  | sed "s/['.]//g" | sort | uniq | tr "\\n" " ")
+jobidswc=$(echo $jobids | wc -c)
+if [ "$jobidswc" != "1" ];then
+${SCRIPT_DIR}/jobby $jobids
+fi
