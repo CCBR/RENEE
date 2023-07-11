@@ -17,6 +17,15 @@ TOOLDIR=$(dirname "$SCRIPTDIRNAME")
 TOOLNAME=$(basename "$SCRIPTNAME")
 echo $TOOLNAME
 
+# load conda
+if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
+       . "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh"
+fi
+if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" ]];then
+       . "/mnt/projects/CCBR-Pipelines/resources/miniconda3/etc/profile.d/conda.sh"
+fi
+conda activate py311
+
 # load required modules
 module purge
 module load singularity snakemake
