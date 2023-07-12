@@ -69,6 +69,10 @@ RENEE comes bundled with pre-built reference files for the following genomes:
 #### 2.3 Dependencies
 **Requires:** `singularity>=3.5`  `snakemake>=6.0` 
 
+> **NOTE:**  
+> <ins>Biowulf users</ins>:  
+> Both, singularity and snakemake, modules are already installed and available for all Biowulf users. Please skip this step as `module load ccbrpipeliner` will preload singularity and snakemake.
+
 [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) and [singularity](https://singularity.lbl.gov/all-releases) must be installed on the target system. Snakemake orchestrates the execution of each step in the pipeline. To guarantee reproducibility, each step relies on pre-built images from [DockerHub](https://hub.docker.com/orgs/nciccbr/repositories). Snakemake pulls these docker images while converting them to singularity on the fly and saves them onto the local filesystem prior to job execution, and as so, snakemake and singularity are the only two dependencies.
 
 ### 3. Run RENEE pipeline
