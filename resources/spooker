@@ -8,6 +8,10 @@
 
 PIPELINE_OUTDIR=$1
 
+if [[ "$HOSTNAME" != "biowulf.nih.gov" ]];then
+    exit 0
+fi
+
 SPOOK=$(type -P spook)
 if [[ "$SPOOK" == "" ]];then
 	echo "spook is not in PATH."
