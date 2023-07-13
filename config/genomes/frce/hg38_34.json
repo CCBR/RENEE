@@ -1,0 +1,25 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/hg38.fa",
+            "GENOME": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/hg38.fa",
+            "GTFFILE": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/34.gtf",
+            "GENOME_STARDIR": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/STAR/2.7.6a/genome",
+            "ANNOTATE": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/annotate.isoforms.txt",
+            "REFFLAT": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/refFlat.txt",
+            "BEDREF": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/genes.ref.bed",
+            "GENEINFO": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/geneinfo.bed",
+            "QUALIMAP_INFO": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/qualimap_info.txt",
+            "KARYOBEDS": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/karyobeds/",
+            "KARYOPLOTER": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/rsemref/hg38",
+            "RRNALIST": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/hg38.rRNA_interval_list",
+            "ORGANISM": "hg38_34",
+            "TINREF": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/34/transcripts.protein_coding_only.bed12",
+            "FUSIONBLACKLIST": "s3://nciccbr/Resources/RNA-seq/arriba/blacklist_hg38_GRCh38_v2.0.0.tsv.gz",
+            "FUSIONCYTOBAND": "s3://nciccbr/Resources/RNA-seq/arriba/cytobands_hg38_GRCh38_v2.0.0.tsv",
+            "FUSIONPROTDOMAIN": "s3://nciccbr/Resources/RNA-seq/arriba/protein_domains_hg38_GRCh38_v2.0.0.gff3"
+        }
+    }
+}

@@ -1,0 +1,25 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/mm10.fa",
+            "GENOME": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/mm10.fa",
+            "GTFFILE": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/M21.gtf",
+            "GENOME_STARDIR": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/STAR/2.7.6a/genome",
+            "ANNOTATE": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/annotate.isoforms.txt",
+            "REFFLAT": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/refFlat.txt",
+            "BEDREF": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/genes.ref.bed",
+            "GENEINFO": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/geneinfo.bed",
+            "QUALIMAP_INFO": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/qualimap_info.txt",
+            "KARYOBEDS": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/karyobeds/",
+            "KARYOPLOTER": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/rsemref/mm10",
+            "RRNALIST": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/mm10.rRNA_interval_list",
+            "ORGANISM": "mm10_M21",
+            "TINREF": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M21/transcripts.protein_coding_only.bed12",
+            "FUSIONBLACKLIST": "s3://nciccbr/Resources/RNA-seq/arriba/blacklist_mm10_GRCm38_v2.0.0.tsv.gz",
+            "FUSIONCYTOBAND": "s3://nciccbr/Resources/RNA-seq/arriba/cytobands_mm10_GRCm38_v2.0.0.tsv",
+            "FUSIONPROTDOMAIN": "s3://nciccbr/Resources/RNA-seq/arriba/protein_domains_mm10_GRCm38_v2.0.0.gff3"
+        }
+    }
+}

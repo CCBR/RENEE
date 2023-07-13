@@ -11,7 +11,12 @@ Bundled Biowulf Reference Genomes
 | **Genome**   | **Species**   | **Annotation Version**    | **Notes**                                               |
 | ------------ |-------------- | --------------------------| --------------------------------------------------------|
 | hg38_30      | Homo sapiens (human)   | [Gencode Release v30](https://www.gencodegenes.org/human/release_30.html)  | [GRCh38](https://www.gencodegenes.org/human/release_30.html), Annotation Release date: 11/2018  |
+| hg38_34      | Homo sapiens (human)   | [Gencode Release v34](https://www.gencodegenes.org/human/release_34.html)  | [GRCh38](https://www.gencodegenes.org/human/release_34.html), Annotation Release date: 04/2020  |
+| hg38_38      | Homo sapiens (human)   | [Gencode Release v38](https://www.gencodegenes.org/human/release_38.html)  | [GRCh38](https://www.gencodegenes.org/human/release_38.html), Annotation Release date: 05/2021  |
+| hg38_41      | Homo sapiens (human)   | [Gencode Release v41](https://www.gencodegenes.org/human/release_41.html)  | [GRCh38](https://www.gencodegenes.org/human/release_41.html), Annotation Release date: 07/2022  |
 | mm10_M21     | Mus musculus (mouse)   | [Gencode Release M21](https://www.gencodegenes.org/mouse/release_M21.html) | [GRCm38](https://www.gencodegenes.org/mouse/release_M21.html), Annotation Release date: 04/2019 |
+| mm10_M23     | Mus musculus (mouse)   | [Gencode Release M23](https://www.gencodegenes.org/mouse/release_M23.html) | [GRCm38](https://www.gencodegenes.org/mouse/release_M23.html), Annotation Release date: 09/2019 |
+| mm10_M25     | Mus musculus (mouse)   | [Gencode Release M25](https://www.gencodegenes.org/mouse/release_M25.html) | [GRCm38](https://www.gencodegenes.org/mouse/release_M25.html), Annotation Release date: 04/2020 |
 
 However, building new reference genomes is easy! 
 

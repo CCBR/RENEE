@@ -1,0 +1,25 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/mm10.fa",
+            "GENOME": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/mm10.fa",
+            "GTFFILE": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/M25.gtf",
+            "GENOME_STARDIR": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/STAR/2.7.6a/genome",
+            "ANNOTATE": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/annotate.isoforms.txt",
+            "REFFLAT": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/refFlat.txt",
+            "BEDREF": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/genes.ref.bed",
+            "GENEINFO": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/geneinfo.bed",
+            "QUALIMAP_INFO": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/qualimap_info.txt",
+            "KARYOBEDS": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/karyobeds/",
+            "KARYOPLOTER": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/rsemref/mm10",
+            "RRNALIST": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/mm10.rRNA_interval_list",
+            "ORGANISM": "mm10_M25",
+            "TINREF": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/mm10/M25/transcripts.protein_coding_only.bed12",
+            "FUSIONBLACKLIST": "s3://nciccbr/Resources/RNA-seq/arriba/blacklist_mm10_GRCm38_v2.0.0.tsv.gz",
+            "FUSIONCYTOBAND": "s3://nciccbr/Resources/RNA-seq/arriba/cytobands_mm10_GRCm38_v2.0.0.tsv",
+            "FUSIONPROTDOMAIN": "s3://nciccbr/Resources/RNA-seq/arriba/protein_domains_mm10_GRCm38_v2.0.0.gff3"
+        }
+    }
+}

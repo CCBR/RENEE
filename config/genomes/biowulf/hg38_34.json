@@ -1,0 +1,25 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/hg38.fa",
+            "GENOME": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/hg38.fa",
+            "GTFFILE": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/34.gtf",
+            "GENOME_STARDIR": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/STAR/2.7.6a/genome",
+            "ANNOTATE": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/annotate.isoforms.txt",
+            "REFFLAT": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/refFlat.txt",
+            "BEDREF": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/genes.ref.bed",
+            "GENEINFO": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/geneinfo.bed",
+            "QUALIMAP_INFO": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/qualimap_info.txt",
+            "KARYOBEDS": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/karyobeds/",
+            "KARYOPLOTER": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/rsemref/hg38",
+            "RRNALIST": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/hg38.rRNA_interval_list",
+            "ORGANISM": "hg38_34",
+            "TINREF": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/34/transcripts.protein_coding_only.bed12",
+            "FUSIONBLACKLIST": "s3://nciccbr/Resources/RNA-seq/arriba/blacklist_hg38_GRCh38_v2.0.0.tsv.gz",
+            "FUSIONCYTOBAND": "s3://nciccbr/Resources/RNA-seq/arriba/cytobands_hg38_GRCh38_v2.0.0.tsv",
+            "FUSIONPROTDOMAIN": "s3://nciccbr/Resources/RNA-seq/arriba/protein_domains_hg38_GRCh38_v2.0.0.gff3"
+        }
+    }
+}

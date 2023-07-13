@@ -59,15 +59,24 @@ Reference files are pulled from an S3 bucket to the compute instance or local fi
 RENEE comes bundled with pre-built reference files for the following genomes:
 | Name     | Species | Genome | Annotation |
 | -------- | ------- | ------------------ | -------- | 
-| hg38_30  | Homo sapiens (human) | [GRCh38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 30](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30/gencode.v30.annotation.gtf.gz) |
-| mm10_M21 | Mus musculus (mouse) | [GRCm38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode Release M21](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21/gencode.vM21.annotation.gtf.gz) |
+| hg38_30  | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 30](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30/gencode.v30.annotation.gtf.gz) |
+| hg38_34  | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 34](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.annotation.gtf.gz) |
+| hg38_38  | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 38](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/gencode.v38.annotation.gtf.gz) |
+| hg38_41  | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 41](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_41/gencode.v41.annotation.gtf.gz) |
+| mm10_M21 | Mus musculus (mouse) | [GRCm38 or mm10](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release M21](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21/gencode.vM21.annotation.gtf.gz) |
+| mm10_M23 | Mus musculus (mouse) | [GRCm38 or mm10](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release M23](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M23/gencode.vM23.annotation.gtf.gz) |
+| mm10_M25 | Mus musculus (mouse) | [GRCm38 or mm10](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release M25](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz) |
 
-> **Warning:** This section contains FTP links for downloading each reference file.  Open the link in a new tab to start a download. 
+> **Warning:** This section contains FTP links for downloading each reference file.  Open the link in a new tab to start a download. DO NOT download if you are running on Biowulf or FRCE. Pre-built indices are already available for these genome+annotation combinations. This can be done by using the values under the _Name_ column above as the `--genome` renee argument.
 
-> **Note:** Release 30 for hg38 and Release M21 for mm10 were the only annotation versions available at the time of writing this documentation. Newer annotations versions may be added upon request and may be already available. Please contact [Vishal Koparde](mailto:vishal.koparde@nih.gov) for details.
+> **Note:** These were the only annotation versions available at the time of writing this documentation. Newer annotations versions may be added upon request and may be already available. Please contact [Vishal Koparde](mailto:vishal.koparde@nih.gov) for details.
 
 #### 2.3 Dependencies
 **Requires:** `singularity>=3.5`  `snakemake>=6.0` 
+
+> **NOTE:**  
+> <ins>Biowulf users</ins>:  
+> Both, singularity and snakemake, modules are already installed and available for all Biowulf users. Please skip this step as `module load ccbrpipeliner` will preload singularity and snakemake.
 
 [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) and [singularity](https://singularity.lbl.gov/all-releases) must be installed on the target system. Snakemake orchestrates the execution of each step in the pipeline. To guarantee reproducibility, each step relies on pre-built images from [DockerHub](https://hub.docker.com/orgs/nciccbr/repositories). Snakemake pulls these docker images while converting them to singularity on the fly and saves them onto the local filesystem prior to job execution, and as so, snakemake and singularity are the only two dependencies.
 
