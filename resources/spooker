@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# if running on Biowulf
+# create a zip of essential files like dryrun and tree
+# use spook to push the file to secret location on /scratch
+#
+# This scripts is created using _zip_tar_copy script from permfix as template
+#
+
+PIPELINE_OUTDIR=$1
+
+if [[ "$HOSTNAME" != "biowulf.nih.gov" ]];then
+    exit 0
+fi
+
+SPOOK=$(type -P spook)
+if [[ "$SPOOK" == "" ]];then
+	echo "spook is not in PATH."
+	echo "... trying to add it."
+	# setup SPACESAVERS2DIR PERMFIXDIR PATHs etc.
+	. "/data/CCBR_Pipeliner/cronjobs/scripts/setup"
+	SPOOK=$(type -P spook)
+	if [[ "$SPOOK" == "" ]];then
+		echo "spook is still not in PATH!"
+		exit
+	fi
+fi
+SPOOK_COPY2DIR="/scratch/ccbrpipeliner"
+
+if [[ ! -d $SPOOK_COPY2DIR ]];then
+    mkdir -p $SPOOK_COPY2DIR && chmod a+rwX $SPOOK_COPY2DIR
+fi
+
+DT=$(date +%Y%m%d)
+archivefile="${HOME}/${USER}.${DT}.tar"
+treefile="${HOME}/${USER}.${DT}.tree"
+
+dryrunlogfile=""
+if [[ -d "$PIPELINE_OUTDIR" ]];then
+    dryrunlogfile=$(ls -rt ${PIPELINE_OUTDIR}/dryrun*log 2>/dev/null |tail -n1 || echo "")
+    cmd="tar cvf ${archivefile}"
+    if [[ "$dryrunlogfile" != "" ]];then
+        cmd="$cmd $dryrunlogfile"
+    fi
+    # gather some info
+    echo "PIPELINE_OUTDIR:$PIPELINE_OUTDIR" > $treefile
+    echo "USER:$USER" >> $treefile
+    GROUPS=$(groups)
+    echo "GROUPS:$GROUPS" >> $treefile
+    RENEE=$(which renee)
+    echo "RENEE:$RENEE" >> $treefile
+    echo "DATE:$DT" >> $treefile
+    tree $PIPELINE_OUTDIR >> $treefile
+    cmd="$cmd $treefile"
+
+    if [[ -d "${PIPELINE_OUTDIR}/logfiles" ]];then
+        logdir="${PIPELINE_OUTDIR}/logfiles"
+        for thisfile in "snakemake.log" "snakemake.log.jobby" "master.log" "runtime_statistics.json";do
+            absthisfile="${logdir}/${thisfile}"
+            if [[ -f "$absthisfile" ]];then
+                cmd="$cmd $absthisfile"
+            fi
+        done
+    fi
+
+
+    echo $cmd
+    $cmd
+
+    # copy over the archive to secrete location and delete it
+    if [ -f "${archivefile}" ];then
+        gzip -f $archivefile
+        cmd="$SPOOK -f ${archivefile}.gz -d $SPOOK_COPY2DIR"
+        echo $cmd
+        $cmd
+        rm -f $archivefile $treefile
+    fi
+fi

@@ -17,9 +17,24 @@ TOOLDIR=$(dirname "$SCRIPTDIRNAME")
 TOOLNAME=$(basename "$SCRIPTNAME")
 echo $TOOLNAME
 
+# load conda
+if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
+       . "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh"
+elif [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" ]];then
+       . "/mnt/projects/CCBR-Pipelines/resources/miniconda3/etc/profile.d/conda.sh"
+fi
+conda activate py311
+
 # load required modules
 module purge
-module load singularity snakemake
+module load singularity 
+if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
+	module load snakemake
+elif [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" ]];then
+# snakemake module on FRCE does not work as expected
+# use the conda installed version of snakemake instead
+	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
+fi
 
 ${TOOLDIR}/${TOOLNAME} "$@" || true
 
