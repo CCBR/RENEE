@@ -203,13 +203,16 @@ elif not paired_end:
 
 # create jobby tables
 jobby_cmd = join('resources', 'run_jobby_on_snakemake_log') + " " + join('logfiles', 'snakemake.log') + " | tee " + join('logfiles', 'snakemake.log.jobby') + " | cut -f2,3,18 > " + join('logfiles', 'snakemake.log.jobby.short')
+spook_cmd = join('resources', 'spooker') + " " + workpath
 
 onsuccess:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print(jobby_cmd)
     shell(jobby_cmd)
+    shell(spook_cmd)
 
 onerror:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print(jobby_cmd)
     shell(jobby_cmd)
+    shell(spook_cmd)
