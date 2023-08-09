@@ -238,6 +238,7 @@ rule kraken_pe:
         config['bin'][pfamily]['tool_versions']['KRONATOOLSVER'],
     container: config['images']['kraken']
     shell: """
+    set -exo pipefail
     # Setups temporary directory for
     # intermediate files with built-in 
     # mechanism for deletion on exit
@@ -247,9 +248,11 @@ rule kraken_pe:
 
     # Copy kraken2 db to /lscratch or temp 
     # location to reduce filesystem strain
-    cp -rv {params.bacdb} ${{tmp}}/;
-    kdb_base=$(basename {params.bacdb})
-    kraken2 --db ${{tmp}}/${{kdb_base}} \
+    cp -rv {params.bacdb}/* ${{tmp}}/
+    # kdb_base=$(basename {params.bacdb})
+    # kraken2 --db ${{tmp}}/${{kdb_base}}
+    # rsync -az --progress {params.bacdb} ${{tmp}}/; # does not work as docker does not contain rsync
+    kraken2 --db ${{tmp}} \
         --threads {threads} --report {output.krakentaxa} \
         --output {output.krakenout} \
         --gzip-compressed \
@@ -830,12 +833,14 @@ rule rnaseq_multiqc:
         expand(join(workpath,"QualiMap","{name}","genome_results.txt"),name=samples),
         expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
         expand(join(workpath,log_dir,"{name}.flagstat.concord.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
         expand(join(workpath,preseq_dir,"{name}.ccurve"),name=samples),
         expand(join(workpath,degall_dir,"{name}.RSEM.genes.results"),name=samples),
         expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
+        expand(join(workpath,kraken_dir,"{name}.trim.kraken_bacteria.taxa.txt"),name=samples),
         fqinfo=expand(join(workpath,"rawQC","{name}.fastq.info.txt"),name=samples),
         innerdists=expand(join(workpath,rseqc_dir,"{name}.inner_distance_freq.txt"),name=samples),
         tins=expand(join(workpath,rseqc_dir,"{name}.star_rg_added.sorted.dmark.summary.txt"),name=samples),
