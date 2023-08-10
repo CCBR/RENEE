@@ -6,7 +6,7 @@
 # This scripts is created using _zip_tar_copy script from permfix as template
 #
 
-set -exo pipefail
+set -o pipefail
 PIPELINE_OUTDIR=$1
 
 if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$HOSTNAME" == "biowulf.nih.gov" ]]; then # only run on biowulf or frce
