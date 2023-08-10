@@ -654,12 +654,12 @@ rule kraken2_db:
 rule jsonmaker:
     """
     Builds reference genome reference JSON file. This is a config file for the
-    RNA-seek pipeline that defines each location to a given reference file.
+    RENEE pipeline that defines each location to a given reference file.
     @Input:
         Genomic FASTA file
         Annotation file in GTF format
     @Output:
-        Generates '{genome}.json' which is used RNA-seek pipeline internally.
+        Generates '{genome}.json' which is used RENEE pipeline internally.
     """
     input:
         fa=REFFA,

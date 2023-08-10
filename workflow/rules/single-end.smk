@@ -165,10 +165,11 @@ rule fastq_screen:
     output:
         out1=join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),
         out2=join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
-        out3=join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
-        out4=join(workpath,"FQscreen2","{name}.R1.trim_screen.png")
+        out3=join(workpath,"FQscreen2","{name}.R1_2.trim_screen.txt"),
+        out4=join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png")
     params:
         rname='pl:fqscreen',
+        samplename="{name}",
         outdir = join(workpath,"FQscreen"),
         outdir2 = join(workpath,"FQscreen2"),
         # Exposed Parameters: modify resources/fastq_screen{_2}.conf to change defaults
@@ -187,6 +188,10 @@ rule fastq_screen:
 
     fastq_screen --conf {params.fastq_screen_config2} --outdir {params.outdir2} \
         --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1}
+
+    for ext in png txt html;do
+        mv {params.outdir2}/{params.samplename}.R1.trim_screen.${{ext}} {params.outdir2}/{params.samplename}.R1_2.trim_screen.${{ext}}
+    done
     """
 
 
@@ -227,9 +232,8 @@ rule kraken_se:
 
     # Copy kraken2 db to /lscratch or temp 
     # location to reduce filesytem strain
-    cp -rv {params.bacdb} ${{tmp}}/;
-    kdb_base=$(basename {params.bacdb})
-    kraken2 --db ${{tmp}}/${{kdb_base}} \
+    cp -rv {params.bacdb}/* ${{tmp}}/
+    kraken2 --db ${{tmp}} \
         --threads {threads} --report {output.krakentaxa} \
         --output {output.krakenout} \
         --gzip-compressed \
@@ -729,6 +733,7 @@ rule rnaseq_multiqc:
     input:
         expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png"),name=samples),
         expand(join(workpath,log_dir,"{name}.flagstat.concord.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
@@ -737,6 +742,7 @@ rule rnaseq_multiqc:
         expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
         expand(join(workpath,rseqc_dir,"{name}.star_rg_added.sorted.dmark.summary.txt"),name=samples),
         expand(join(workpath,"rawQC","{name}.fastq.info.txt"),name=samples),
+        expand(join(workpath,kraken_dir,"{name}.trim.kraken_bacteria.taxa.txt"),name=sample),
         fqinfo=expand(join(workpath,"rawQC","{name}.fastq.info.txt"),name=samples),
         tins=expand(join(workpath,rseqc_dir,"{name}.star_rg_added.sorted.dmark.summary.txt"),name=samples)
     output:

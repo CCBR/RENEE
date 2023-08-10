@@ -640,6 +640,14 @@ def setup(sub_args, ifiles, repo_path, output_path):
     config['options']['small_rna'] = sub_args.small_rna
     config['options']['tmp_dir'] = sub_args.tmp_dir
     config['options']['shared_resources'] = sub_args.shared_resources
+    if sub_args.wait:
+        config['options']['wait'] = "True"
+    else:
+        config['options']['wait'] = "False"
+    if sub_args.create_nidap_folder:
+        config['options']['create_nidap_folder'] = "True"
+    else:
+        config['options']['create_nidap_folder'] = "False"
 
     # Get latest git commit hash
     git_hash = get_repo_git_commit_hash(repo_path)
@@ -706,7 +714,7 @@ def dryrun(outdir, config='config.json', snakefile=os.path.join('workflow', 'Sna
 def orchestrate(
         mode, outdir, additional_bind_paths, alt_cache, threads=2, 
         submission_script='runner', masterjob='pl:renee', 
-        tmp_dir = '/lscratch/$SLURM_JOBID/'
+        tmp_dir = '/lscratch/$SLURM_JOBID/', wait=''
     ):
     """Runs RENEE pipeline via selected executor: local or slurm.
     If 'local' is selected, the pipeline is executed locally on a compute node/instance.
@@ -812,11 +820,14 @@ def orchestrate(
         logfh = open(os.path.join(outdir, 'logfiles', 'master.log'), 'w')
         # submission_script for renee run is /path/to/output/resources/runner
         # submission_script for renee build is /path/to/output/resources/builder
-        masterjob = subprocess.Popen([
+        cmdlist = [
                 str(os.path.join(outdir, 'resources', str(submission_script))), mode,
                 '-j', str(masterjob), '-b', str(bindpaths),
                 '-o', str(outdir), '-c', str(cache), '-t', str(tmp_dir)
-            ], cwd = outdir, stderr=subprocess.STDOUT, stdout=logfh, env=my_env)
+            ]
+        if str(wait) == "--wait":
+            cmdlist.append('-w')
+        masterjob = subprocess.Popen(cmdlist, cwd = outdir, stderr=subprocess.STDOUT, stdout=logfh, env=my_env)
 
     return masterjob
 
@@ -893,6 +904,9 @@ def run(sub_args):
         print("\nDry-running RENEE pipeline:\n{}".format(dryrun_output.decode("utf-8")))
         # sys.exit(0) # DONT exit now ... exit after printing singularity bind paths
 
+    # determine "wait"
+    wait = ''
+    if sub_args.wait: wait = '--wait'
 
     # Resolve all Singularity Bindpaths
     rawdata_bind_paths = config['project']['datapath']
@@ -916,7 +930,8 @@ def run(sub_args):
         additional_bind_paths = all_bind_paths, 
         alt_cache = sub_args.singularity_cache,  
         threads = sub_args.threads, 
-        tmp_dir = sub_args.tmp_dir
+        tmp_dir = sub_args.tmp_dir,
+        wait = wait
     )
 
     # Wait for subprocess to complete,
@@ -1290,6 +1305,8 @@ def parsed_arguments(name, description):
                               [--singularity-cache SINGULARITY_CACHE] \\
                               [--sif-cache SIF_CACHE] \\
                               [--tmp-dir TMP_DIR] \\
+                              [--wait] \\
+                              [--create-nidap-folder] \\
                               [--threads THREADS] \\
                               --input INPUT [INPUT ...] \\
                               --output OUTPUT \\
@@ -1418,6 +1435,18 @@ def parsed_arguments(name, description):
                                 sub command can be used to create a local SIF cache. 
                                 Please see {0} cache for more information.
                                    Example: --sif-cache /data/$USER/sifs/
+
+          --wait 
+                                Wait until master job completes. This is required if
+                                the job is submitted using HPC API. If not provided
+                                the API may interpret submission of master job as
+                                completion of the pipeline!
+         
+          --create-nidap-folder
+                                Create folder called "NIDAP" with file to-be-moved back to NIDAP 
+                                This makes it convinient to move only this folder (called NIDAP) 
+                                and its content back to NIDAP, rather than the entire pipeline 
+                                output folder.
 
           --tmp-dir TMP_DIR     
                                 Path on the file system for writing temporary output 
@@ -1599,6 +1628,25 @@ def parsed_arguments(name, description):
         required = False,
         help = argparse.SUPPRESS
     )
+
+    # Create NIDAP output folder 
+    subparser_run.add_argument('--create-nidap-folder',
+                                action = 'store_true',
+                                required = False,
+                                default = False,
+                                help = 'Create folder called "NIDAP" with file to-be-moved back to NIDAP \
+                                This makes it convinient to move only this folder (called NIDAP) and its content back \
+                                to NIDAP, rather than the entire pipeline output folder')
+
+    # wait until master job finishes ... required for HPC API execution 
+    subparser_run.add_argument('--wait',
+                                action = 'store_true',
+                                required = False,
+                                default = False,
+                                help = 'Wait until master job completes. This is required if \
+                                the job is submitted using HPC API. If not provided \
+                                the API may interpret submission of master job as \
+                                completion of the pipeline!')
 
     # Base directory to write 
     # temporary/intermediate files 

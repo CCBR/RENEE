@@ -17,7 +17,7 @@ from scripts.common import (
 )
 
 # Global workflow variables
-configfile: 'config.json'                        # rna-seek config file
+configfile: 'config.json'                        # RENEE config file
 samples  = config['project']['groups']['rsamps'] # sample basenames
 pfamily  = config['project']['pfamily']          # rnaseq
 workpath = config['project']['workpath']         # Parent Output directory
@@ -51,6 +51,24 @@ degall_dir='DEG_ALL'
 dtypes=['RSEM_genes']
 
 
+def get_nidap_folder_input_files(wildcards):
+    nidap_files=[]
+    nidap_files.append(join(workpath,"Reports","RNA_Report.html"))
+    nidap_files.append(join(workpath,"Reports","multiqc_report.html"))
+    nidap_files.append(join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"))
+    nidap_files.append(join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"))
+    return nidap_files
+
+def get_nidap_folder_ouptut_files(wildcards):
+    nidap_files=[]
+    if config['options']['create_nidap_folder'] == "True":
+        nidap_files.append(join(workpath,"NIDAP","RNA_Report.html"))
+        nidap_files.append(join(workpath,"NIDAP","multiqc_report.html"))
+        nidap_files.append(join(workpath,"NIDAP","RSEM.genes.FPKM.all_samples.txt"))
+        nidap_files.append(join(workpath,"NIDAP","RSEM.isoforms.FPKM.all_samples.txt"))
+    return nidap_files
+
+
 if paired_end:
     # Paired-end Target files
     rule all:
@@ -78,10 +96,10 @@ if paired_end:
             expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
             expand(join(workpath,"FQscreen","{name}.R2.trim_screen.txt"),name=samples),
             expand(join(workpath,"FQscreen","{name}.R2.trim_screen.png"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R2.trim_screen.txt"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R2.trim_screen.png"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R1_2.trim_screen.txt"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R2_2.trim_screen.txt"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R2_2.trim_screen.png"),name=samples),
 
             # Kraken + Krona
             expand(join(workpath,kraken_dir,"{name}.trim.kraken_bacteria.taxa.txt"),name=samples),
@@ -132,6 +150,9 @@ if paired_end:
 
             # RNA QC Report
             join(workpath,"Reports","RNA_Report.html"),
+
+            #NIDAP stuff
+            get_nidap_folder_ouptut_files
 
 
 elif not paired_end:
@@ -190,6 +211,8 @@ elif not paired_end:
             # MultiQC
             join(workpath,"Reports","multiqc_report.html"),
 
+            #NIDAP stuff
+            get_nidap_folder_ouptut_files
 
 # Rules common to single-end or paired-end data
 include: "rules/common.smk"
@@ -200,6 +223,9 @@ if paired_end:
 elif not paired_end:
     # rules common to paired-end data
     include: "rules/single-end.smk"
+
+if config['options']['create_nidap_folder']:
+    include: "rules/nidap.smk"
 
 # create jobby tables
 jobby_cmd = join('resources', 'run_jobby_on_snakemake_log') + " " + join('logfiles', 'snakemake.log') + " | tee " + join('logfiles', 'snakemake.log.jobby') + " | cut -f2,3,18 > " + join('logfiles', 'snakemake.log.jobby.short')
