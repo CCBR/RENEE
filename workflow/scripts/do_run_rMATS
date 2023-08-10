@@ -6,14 +6,14 @@ set -euo pipefail
 # Functions
 function err() { cat <<< "$@" 1>&2; }
 function usage() { cat << EOF
-do_run_rMATS: Run rMATS with an RNA-seek output directory.
+do_run_rMATS: Run rMATS with an RENEE output directory.
 USAGE:
   $ ./do_run_rMATS [-h] \\
         [--skip-index]
 SYNOPSIS:
-  Convience script to run rMATS with an RNA-seek output directory. A 
+  Convience script to run rMATS with an RENEE output directory. A 
   user just needs to create a 'groups.tab' and 'contrasts.tab' file in the
-  RNA-seek output directory of interest. This script will run rMATS Turbo
+  RENEE output directory of interest. This script will run rMATS Turbo
   for each comparsion defined in 'contrasts.tab' file. The '--skip-index'
   option can be provided if this script has already been run to generate 
   an STAR index for rMATS.
@@ -31,7 +31,7 @@ OPTIONS:
                                  cause rMATS to fail. 
   -h, --help     [Type: Bool]  Displays usage and help information.
 Example:
-  $ cd /path/to/RNA-seek/output/directory
+  $ cd /path/to/RENEE/output/directory
   $ nano groups.tab    # create a groups.tab file similar to Pipeliner 
   $ nano contrasts.tab # create a contrasts.tab file similar to Pipeliner
   $ ./do_run_rMATS
