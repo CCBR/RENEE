@@ -169,6 +169,7 @@ rule fastq_screen:
         out4=join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png")
     params:
         rname='pl:fqscreen',
+        samplename="{name}",
         outdir = join(workpath,"FQscreen"),
         outdir2 = join(workpath,"FQscreen2"),
         # Exposed Parameters: modify resources/fastq_screen{_2}.conf to change defaults
@@ -189,7 +190,7 @@ rule fastq_screen:
         --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1}
 
     for ext in png txt html;do
-        mv {params.outdir2}/{samplename}.R1.trim_screen.${{ext}} {params.outdir2}/{samplename}.R1_2.trim_screen.${{ext}}
+        mv {params.outdir2}/{params.samplename}.R1.trim_screen.${{ext}} {params.outdir2}/{params.samplename}.R1_2.trim_screen.${{ext}}
     done
     """
 

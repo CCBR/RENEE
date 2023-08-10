@@ -210,8 +210,8 @@ rule fastq_screen:
         --aligner bowtie2 --force {input.file1} {input.file2}
     
     for ext in png txt html;do
-        mv {params.outdir2}/{samplename}.R1.trim_screen.${{ext}} {params.outdir2}/{samplename}.R1_2.trim_screen.${{ext}}
-        mv {params.outdir2}/{samplename}.R2.trim_screen.${{ext}} {params.outdir2}/{samplename}.R2_2.trim_screen.${{ext}}
+        mv {params.outdir2}/{params.samplename}.R1.trim_screen.${{ext}} {params.outdir2}/{params.samplename}.R1_2.trim_screen.${{ext}}
+        mv {params.outdir2}/{params.samplename}.R2.trim_screen.${{ext}} {params.outdir2}/{params.samplename}.R2_2.trim_screen.${{ext}}
     done
     """
 
