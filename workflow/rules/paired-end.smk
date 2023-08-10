@@ -180,12 +180,14 @@ rule fastq_screen:
         out2=join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
         out3=join(workpath,"FQscreen","{name}.R2.trim_screen.txt"),
         out4=join(workpath,"FQscreen","{name}.R2.trim_screen.png"),
-        out5=join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
-        out6=join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),
-        out7=join(workpath,"FQscreen2","{name}.R2.trim_screen.txt"),
-        out8=join(workpath,"FQscreen2","{name}.R2.trim_screen.png")
+        # add "_2" to the file name so it is correctly plotted by multiqc
+        out5=join(workpath,"FQscreen2","{name}.R1_2.trim_screen.txt"),
+        out6=join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png"),
+        out7=join(workpath,"FQscreen2","{name}.R2_2.trim_screen.txt"),
+        out8=join(workpath,"FQscreen2","{name}.R2_2.trim_screen.png")
     params:
         rname='pl:fqscreen',
+        samplename="{name}",
         outdir = join(workpath,"FQscreen"),
         outdir2 = join(workpath,"FQscreen2"),
         # Exposed Parameters: modify resources/fastq_screen{_2}.conf to change defaults
@@ -206,6 +208,11 @@ rule fastq_screen:
     fastq_screen --conf {params.fastq_screen_config2} --outdir {params.outdir2} \
         --threads {threads} --subset 1000000 \
         --aligner bowtie2 --force {input.file1} {input.file2}
+    
+    for ext in png txt html;do
+        mv {params.outdir2}/{samplename}.R1.trim_screen.${{ext}} {params.outdir2}/{samplename}.R1_2.trim_screen.${{ext}}
+        mv {params.outdir2}/{samplename}.R2.trim_screen.${{ext}} {params.outdir2}/{samplename}.R2_2.trim_screen.${{ext}}
+    done
     """
 
 
@@ -833,7 +840,7 @@ rule rnaseq_multiqc:
         expand(join(workpath,"QualiMap","{name}","genome_results.txt"),name=samples),
         expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
-        expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png"),name=samples),
         expand(join(workpath,log_dir,"{name}.flagstat.concord.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),
