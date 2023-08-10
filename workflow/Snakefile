@@ -17,7 +17,7 @@ from scripts.common import (
 )
 
 # Global workflow variables
-configfile: 'config.json'                        # rna-seek config file
+configfile: 'config.json'                        # RENEE config file
 samples  = config['project']['groups']['rsamps'] # sample basenames
 pfamily  = config['project']['pfamily']          # rnaseq
 workpath = config['project']['workpath']         # Parent Output directory
