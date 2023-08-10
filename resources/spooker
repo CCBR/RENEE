@@ -6,6 +6,7 @@
 # This scripts is created using _zip_tar_copy script from permfix as template
 #
 
+set -o pipefail
 PIPELINE_OUTDIR=$1
 
 if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$HOSTNAME" == "biowulf.nih.gov" ]]; then # only run on biowulf or frce
@@ -43,8 +44,8 @@ if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$HOSTNAME" == "biowulf.nih
         # gather some info
         echo "PIPELINE_OUTDIR:$PIPELINE_OUTDIR" > $treefile
         echo "USER:$USER" >> $treefile
-        GROUPS=$(groups)
-        echo "GROUPS:$GROUPS" >> $treefile
+        #GROUPS=$(groups 2>/dev/null)
+        echo "GROUPS:" $(groups) >> $treefile
         RENEE=$(which renee)
         echo "RENEE:$RENEE" >> $treefile
         echo "DATE:$DT" >> $treefile
