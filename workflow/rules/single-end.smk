@@ -165,8 +165,8 @@ rule fastq_screen:
     output:
         out1=join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),
         out2=join(workpath,"FQscreen","{name}.R1.trim_screen.png"),
-        out3=join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),
-        out4=join(workpath,"FQscreen2","{name}.R1.trim_screen.png")
+        out3=join(workpath,"FQscreen2","{name}.R1_2.trim_screen.txt"),
+        out4=join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png")
     params:
         rname='pl:fqscreen',
         outdir = join(workpath,"FQscreen"),
@@ -187,6 +187,10 @@ rule fastq_screen:
 
     fastq_screen --conf {params.fastq_screen_config2} --outdir {params.outdir2} \
         --threads {threads} --subset 1000000 --aligner bowtie2 --force {input.file1}
+
+    for ext in png txt html;do
+        mv {params.outdir2}/{samplename}.R1.trim_screen.${{ext}} {params.outdir2}/{samplename}.R1_2.trim_screen.${{ext}}
+    done
     """
 
 
@@ -728,7 +732,7 @@ rule rnaseq_multiqc:
     input:
         expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
         expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
-        expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
+        expand(join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png"),name=samples),
         expand(join(workpath,log_dir,"{name}.flagstat.concord.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.RnaSeqMetrics.txt"),name=samples),
         expand(join(workpath,log_dir,"{name}.star.duplic"),name=samples),

@@ -11,8 +11,10 @@ An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
       - [2.2 Reference Genomes](#22-reference-genomes)
       - [2.3 Dependencies](#23-dependencies)
     - [3. Run RENEE pipeline](#3-run-renee-pipeline)
-      - [3.3 Biowulf](#33-biowulf)
-    - [5. References](#5-references)
+      - [3.1 Biowulf](#31-biowulf)
+      - [3.2 FRCE](#32-frce)
+    - [4. References](#4-references)
+    - [5. Version Notes](#5-version-notes)
 
 ### 1. Introduction  
 RNA-sequencing (*RNA-seq*) has a wide variety of applications. This popular transcriptome profiling technique can be used to quantify gene and isoform expression, detect alternative splicing events, predict gene-fusions, call variants and much more.
@@ -21,6 +23,7 @@ RNA-sequencing (*RNA-seq*) has a wide variety of applications. This popular tran
 
 ![RENEE_overview_diagram](./resources/overview.svg)  
 <sup>**Fig 1. Run locally on a compute instance, on-premise using a cluster, or on the cloud using AWS.** A user can define the method or mode of execution. The pipeline can submit jobs to a cluster using a job scheduler like SLURM, or run on AWS using Tibanna (feature coming soon!). A hybrid approach ensures the pipeline is accessible to all users. As an optional step, relevelant output files and metadata can be stored in object storage using HPC DME (NIH users) or Amazon S3 for archival purposes (coming soon!).</sup> 
+
 
 ### 2. Overview
 
@@ -80,9 +83,15 @@ RENEE comes bundled with pre-built reference files for the following genomes:
 
 [Snakemake](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html) and [singularity](https://singularity.lbl.gov/all-releases) must be installed on the target system. Snakemake orchestrates the execution of each step in the pipeline. To guarantee reproducibility, each step relies on pre-built images from [DockerHub](https://hub.docker.com/orgs/nciccbr/repositories). Snakemake pulls these docker images while converting them to singularity on the fly and saves them onto the local filesystem prior to job execution, and as so, snakemake and singularity are the only two dependencies.
 
+<hr>
+<p align="center">
+	<a href="#RENEE">Back to Top</a>
+</p>
+<hr>
+
 ### 3. Run RENEE pipeline
 
-#### 3.3 Biowulf
+#### 3.1 Biowulf
 ```bash
 # RENEE is configured to use different execution backends: local or slurm
 # view the help page for more information
@@ -109,7 +118,24 @@ module load ccbrpipeliner
 renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode slurm
 ```
 
-### 5. References  
+#### 3.2 FRCE
+```bash
+# grab an interactive node
+srun --export all --pty --x11 bash
+
+# add renee to path correctly
+. /mnt/projects/CCBR-Pipelines/pipelines/guis/latest/bin/setup
+
+# run renee
+renee --help
+```
+<hr>
+<p align="center">
+	<a href="#RENEE">Back to Top</a>
+</p>
+<hr>
+
+### 4. References  
 
 <sup>**1.**	Daley, T. and A.D. Smith, Predicting the molecular complexity of sequencing libraries. Nat Methods, 2013. 10(4): p. 325-7.</sup>  
 <sup>**2.** Andrews, S. (2010). FastQC: a quality control tool for high throughput sequence data.</sup>  
@@ -134,6 +160,18 @@ renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg
 <sup>**21.**  Kurtzer GM, Sochat V, Bauer MW (2017). Singularity: Scientific containers for mobility of compute. PLoS ONE 12(5): e0177459.</sup>   
 <sup>**22.**  Haas, B. J., et al. (2019). "Accuracy assessment of fusion transcript detection via read-mapping and de novo fusion transcript assembly-based methods." Genome Biology 20(1): 213.</sup>    
 
+
+<hr>
+<p align="center">
+	<a href="#RENEE">Back to Top</a>
+</p>
+<hr>
+
+### 5. Version Notes
+
+| Version | Notes |
+| --- | --- |
+| v2.0 | Notes |
 
 <hr>
 <p align="center">

@@ -677,14 +677,16 @@ def dryrun(outdir, config='config.json', snakefile=os.path.join('workflow', 'Sna
         Byte string representation of dryrun command
     """
     try:
-        dryrun_output = subprocess.check_output([
+        cmdlist = [
             'snakemake', '-npr',
             '-s', str(snakefile),
             '--use-singularity',
             '--rerun-incomplete',
             '--cores', '4',
             '--configfile={}'.format(config)
-        ], cwd = outdir,
+        ]
+        print(cmdlist)
+        dryrun_output = subprocess.check_output(cmdlist, cwd = outdir,
         stderr=subprocess.STDOUT)
 
     except subprocess.CalledProcessError as e:

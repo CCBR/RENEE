@@ -97,10 +97,10 @@ if paired_end:
             expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
             expand(join(workpath,"FQscreen","{name}.R2.trim_screen.txt"),name=samples),
             expand(join(workpath,"FQscreen","{name}.R2.trim_screen.png"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R2.trim_screen.txt"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R2.trim_screen.png"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R1_2.trim_screen.txt"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R2_2.trim_screen.txt"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R2_2.trim_screen.png"),name=samples),
 
             # Kraken + Krona
             expand(join(workpath,kraken_dir,"{name}.trim.kraken_bacteria.taxa.txt"),name=samples),
