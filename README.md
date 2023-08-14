@@ -89,7 +89,7 @@ RENEE comes bundled with pre-built reference files for the following genomes:
 
 <hr>
 <p align="center">
-	<a href="#RENEE">Back to Top</a>
+	<a href="#renee---rna-sequencing-analysis-pipeline">Back to Top</a>
 </p>
 <hr>
 
@@ -135,7 +135,7 @@ renee --help
 ```
 <hr>
 <p align="center">
-	<a href="#RENEE">Back to Top</a>
+	<a href="#renee---rna-sequencing-analysis-pipeline">Back to Top</a>
 </p>
 <hr>
 
@@ -167,7 +167,7 @@ renee --help
 
 <hr>
 <p align="center">
-	<a href="#RENEE">Back to Top</a>
+	<a href="#renee---rna-sequencing-analysis-pipeline">Back to Top</a>
 </p>
 <hr>
 
@@ -209,5 +209,5 @@ renee --help
 
 <hr>
 <p align="center">
-	<a href="#RENEE">Back to Top</a>
+	<a href="#renee---rna-sequencing-analysis-pipeline">Back to Top</a>
 </p>
