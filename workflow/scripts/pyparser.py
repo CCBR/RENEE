@@ -54,7 +54,7 @@ config = {
 
 	"multiqc_fastq_screen.txt": {
         "delimeter": "\t",
-		"clean_sample_name": ["^FQscreen \\| ", "^FQscreen2 \\| ", "_screen$", "\.trim$", "\.R1$", "\.R2$"],
+		"clean_sample_name": ["^FQscreen \\| ", "^FQscreen2 \\| ", "_screen$", "\.trim$", "\.R1$", "\.R2$", "\.R1_2$", "\.R2_2$"],
 		"parse_column": ["Sample", "Uni_Vec percentage", "rRNA percentage", "Human percentage", "Mouse percentage", "Bacteria percentage", "Fungi percentage", "Virus percentage"],
 		"rename_field": {
 			"Uni_Vec percentage": "uni_vec_percent_aligned",
