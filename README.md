@@ -19,6 +19,7 @@ An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
       - [v2.1](#v21)
       - [v2.2](#v22)
       - [v2.3](#v23)
+      - [v2.4](#v24)
 
 ### 1. Introduction  
 RNA-sequencing (*RNA-seq*) has a wide variety of applications. This popular transcriptome profiling technique can be used to quantify gene and isoform expression, detect alternative splicing events, predict gene-fusions, call variants and much more.
@@ -206,6 +207,11 @@ renee --help
  - "_2" suffix added to "FQscreen2" files to distinguish them from "FQscreen" files. Now two separate fqscreen plots per sample are reported in the multiqc report.
  - Custom Kraken2 database created and used. The "Standard" Kraken2 database was missing mouse genome.. hence it was added.
 
+#### v2.4
+
+ - "pipelinehome" added to `config.json` in output folder.
+ - `cluster.json` optimized.
+ - `"\.R1$", "\.R2$"` added to `workflow/scripts/pyparser.py`. This helps FQscreen2 output correctly collected in the `multiqc_matrix.tsv` which is required for rNA report HTML.
 
 <hr>
 <p align="center">
