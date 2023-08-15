@@ -15,6 +15,10 @@ An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
       - [3.2 FRCE](#32-frce)
     - [4. References](#4-references)
     - [5. Version Notes](#5-version-notes)
+      - [v2.0](#v20)
+      - [v2.1](#v21)
+      - [v2.2](#v22)
+      - [v2.3](#v23)
 
 ### 1. Introduction  
 RNA-sequencing (*RNA-seq*) has a wide variety of applications. This popular transcriptome profiling technique can be used to quantify gene and isoform expression, detect alternative splicing events, predict gene-fusions, call variants and much more.
@@ -85,7 +89,7 @@ RENEE comes bundled with pre-built reference files for the following genomes:
 
 <hr>
 <p align="center">
-	<a href="#RENEE">Back to Top</a>
+	<a href="#renee---rna-sequencing-analysis-pipeline">Back to Top</a>
 </p>
 <hr>
 
@@ -131,7 +135,7 @@ renee --help
 ```
 <hr>
 <p align="center">
-	<a href="#RENEE">Back to Top</a>
+	<a href="#renee---rna-sequencing-analysis-pipeline">Back to Top</a>
 </p>
 <hr>
 
@@ -163,17 +167,47 @@ renee --help
 
 <hr>
 <p align="center">
-	<a href="#RENEE">Back to Top</a>
+	<a href="#renee---rna-sequencing-analysis-pipeline">Back to Top</a>
 </p>
 <hr>
 
 ### 5. Version Notes
 
-| Version | Notes |
-| --- | --- |
-| v2.0 | Notes |
+#### v2.0
+
+ - new name **RENEE**
+ - `redirect` wrapper script added.
+ - MultiQC version changed from v1.9 to v1.12. `resources/multiqc_config.yaml` updated accordingly.
+ - updates to `project.json` and `tools.json` templates.
+ - updates to `builder`, `cacher` and `runner` workflow orchestration scripts.
+ - `resources/gff3togtf.py`, `resources/jobby` and `resources/run_jobby_on_snakemake_log` added.
+ - adding `jobby` related commands to `onsuccess` and `onerror` blocks in `Snakefile`.
+ - **fastQValidator**: `-minReadLen 2` added to command line.
+ - GTF now parsed at STAR command line. GTF-agnostic STAR index can be re-used saving significant disk space in the "resources" folder.
+
+#### v2.1
+
+ - `spooker` utility added to track userdata on _biowulf_.
+ - CLI support for _frce_ implemented.
+ - resource jsons split into 2 folders _biowulf_ and _frce_ to store HPC-specific JSONs.
+ - resource bundles created on both, _biowulf_ and _frce_, for 4 **hg38** and 3 **mm10** genome+annotation combinations.
+
+#### v2.2
+
+ - `spooker` utility added to `onsuccess` and `onerror` blocks in `Snakefile`. Only works for _biowulf_.
+
+#### v2.3
+
+ - `runner` orchestration script updated for:
+   - `--wait` and `--create-nidap-folder` options added for _frce_. Also work on _biowulf_. These are required when running **RENEE** with NIDAP API call.
+   - `--rerun-triggers mtime` set when _snakemake_ version is >= 7.8
+ - `spooker` updated to track user info on _frce_.
+ - _NIDAP_ folder related updates made to _Snakefile_. `rules/nidap.smk` added.
+ - "_2" suffix added to "FQscreen2" files to distinguish them from "FQscreen" files. Now two separate fqscreen plots per sample are reported in the multiqc report.
+ - Custom Kraken2 database created and used. The "Standard" Kraken2 database was missing mouse genome.. hence it was added.
+
 
 <hr>
 <p align="center">
-	<a href="#RENEE">Back to Top</a>
+	<a href="#renee---rna-sequencing-analysis-pipeline">Back to Top</a>
 </p>
