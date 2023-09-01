@@ -9,9 +9,9 @@
 set -o pipefail
 PIPELINE_OUTDIR=$1
 
-if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$HOSTNAME" == "biowulf.nih.gov" ]]; then # only run on biowulf or frce
+if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$HOSTNAME" == "biowulf.nih.gov" || "$SLURM_SUBMIT_HOST" == "biowulf.nih.gov" || "$SLURM_SUBMIT_HOST" == "fsitgl-head01p.ncifcrf.gov" ]]; then # only run on biowulf or frce
 
-    if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
+    if [[ "$HOSTNAME" == "biowulf.nih.gov" || "$SLURM_SUBMIT_HOST" == "biowulf.nih.gov" ]];then
         SPOOK=$(type -P spook)
         if [[ "$SPOOK" == "" ]];then
             echo "spook is not in PATH."
@@ -26,7 +26,7 @@ if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$HOSTNAME" == "biowulf.nih
         fi
         SPOOK_COPY2DIR="/scratch/ccbrpipeliner"
     fi
-    if [[  "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" ]];then
+    if [[  "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$SLURM_SUBMIT_HOST" == "fsitgl-head01p.ncifcrf.gov" ]];then
         SPOOK_COPY2DIR="/mnt/projects/CCBR-Pipelines/pipelines/userdata/ccbrpipeliner"
     fi
 
