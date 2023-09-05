@@ -14,7 +14,7 @@ An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
       - [3.1 Biowulf](#31-biowulf)
       - [3.2 FRCE](#32-frce)
     - [4. References](#4-references)
-    - [5. Version Notes](https://github.com/CCBR/RENEE/blob/main/docs/CHANGELOG.md)
+    - [5. Version Notes](https://github.com/CCBR/RENEE/blob/main/CHANGELOG.md)
 
 ### 1. Introduction  
 RNA-sequencing (*RNA-seq*) has a wide variety of applications. This popular transcriptome profiling technique can be used to quantify gene and isoform expression, detect alternative splicing events, predict gene-fusions, call variants and much more.
