@@ -5,7 +5,7 @@
 # - loads require modules
 # - parses the variables directly to the python script
 
-SCRIPTNAME="$0"
+SCRIPTNAME="$BASH_SOURCE"
 SCRIPTDIRNAME=$(readlink -f $(dirname "$SCRIPTNAME"))
 
 # add "bin" to PATH
