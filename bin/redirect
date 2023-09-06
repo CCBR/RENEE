@@ -5,7 +5,7 @@
 # - loads require modules
 # - parses the variables directly to the python script
 
-SCRIPTNAME="$0"
+SCRIPTNAME="$BASH_SOURCE"
 SCRIPTDIRNAME=$(readlink -f $(dirname "$SCRIPTNAME"))
 
 # add "bin" to PATH
@@ -18,9 +18,9 @@ TOOLNAME=$(basename "$SCRIPTNAME")
 echo $TOOLNAME
 
 # load conda
-if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
+if [[ "$HOSTNAME" == "biowulf.nih.gov" || "$SLURM_SUBMIT_HOST" == "biowulf.nih.gov" ]];then
        . "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh"
-elif [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" ]];then
+elif [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$SLURM_SUBMIT_HOST" == "fsitgl-head01p.ncifcrf.gov" ]];then
        . "/mnt/projects/CCBR-Pipelines/resources/miniconda3/etc/profile.d/conda.sh"
 fi
 conda activate py311
