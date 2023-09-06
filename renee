@@ -23,7 +23,7 @@ import argparse  # potential python3 3rd party package, added in python/3.5
 
 
 # Pipeline Metadata and globals 
-__version__  = 'v2.4+develop'
+__version__  = 'v2.5'
 __home__     =  os.path.dirname(os.path.abspath(__file__))
 _name        = os.path.basename(sys.argv[0])
 _description = 'a highly-reproducible RNA-seq pipeline'
@@ -596,10 +596,11 @@ def setup(sub_args, ifiles, repo_path, output_path):
     # bundled reference genome or a user generated reference genome built via
     # renee build subcommand
     print("HOSTNAME="+os.getenv("HOSTNAME"))
-    if os.getenv("HOSTNAME")=="biowulf.nih.gov":
+    slurmsubmithost = os.getenv("SLURM_SUBMIT_HOST"):
+    if os.getenv("HOSTNAME")=="biowulf.nih.gov" or slurmsubmithost == "biowulf.nih.gov":
         print("Thank you for running RENEE on BIOWULF!")
         genome_config = os.path.join(output_path, 'config','genomes','biowulf', sub_args.genome + '.json')
-    elif os.getenv("HOSTNAME")=="fsitgl-head01p.ncifcrf.gov":
+    elif os.getenv("HOSTNAME")=="fsitgl-head01p.ncifcrf.gov" or slurmsubmithost == "fsitgl-head01p.ncifcrf.gov":
         print("Thank you for running RENEE on FRCE!")
         genome_config = os.path.join(output_path, 'config','genomes','frce', sub_args.genome + '.json')
     else:
