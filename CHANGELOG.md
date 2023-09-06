@@ -1,5 +1,9 @@
 # Version Notes
 
+## v2.5
+
+- `SLURM_SUBMIT_HOST` adding to get hostname correctly on compute nodes.
+
 ## v2.4
 
  - "pipelinehome" added to `config.json` in output folder.
