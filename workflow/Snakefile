@@ -235,10 +235,12 @@ onsuccess:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print(jobby_cmd)
     shell(jobby_cmd)
+    print(spook_cmd)
     shell(spook_cmd)
 
 onerror:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print(jobby_cmd)
     shell(jobby_cmd)
+    print(spook_cmd)
     shell(spook_cmd)
