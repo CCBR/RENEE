@@ -1,0 +1,16 @@
+name: Add to personal projects
+
+on:
+  issues:
+    types:
+      - assigned
+  pull_request:
+    types:
+      - assigned
+
+jobs:
+  add-to-project:
+    uses: CCBR/nf-sandbox/.github/workflows/auto-add-user-project.yml@master
+    with:
+      username: ${{ github.event.assignee.login }}
+    secrets: inherit
