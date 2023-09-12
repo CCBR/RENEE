@@ -596,7 +596,7 @@ def setup(sub_args, ifiles, repo_path, output_path):
     # bundled reference genome or a user generated reference genome built via
     # renee build subcommand
     print("HOSTNAME="+os.getenv("HOSTNAME"))
-    slurmsubmithost = os.getenv("SLURM_SUBMIT_HOST"):
+    slurmsubmithost = os.getenv("SLURM_SUBMIT_HOST")
     if os.getenv("HOSTNAME")=="biowulf.nih.gov" or slurmsubmithost == "biowulf.nih.gov":
         print("Thank you for running RENEE on BIOWULF!")
         genome_config = os.path.join(output_path, 'config','genomes','biowulf', sub_args.genome + '.json')
