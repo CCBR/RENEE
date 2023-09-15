@@ -9,9 +9,19 @@
 set -o pipefail
 PIPELINE_OUTDIR=$1
 
-if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$HOSTNAME" == "biowulf.nih.gov" || "$SLURM_SUBMIT_HOST" == "biowulf.nih.gov" || "$SLURM_SUBMIT_HOST" == "fsitgl-head01p.ncifcrf.gov" ]]; then # only run on biowulf or frce
+SCONTROL=$(type -P scontrol)
+if [[ "$SCONTROL" == "" ]];then
+	echo "scontrol not in PATH!"
+	exit
+fi
 
-    if [[ "$HOSTNAME" == "biowulf.nih.gov" || "$SLURM_SUBMIT_HOST" == "biowulf.nih.gov" ]];then
+nbiowulf=$(scontrol show config | grep -i -c biowulf)
+if [[ "$nbiowulf" > 0 ]];then ISBIOWULF=true; else ISBIOWULF=false;fi
+nfrce=$(scontrol show config | grep -i -c fsitgl)
+if [[ "$nfrce" > 0 ]];then ISFRCE=true; else ISFRCE=false;fi
+
+if [[ $ISBIOWULF == true || $ISFRCE == true ]];then
+    if [[ $ISBIOWULF == true ]];then
         SPOOK=$(type -P spook)
         if [[ "$SPOOK" == "" ]];then
             echo "spook is not in PATH."
@@ -22,11 +32,12 @@ if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$HOSTNAME" == "biowulf.nih
             if [[ "$SPOOK" == "" ]];then
                 echo "spook is still not in PATH!"
                 exit
-            fi
+	    fi
         fi
+        echo "spook is now in PATH:$SPOOK"
         SPOOK_COPY2DIR="/scratch/ccbrpipeliner"
     fi
-    if [[  "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$SLURM_SUBMIT_HOST" == "fsitgl-head01p.ncifcrf.gov" ]];then
+    if [[ $ISFRCE == true ]];then
         SPOOK_COPY2DIR="/mnt/projects/CCBR-Pipelines/pipelines/userdata/ccbrpipeliner"
     fi
 
@@ -69,12 +80,12 @@ if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" || "$HOSTNAME" == "biowulf.nih
         # copy over the archive to secrete location and delete it
         if [ -f "${archivefile}" ];then
             gzip -f $archivefile
-            if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
+            if [[ $ISBIOWULF == true ]]; then
                 cmd="$SPOOK -f ${archivefile}.gz -d $SPOOK_COPY2DIR"
                 echo $cmd
                 $cmd
             fi
-            if [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" ]];then
+            if [[ $ISFRCE == true ]];then
                 cmd="cp -rv ${archivefile}.gz $SPOOK_COPY2DIR"
                 echo $cmd
                 $cmd

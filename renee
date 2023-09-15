@@ -23,7 +23,12 @@ import argparse  # potential python3 3rd party package, added in python/3.5
 
 
 # Pipeline Metadata and globals
-__version__ = "v2.5.2"
+# __version__ = "v2.5.2"
+current_path = os.path.dirname(os.path.abspath(__file__))
+vfile = open(os.path.join(current_path, "VERSION"), "r")
+__version__ = "v" + vfile.read()
+__version__ = __version__.strip()
+vfile.close()
 __home__ = os.path.dirname(os.path.abspath(__file__))
 _name = os.path.basename(sys.argv[0])
 _description = "a highly-reproducible RNA-seq pipeline"
@@ -526,6 +531,7 @@ def add_sample_metadata(input_files, config, group=None):
             # Only add PE sample information once
             added.append(sample)
             config["project"]["groups"]["rsamps"].append(sample)
+            config["project"]["groups"]["rgroups"].append(sample)
             config["project"]["groups"]["rlabels"].append(sample)
 
     return config
@@ -640,27 +646,26 @@ def setup(sub_args, ifiles, repo_path, output_path):
         Pipeline output path, created if it does not exist
     @return config <dict>:
          Config dictionary containing metadata to run the pipeline
+    @return hpcname <str>:
     """
     # Resolves PATH to template for genomic reference files to select from a
     # bundled reference genome or a user generated reference genome built via
     # renee build subcommand
-    print("HOSTNAME=" + os.getenv("HOSTNAME"))
-    slurmsubmithost = os.getenv("SLURM_SUBMIT_HOST")
-    if (
-        os.getenv("HOSTNAME") == "biowulf.nih.gov"
-        or slurmsubmithost == "biowulf.nih.gov"
-    ):
+    x = subprocess.run(
+        "scontrol show config", shell=True, capture_output=True, text=True
+    )
+    hpcname = ""
+    if "biowulf" in x.stdout:
+        hpcname = "biowulf"
         print("Thank you for running RENEE on BIOWULF!")
         genome_config = os.path.join(
-            output_path, "config", "genomes", "biowulf", sub_args.genome + ".json"
+            output_path, "config", "genomes", hpcname, sub_args.genome + ".json"
         )
-    elif (
-        os.getenv("HOSTNAME") == "fsitgl-head01p.ncifcrf.gov"
-        or slurmsubmithost == "fsitgl-head01p.ncifcrf.gov"
-    ):
+    elif "fsitgl" in x.stdout:
+        hpcname = "frce"
         print("Thank you for running RENEE on FRCE!")
         genome_config = os.path.join(
-            output_path, "config", "genomes", "frce", sub_args.genome + ".json"
+            output_path, "config", "genomes", hpcname, sub_args.genome + ".json"
         )
     else:
         genome_config = os.path.join(
@@ -742,7 +747,7 @@ def setup(sub_args, ifiles, repo_path, output_path):
         json.dump(config, fh, indent=4, sort_keys=True)
     print("Done!")
 
-    return config
+    return config, hpcname
 
 
 def dryrun(
@@ -813,6 +818,7 @@ def orchestrate(
     masterjob="pl:renee",
     tmp_dir="/lscratch/$SLURM_JOBID/",
     wait="",
+    hpcname="",
 ):
     """Runs RENEE pipeline via selected executor: local or slurm.
     If 'local' is selected, the pipeline is executed locally on a compute node/instance.
@@ -836,6 +842,12 @@ def orchestrate(
             renee build = /path/to/output/resources/builder
     @param masterjob <str>:
         Name of the master job
+    @param tmp_dir <str>:
+        Absolute Path to temp dir for compute node
+    @param wait <str>:
+        "--wait" to wait for master job to finish. This waits when pipeline is called via NIDAP API
+    @param hpcname <str>:
+        "biowulf" if run on biowulf, "frce" if run on frce, blank otherwise. hpcname is determined in setup() function
     @return masterjob <subprocess.Popen() object>:
     """
     # Add additional singularity bind PATHs
@@ -942,6 +954,14 @@ def orchestrate(
         ]
         if str(wait) == "--wait":
             cmdlist.append("-w")
+        if str(hpcname) != "":
+            cmdlist.append("-n")
+            cmdlist.append(hpcname)
+        else:
+            cmdlist.append("-n")
+            cmdlist.append("unknown")
+
+        print(" ".join(cmdlist))
         masterjob = subprocess.Popen(
             cmdlist, cwd=outdir, stderr=subprocess.STDOUT, stdout=logfh, env=my_env
         )
@@ -1018,7 +1038,8 @@ def run(sub_args):
     input_files = initialize(sub_args, repo_path=git_repo, output_path=sub_args.output)
 
     # Step pipeline for execution, create config.json config file from templates
-    config = setup(
+    # hpcname is either biowulf or frce or blank
+    config, hpcname = setup(
         sub_args, ifiles=input_files, repo_path=git_repo, output_path=sub_args.output
     )
 
@@ -1066,6 +1087,7 @@ def run(sub_args):
         threads=sub_args.threads,
         tmp_dir=sub_args.tmp_dir,
         wait=wait,
+        hpcname=hpcname,
     )
 
     # Wait for subprocess to complete,
@@ -1089,7 +1111,11 @@ def run(sub_args):
         if int(masterjob.returncode) == 0:
             print("Successfully submitted master job: ", end="")
         else:
-            fatal("Error occurred when submitting the master job.")
+            fatal(
+                "Error occurred when submitting the master job. Error code = {}".format(
+                    masterjob.returncode
+                )
+            )
         print(jobid)
 
 
