@@ -17,7 +17,7 @@ rule fc_lane:
     SRA have a different format than newer FastQ files generated with the
     current version of Casava. It is worth noting that FastQ files downloaded from SRA
     or FastQ files generated with Casava version < 1.8 do not have Flowcell
-    IDs in its sequence indentifer. If a FastQ file does not have Flowcell IDs,
+    IDs in its sequence identifier. If a FastQ file does not have Flowcell IDs,
     the Machine or Instrument ID is grabbed instead.
     @Input:
         Raw FastQ R1 file (scatter)
@@ -62,7 +62,7 @@ rule picard:
     container: config['images']['picard']
     shell: """
     # Setups temporary directory for
-    # intermediate files with built-in 
+    # intermediate files with built-in
     # mechanism for deletion on exit
     if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
     tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -75,7 +75,7 @@ rule picard:
         I=${{tmp}}/{params.sampleName}.star_rg_added.sorted.bam \
         O=${{tmp}}/{params.sampleName}.star_rg_added.sorted.dmark.bam \
         TMP_DIR=${{tmp}} CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE={output.metrics};
-    
+
     mv ${{tmp}}/{params.sampleName}.star_rg_added.sorted.dmark.bam {output.bam};
     mv ${{tmp}}/{params.sampleName}.star_rg_added.sorted.dmark.bai {output.bai};
     sed -i 's/MarkDuplicates/picard.sam.MarkDuplicates/g' {output.metrics};
@@ -167,7 +167,7 @@ rule stats:
     container: config['images']['rstat']
     shell: """
     # Setups temporary directory for
-    # intermediate files with built-in 
+    # intermediate files with built-in
     # mechanism for deletion on exit
     if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
     tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -199,7 +199,7 @@ rule rsem_merge:
         gene_counts_matrix=join(workpath,degall_dir,"RSEM.genes.expected_count.all_samples.txt"),
         gene_fpkm_matrix=join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
         isoform_fpkm_matrix=join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-        reformatted=join(workpath,degall_dir,"RSEM_genes_expected_counts.tsv"),
+        reformatted=join(workpath,degall_dir,"RSEM.genes.expected_counts.all_samples.reformatted.tsv"),
     params:
         rname='pl:rsem_merge',
         annotate=config['references'][pfamily]['ANNOTATE'],
@@ -242,7 +242,7 @@ rule rseqc:
 rule tin:
     """
     Quality-control step to infer RNA integrity at the transcript level.
-    TINs (transcript integrity numbers) are calculated for all canoncial
+    TINs (transcript integrity numbers) are calculated for all canonical
     protein-coding transcripts. TIN is analogous to a computionally derived
     RIN value. From the docs: requires a sort and indexed bam file.
     @Input:

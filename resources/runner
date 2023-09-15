@@ -29,10 +29,10 @@ Required Positional Argument:
 Required Arguments:
   -j, --job-name [Type: Str]    Name of pipeline's master job.
   -b, --bind-paths [Type:Path]  Singularity bind paths. The RENEE pipeline uses
-                                 singaularity images for exection. Bind paths are
+                                 singaularity images for execution. Bind paths are
                                  used to mount the host filesystem to the container's
                                  filesystem. Multiple bind paths can be provided
-                                 as a comma seperated list. The main entry point
+                                 as a comma separated list. The main entry point
                                  of the pipeline internally collects and aggregates
                                  bindpaths to mount to the container's filesystem.
                                  If you are manually running this script or by-passing
@@ -40,12 +40,13 @@ Required Arguments:
                                  the rawdata directory(s) along with the pipeline's
                                  output directory. Please see example usage below.
   -t, --tmp-dir [Type:Path]      Temporary directory. The pipeline generates
-                                 intermediate, temporary output files. Any 
+                                 intermediate, temporary output files. Any
                                  temporary output files will be written to
-                                 this location. On Biowulf, it should be 
+                                 this location. On Biowulf, it should be
                                  set to '/lscratch/\$SLURM_JOBID/'. On FRCE,
-                                 this value should be set to the following: 
-                                 '/scratch/cluster_scratch/\$USER/'. 
+                                 this value should be set to the following:
+                                 '/scratch/cluster_scratch/\$USER/'.
+  -h, --hpc-name [Type: Str]     biowulf or frce or unknown
 OPTIONS:
   -o,  --outdir  [Type: Path]  Path to output directory. If not provided, the Path
                                 will default to the current working directory of
@@ -87,6 +88,7 @@ function parser() {
       -t  | --tmp-dir) provided "$key" "${2:-}"; Arguments["t"]="$2"; shift; shift;;
       -o  | --outdir)  provided "$key" "${2:-}"; Arguments["o"]="$2"; shift; shift;;
       -c  | --cache)  provided "$key" "${2:-}"; Arguments["c"]="$2"; shift; shift;;
+      -n  | --hpc-name)  provided "$key" "${2:-}"; Arguments["h"]="$2"; shift; shift;;
       -w  | --wait)  Arguments["w"]="--wait"; shift;;
       -*  | --*) err "Error: Failed to parse unsupported argument: '${key}'."; usage && exit 1;;
       *) err "Error: Failed to parse unrecognized argument: '${key}'. Do any of your inputs have spaces?"; usage && exit 1;;
@@ -135,6 +137,7 @@ function submit(){
   # INPUT $5 = Singularity cache directory
   # INPUT $6 = Temporary directory for output files
   # INPUT $7 = Wait ("--wait") or no wait ("--nowait".. default)
+  # INPUT $8 = HPC name... biowulf or frce or unknown
 
   # SLURM inherits the environment from which the job was launched
   # Try to purge modules all modules from environment
@@ -147,7 +150,7 @@ function submit(){
 
   # Check if snakemake in $PATH
   # If not, try to module load snakemake as a last resort
-  if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
+  if [[ "$8" == "biowulf" ]];then
   command -V snakemake &> /dev/null || module load snakemake || \
     fatal "Fail to find or load 'snakemake', not installed on target system."
   else # dont load snakemake if not biowulf
@@ -157,9 +160,9 @@ function submit(){
   # Snakemake executor
   executor=${1}
 
-  # Goto Pipeline Ouput directory
+  # Goto Pipeline Output directory
   # Create a local singularity cache in output directory
-  # cache can be re-used instead of re-pulling from DockerHub everytime
+  # cache can be re-used instead of re-pulling from DockerHub every time
   cd "$3" && export SINGULARITY_CACHEDIR="${5}"
 
   # unsetting XDG_RUNTIME_DIR to avoid some unsighly but harmless warnings
@@ -186,22 +189,22 @@ function submit(){
             triggeroptions=""
           fi
           # Check if NOT running on Biowulf
-          # Assumes other clusters do NOT 
+          # Assumes other clusters do NOT
           # have GRES for local node disk,
-          # long term it might be worth 
-          # adding a new option to allow 
-          # a user to decide whether to 
+          # long term it might be worth
+          # adding a new option to allow
+          # a user to decide whether to
           # use GRES at job submission,
           # trying to infer this because
           # most users will not even know
           # what GRES is and how or why
           # it should be used and by default
-          # SLURM is not configured to use 
+          # SLURM is not configured to use
           # GRES, remove prefix single quote
           #if [[ ${6#\'} != /lscratch* ]]; then
           #  CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name={params.rname}"
           #fi
-          if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
+          if [[ "$8" == "biowulf" ]];then
             CLUSTER_OPTS="${CLUSTER_OPTS} --gres {cluster.gres}"
           fi
           echo "TRIGGEROPTIONS:${triggeroptions}"
@@ -282,7 +285,7 @@ function main(){
 
   # Step 1. Run pipeline and submit jobs to cluster using the defined executor
   mkdir -p "${Arguments[o]}/logfiles/"
-  job_id=$(submit "${Arguments[e]}" "${Arguments[j]}" "${Arguments[o]}" "${Arguments[b]}" "${Arguments[c]}" "${Arguments[t]}" "${Arguments[w]}")
+  job_id=$(submit "${Arguments[e]}" "${Arguments[j]}" "${Arguments[o]}" "${Arguments[b]}" "${Arguments[c]}" "${Arguments[t]}" "${Arguments[w]}" "${Arguments[h]}")
   echo -e "[$(date)] Pipeline submitted to cluster.\nMaster Job ID: $job_id"
   echo "${job_id}" > "${Arguments[o]}/logfiles/mjobid.log"
 

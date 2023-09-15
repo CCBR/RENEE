@@ -1,0 +1,51 @@
+name: py311
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_gnu
+  - bzip2=1.0.8=h7f98852_4
+  - ca-certificates=2023.5.7=hbcca054_0
+  - csvtk=0.25.0=h9ee0642_0
+  - ld_impl_linux-64=2.40=h41732ed_0
+  - libexpat=2.5.0=hcb278e6_1
+  - libffi=3.4.2=h7f98852_5
+  - libgcc-ng=12.2.0=h65d4601_19
+  - libgomp=12.2.0=h65d4601_19
+  - libnsl=2.0.0=h7f98852_0
+  - libsqlite=3.40.0=h753d276_1
+  - libuuid=2.38.1=h0b41bf4_0
+  - libzlib=1.2.13=h166bdaf_4
+  - ncurses=6.3=h27087fc_1
+  - openssl=3.1.0=hd590300_3
+  - parallel=20230322=ha770c72_0
+  - perl=5.32.1=2_h7f98852_perl5
+  - pip=23.1.2=pyhd8ed1ab_0
+  - python=3.11.3=h2755cc3_0_cpython
+  - python-xxhash=3.2.0=py311h2582759_0
+  - python_abi=3.11=3_cp311
+  - readline=8.2=h8228510_1
+  - setuptools=67.7.2=pyhd8ed1ab_0
+  - tk=8.6.12=h27826a3_0
+  - wheel=0.40.0=pyhd8ed1ab_0
+  - xxhash=0.8.1=h0b41bf4_0
+  - xz=5.2.6=h166bdaf_0
+  - pip:
+      - click==8.1.7
+      - cowsay==5.0
+      - et-xmlfile==1.1.0
+      - fortune==1.1.1
+      - grizzled-python==2.2.0
+      - nextflow==23.4.3
+      - numpy==1.24.3
+      - openpyxl==3.1.2
+      - pandas==2.0.2
+      - pysimplegui==4.60.5
+      - python-dateutil==2.8.2
+      - pytz==2023.3
+      - pyyaml==6.0.1
+      - six==1.16.0
+      - tzdata==2023.3
+prefix: /data/CCBR_Pipeliner/db/PipeDB/Conda/envs/py311
