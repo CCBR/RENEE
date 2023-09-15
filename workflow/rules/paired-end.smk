@@ -1,6 +1,6 @@
 # Paired-end snakemake rules imported in the main Snakefile.
 from scripts.common import (
-    abstract_location, 
+    abstract_location,
     allocated,
     references
 )
@@ -103,7 +103,7 @@ rule fastqc:
     """
     Quality-control step to assess sequencing quality of the raw data after removing
     adapter sequences. This step is run after trim_pe rule. FastQC is run after adapter
-    trimming to evalute if the adapter sequences were properly removed.
+    trimming to evaluate if the adapter sequences were properly removed.
     @Input:
         List of Trimmed FastQ files (gather)
     @Output:
@@ -208,7 +208,7 @@ rule fastq_screen:
     fastq_screen --conf {params.fastq_screen_config2} --outdir {params.outdir2} \
         --threads {threads} --subset 1000000 \
         --aligner bowtie2 --force {input.file1} {input.file2}
-    
+
     for ext in png txt html;do
         mv {params.outdir2}/{params.samplename}.R1.trim_screen.${{ext}} {params.outdir2}/{params.samplename}.R1_2.trim_screen.${{ext}}
         mv {params.outdir2}/{params.samplename}.R2.trim_screen.${{ext}} {params.outdir2}/{params.samplename}.R2_2.trim_screen.${{ext}}
@@ -225,7 +225,7 @@ rule kraken_pe:
     @Input:
         Trimmed FastQ files (scatter)
     @Output:
-        Kraken logfile and interative krona report
+        Kraken logfile and interactive krona report
     """
     input:
         fq1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
@@ -247,13 +247,13 @@ rule kraken_pe:
     shell: """
     set -exo pipefail
     # Setups temporary directory for
-    # intermediate files with built-in 
+    # intermediate files with built-in
     # mechanism for deletion on exit
     if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
     tmp=$(mktemp -d -p "{params.tmpdir}")
     trap 'rm -rf "${{tmp}}"' EXIT
 
-    # Copy kraken2 db to /lscratch or temp 
+    # Copy kraken2 db to /lscratch or temp
     # location to reduce filesystem strain
     cp -rv {params.bacdb}/* ${{tmp}}/
     # kdb_base=$(basename {params.bacdb})
@@ -327,7 +327,7 @@ if config['options']['star_2_pass_basic']:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -429,7 +429,7 @@ else:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -550,7 +550,7 @@ else:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -648,7 +648,7 @@ if references(config, pfamily, ['FUSIONBLACKLIST', 'FUSIONCYTOBAND', 'FUSIONPROT
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -746,7 +746,7 @@ rule rsem:
     threads: int(allocated("threads", "rsem", cluster)),
     shell: """
     # Setups temporary directory for
-    # intermediate files with built-in 
+    # intermediate files with built-in
     # mechanism for deletion on exit
     if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
     tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -830,7 +830,7 @@ rule rnaseq_multiqc:
     Reporting step to aggregate sample statistics and quality-control information
     across all samples. This will be one of the last steps of the pipeline. The inputs
     listed here are to ensure that this step runs last. During runtime, MultiQC will
-    recurively crawl through the working directory and parse files that it supports.
+    recursively crawl through the working directory and parse files that it supports.
     @Input:
         List of files to ensure this step runs last (gather)
     @Output:
@@ -909,7 +909,7 @@ rule rna_report:
         Interactive RNA Report (RNA_Report.html)
     """
     input:
-        counts=join(workpath,degall_dir,"RSEM_genes_expected_counts.tsv"),
+        counts=join(workpath,degall_dir,"RSEM.genes.expected_counts.all_samples.reformatted.tsv"),
         tins=join(workpath,degall_dir,"combined_TIN.tsv"),
         qc=join(workpath,"Reports", "multiqc_matrix.tsv")
     output:

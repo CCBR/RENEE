@@ -1,0 +1,10 @@
+name: Auto add reponame as label to all issues and PRs
+
+on:
+  issues:
+  pull_request:
+
+jobs:
+  add_label:
+    uses: CCBR/.github/.github/workflows/add_reponame_issue_label.yml@v0.2.0
+    secrets: inherit

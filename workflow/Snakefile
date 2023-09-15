@@ -12,7 +12,7 @@ import subprocess,shlex
 # Local imports
 from scripts.common import (
     allocated,
-    provided, 
+    provided,
     references
 )
 
@@ -24,7 +24,7 @@ workpath = config['project']['workpath']         # Parent Output directory
 tmpdir   = config['options']['tmp_dir']          # Temporary directory
 
 # Read in resource information,
-# containing information about 
+# containing information about
 # threads, mem, walltimes, etc.
 # TODO: Add handler for when the
 # mode is set to local.
@@ -143,7 +143,7 @@ if paired_end:
             #join(workpath,star_dir,"sampletable.txt"),
 
             # PCA Reports
-            #expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
+            # expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
 
             # MultiQC
             join(workpath,"Reports","multiqc_report.html"),
@@ -206,7 +206,7 @@ elif not paired_end:
             #join(workpath,star_dir,"sampletable.txt"),
 
             # PCA Report
-            #expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
+            # expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
 
             # MultiQC
             join(workpath,"Reports","multiqc_report.html"),
@@ -223,16 +223,18 @@ if paired_end:
 elif not paired_end:
     # rules common to paired-end data
     include: "rules/single-end.smk"
+include: "rules/group-info.smk"
 
 if config['options']['create_nidap_folder']:
     include: "rules/nidap.smk"
 
 # create jobby tables
 jobby_cmd = join('resources', 'run_jobby_on_snakemake_log') + " " + join('logfiles', 'snakemake.log') + " | tee " + join('logfiles', 'snakemake.log.jobby') + " | cut -f2,3,18 > " + join('logfiles', 'snakemake.log.jobby.short')
-spook_cmd = join('resources', 'spooker') + " " + workpath
+spook_cmd = join('resources', 'spooker') + " " + workpath + " | tee " + join('logfiles', 'spooker.log')
 
 onsuccess:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
+    print("OnSuccess")
     print(jobby_cmd)
     shell(jobby_cmd)
     print(spook_cmd)
@@ -240,6 +242,7 @@ onsuccess:
 
 onerror:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
+    print("OnError")
     print(jobby_cmd)
     shell(jobby_cmd)
     print(spook_cmd)

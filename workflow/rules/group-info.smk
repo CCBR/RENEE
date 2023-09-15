@@ -1,6 +1,7 @@
 # Group-info snakemake rules imported in the main Snakefile.
 
 # Rules that rely on group information for each sample.
+localrules: samplecondition
 rule samplecondition:
     input:
         files=expand(join(workpath,degall_dir,"{name}.RSEM.genes.results"), name=samples)
