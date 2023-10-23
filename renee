@@ -636,6 +636,32 @@ def get_repo_git_commit_hash(repo_path):
     return githash
 
 
+def scontrol_show():
+    """ Run scontrol show config and parse the output as a dictionary
+    @return scontrol_dict <dict>:
+    """
+    scontrol_dict = dict()
+    scontrol_out = subprocess.run(
+        "scontrol show config", shell=True, capture_output=True, text=True
+    ).stdout
+    if len(scontrol_out) > 0:
+        for line in scontrol_out.split("\n"):
+            line_split = line.split("=")
+            if len(line_split) > 1:
+                scontrol_dict[line_split[0].strip()] = line_split[1].strip()
+    return scontrol_dict
+
+
+def get_hpcname():
+    """ Get the HPC name (biowulf, frce, or an empty string)
+    @return hpcname <str>
+    """
+    scontrol_out = scontrol_show()
+    hpc = scontrol_out["ClusterName"] if "ClusterName" in scontrol_out.keys() else ''
+    if hpc == 'fnlcr':
+        hpc = 'frce'
+    return hpc
+
 def setup(sub_args, ifiles, repo_path, output_path):
     """Setup the pipeline for execution and creates config file from templates
     @param sub_args <parser.parse_args() object>:
@@ -651,18 +677,13 @@ def setup(sub_args, ifiles, repo_path, output_path):
     # Resolves PATH to template for genomic reference files to select from a
     # bundled reference genome or a user generated reference genome built via
     # renee build subcommand
-    x = subprocess.run(
-        "scontrol show config", shell=True, capture_output=True, text=True
-    )
-    hpcname = ""
-    if "biowulf" in x.stdout:
-        hpcname = "biowulf"
+    hpcname = get_hpcname()
+    if hpcname == "biowulf":
         print("Thank you for running RENEE on BIOWULF!")
         genome_config = os.path.join(
             output_path, "config", "genomes", hpcname, sub_args.genome + ".json"
         )
-    elif "fsitgl" in x.stdout:
-        hpcname = "frce"
+    elif hpcname == "frce":
         print("Thank you for running RENEE on FRCE!")
         genome_config = os.path.join(
             output_path, "config", "genomes", hpcname, sub_args.genome + ".json"
@@ -747,7 +768,7 @@ def setup(sub_args, ifiles, repo_path, output_path):
         json.dump(config, fh, indent=4, sort_keys=True)
     print("Done!")
 
-    return config, hpcname
+    return config
 
 
 def dryrun(
@@ -1039,7 +1060,8 @@ def run(sub_args):
 
     # Step pipeline for execution, create config.json config file from templates
     # hpcname is either biowulf or frce or blank
-    config, hpcname = setup(
+    hpcname = get_hpcname()
+    config = setup(
         sub_args, ifiles=input_files, repo_path=git_repo, output_path=sub_args.output
     )
 
