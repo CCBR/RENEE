@@ -1057,7 +1057,7 @@ def run(sub_args):
 
     # hpcname is either biowulf, frce, or blank
     hpcname = get_hpcname()
-    if sub_args.runmode == 'init':
+    if sub_args.runmode == 'init' or not os.path.exists(os.path.join(sub_args.output, 'config.json')):
         # Initialize working directory, copy over required pipeline resources
         input_files = initialize(sub_args, repo_path=git_repo, output_path=sub_args.output)
 
@@ -1820,7 +1820,7 @@ def parsed_arguments(name, description):
     subparser_run.add_argument('--runmode',
         # Determines how to run the pipeline: init, run
         # TODO: this API is different from XAVIER & CARLISLE, which have a --runmode=dryrun option instead of a --dry-run flag.
-        required = True,
+        required = False,
         default = 'run',
         choices = ['init','run'],
         type = str,
