@@ -14,7 +14,7 @@ Example:
 # Python standard library
 from __future__ import print_function
 from shutil import copy, copytree
-import sys, os, subprocess, re, json, textwrap, shlex
+import sys, os, subprocess, re, json, textwrap, shlex, glob
 from pathlib import Path
 from datetime import datetime
 
@@ -42,6 +42,22 @@ except AssertionError:
         f"{sys.argv[0]} requires Python {'.'.join([str(n) for n in MIN_PYTHON])} or newer"
     )
 
+# get prebuilt list
+p=Path(__file__)
+RENEEDIR=p.parents[1]
+resource_dir = os.path.join(RENEEDIR,"resources")
+if not os.path.exists(resource_dir):
+    sys.exit("ERROR: Folder does not exist : {}".format(resource_dir))
+searchterm = resource_dir+"/**/**/*json"
+jsonfiles = glob.glob(searchterm)
+if len(jsonfiles) == 0:
+    sys.exit("ERROR: No Genome+Annotation JSONs found in : {}".format(resource_dir))
+jsons = dict()
+for j in jsonfiles:
+    k = os.path.basename(j)
+    k = k.replace(".json","")
+    jsons[k] = j
+prebuilt_list=sorted(list(jsons.keys()))
 
 class Colors:
     """Class encoding for ANSI escape sequences for styling terminal text.
@@ -1778,7 +1794,7 @@ def parsed_arguments(name, description):
         "--genome",
         required=True,
         type=lambda option: str(
-            genome_options(subparser_run, option, ["hg38_30", "mm10_M21"])
+            genome_options(subparser_run, option, prebuilt_list)
         ),
         help=argparse.SUPPRESS,
     )
