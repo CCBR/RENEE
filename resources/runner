@@ -141,7 +141,7 @@ function submit(){
 
   # SLURM inherits the environment from which the job was launched
   # Try to purge modules all modules from environment
-  command -V module &> /dev/null && module purge
+  # command -V module &> /dev/null && module purge
 
   # Check if singularity in $PATH
   # If not, try to module load singularity as a last resort

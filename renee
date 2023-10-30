@@ -1084,7 +1084,7 @@ def run(sub_args):
     # load config from existing file
     else:
         with open(os.path.join(sub_args.output, "config.json"), "r") as config_file:
-            config = json.load(config)
+            config = json.load(config_file)
         
 
     # Optional Step: Dry-run pipeline
