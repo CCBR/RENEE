@@ -3,6 +3,8 @@
 ## v2.5
 
 - `SLURM_SUBMIT_HOST` adding to get hostname correctly on compute nodes.
+- `config.json` is only created when runmode==init and is no longer recreated or overwritten when runmode==run or when resuming a previously unsuccessful run.
+- prebuilt_list, a list of <genome>_<gencode_annotation> combos is auto-populated by glob-ing for relevant JSON files in the RENEEDIR/resources folder.
 
 ## v2.4
 
