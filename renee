@@ -1270,6 +1270,8 @@ def _configure(sub_args, filename, git_repo):
                 fh.write('  {}: "{}"\n'.format(tag, uri))
     print("Done!")
 
+def _reset_write_permission(target):
+    os.system("chmod -R u+w,g-w,o-w "+target)
 
 def configure_build(sub_args, git_repo, output_path):
     """Setups up working directory for build option and creates config file (build.yml)
@@ -1300,6 +1302,7 @@ def configure_build(sub_args, git_repo, output_path):
     # Copy over templates are other required resources
     required_resources = ["workflow", "resources", "config"]
     _cp_r_safe_(source=git_repo, target=output_path, resources=required_resources)
+    _reset_write_permission(target=output_path)
     _configure(
         sub_args=sub_args,
         filename=os.path.join(output_path, "config", "build.yml"),
@@ -1343,6 +1346,14 @@ def build(sub_args):
 
     additional_bind_paths = ",".join(additional_bind_paths)
 
+    # determine "wait"
+    wait = ""
+    if sub_args.wait:
+        wait = "--wait"
+
+    # hpcname is either biowulf, frce, or blank
+    hpcname = get_hpcname()
+
     # Dryrun pipeline
     if sub_args.dry_run:
         dryrun_output = dryrun(
@@ -1367,6 +1378,8 @@ def build(sub_args):
         submission_script="builder",
         masterjob="pl:build",
         tmp_dir=sub_args.tmp_dir,
+        wait=wait,
+        hpcname=hpcname,
     )
 
     masterjob.wait()
@@ -1949,6 +1962,7 @@ def parsed_arguments(name, description):
                                 --ref-name REF_NAME \\
                                 --ref-gtf REF_GTF \\
                                 --gtf-ver GTF_VER \\
+                                --wait \\
                                 --output OUTPUT
 
         {1}{2}Description:{4}
@@ -2052,6 +2066,12 @@ def parsed_arguments(name, description):
                               variable into this string that should NOT be expanded,
                               please quote this options value in single quotes.
                                 Example: --tmp-dir '/cluster_scratch/$USER/'
+
+          --wait
+                                Wait until master job completes. This is required if
+                                the job is submitted using HPC API. If not provided
+                                the API may interpret submission of master job as
+                                completion of the pipeline!                                
 
         {1}{2}Misc Options:{4}
           -h, --help          Show usage information, help message, and exit.
@@ -2204,6 +2224,19 @@ def parsed_arguments(name, description):
         default="/lscratch/$SLURM_JOBID/",
         help=argparse.SUPPRESS,
     )
+
+    # wait until master job finishes ... required for HPC API execution
+    subparser_build.add_argument(
+        "--wait",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Wait until master job completes. This is required if \
+                                the job is submitted using HPC API. If not provided \
+                                the API may interpret submission of master job as \
+                                completion of the pipeline!",
+    )
+
 
     # Sub-parser for the "unlock" sub-command
     # Grouped sub-parser arguments are currently
