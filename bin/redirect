@@ -24,7 +24,7 @@ fi
 
 TOOLDIR=$(dirname "$SCRIPTDIRNAME")
 TOOLNAME=$(basename "$SCRIPTNAME")
-echo $TOOLNAME
+# echo $TOOLNAME
 
 # find out if you are running on biowulf or frce
 nbiowulf=$(scontrol show config | grep -i -c biowulf)

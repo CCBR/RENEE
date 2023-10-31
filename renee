@@ -1763,10 +1763,13 @@ def parsed_arguments(name, description):
                          --genome hg38_30 \\
                          --mode slurm
 
-        {2}{3}Version:{4}
+        {2}{3}Ver:{4}
           {1}
+
+        {2}{3}Prebuilt genome+annotation combos:{4}
+          {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end
+            name, __version__, c.bold, c.url, c.end, list(prebuilt_list)
         )
     )
 
@@ -2109,8 +2112,11 @@ def parsed_arguments(name, description):
 
         {2}{3}Version:{4}
           {1}
+
+        {2}{3}Prebuilt genome+annotation combos:{4}
+          {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end
+            name, __version__, c.bold, c.url, c.end, list(prebuilt_list)
         )
     )
 
