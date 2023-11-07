@@ -235,8 +235,8 @@ spook_cmd = "spooker " + workpath + " RENEE | tee " + join('logfiles', 'spooker.
 onsuccess:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print("OnSuccess")
-    print("printenv")
-    print("module list")
+    shell("printenv")
+    shell("module list")
     print(jobby_cmd)
     shell(jobby_cmd)
     print(spook_cmd)
@@ -245,8 +245,8 @@ onsuccess:
 onerror:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print("OnError")
-    print("printenv")
-    print("module list")
+    shell("printenv")
+    shell("module list")
     print(jobby_cmd)
     shell(jobby_cmd)
     print(spook_cmd)

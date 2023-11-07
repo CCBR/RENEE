@@ -736,6 +736,8 @@ def setup(sub_args, ifiles, repo_path, output_path):
     config["project"]["version"] = __version__
     config["project"]["pipelinehome"] = os.path.dirname(__file__)
     config["project"]["workpath"] = os.path.abspath(sub_args.output)
+    genome_annotation = sub_args.genome
+    config["project"]["organism"] = genome_annotation.split("_")[0]
 
     # Add optional cli workflow steps
     config["options"] = {}
