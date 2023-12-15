@@ -742,7 +742,7 @@ rule rnaseq_multiqc:
         expand(join(workpath,rseqc_dir,"{name}.Rdist.info"),name=samples),
         expand(join(workpath,rseqc_dir,"{name}.star_rg_added.sorted.dmark.summary.txt"),name=samples),
         expand(join(workpath,"rawQC","{name}.fastq.info.txt"),name=samples),
-        expand(join(workpath,kraken_dir,"{name}.trim.kraken_bacteria.taxa.txt"),name=sample),
+        expand(join(workpath,kraken_dir,"{name}.trim.kraken_bacteria.taxa.txt"),name=samples),
         fqinfo=expand(join(workpath,"rawQC","{name}.fastq.info.txt"),name=samples),
         tins=expand(join(workpath,rseqc_dir,"{name}.star_rg_added.sorted.dmark.summary.txt"),name=samples)
     output:
