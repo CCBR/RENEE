@@ -5,7 +5,16 @@
 # - loads require modules
 # - parses the variables directly to the python script
 
-SCRIPTNAME="$0"
+
+function load_module_if_needed {
+	module_name=$1
+	x=$(type -P $module_name)
+	if [[ -z $x ]];then
+		module load $module_name
+	fi
+}
+
+SCRIPTNAME="$BASH_SOURCE"
 SCRIPTDIRNAME=$(readlink -f $(dirname "$SCRIPTNAME"))
 
 # add "bin" to PATH
@@ -15,26 +24,56 @@ fi
 
 TOOLDIR=$(dirname "$SCRIPTDIRNAME")
 TOOLNAME=$(basename "$SCRIPTNAME")
-echo $TOOLNAME
+# echo $TOOLNAME
+
+# find out if you are running on biowulf or frce
+nbiowulf=$(scontrol show config | grep -i -c biowulf)
+if [[ "$nbiowulf" > 0 ]];then ISBIOWULF=true; else ISBIOWULF=false;fi
+nfrce=$(scontrol show config | grep -i -c fsitgl)
+if [[ "$nfrce" > 0 ]];then ISFRCE=true; else ISFRCE=false;fi
 
 # load conda
-if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
+if [[ $ISBIOWULF == true ]];then
        . "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh"
-elif [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" ]];then
+	conda activate py311
+elif [[ $ISFRCE == true ]];then
        . "/mnt/projects/CCBR-Pipelines/resources/miniconda3/etc/profile.d/conda.sh"
+	conda activate py311
+else
+	echo "You are NOT running on BIOWULF or on FRCE"
+	echo "Please make sure that:"
+	echo "  - py311 conda environment is activated"
+	echo "  - singularity is in PATH"
+	echo "  - snakemake is in PATH"
 fi
-conda activate py311
+# if not on biowulf or frce then
+# use py311.environment.yml in resources folder to create the py311 conda environment
+# and load py311
 
 # load required modules
-module purge
-module load singularity 
-if [[ "$HOSTNAME" == "biowulf.nih.gov" ]];then
-	module load snakemake
-elif [[ "$HOSTNAME" == "fsitgl-head01p.ncifcrf.gov" ]];then
+# if running somewhere other than biowulf or frce, then ensure that
+#   - singularity
+#   - snakemake
+# are in PATH
+if [[ $ISBIOWULF == true ]];then
+	# module purge
+	load_module_if_needed singularity
+	load_module_if_needed snakemake
+elif [[ $ISFRCE == true ]];then
 # snakemake module on FRCE does not work as expected
 # use the conda installed version of snakemake instead
+	# module purge
+	load_module_if_needed load singularity
 	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
 fi
 
-${TOOLDIR}/${TOOLNAME} "$@" || true
+# check if singularity, snakemake are in PATH
+for tool in singularity snakemake;do
+	x=$(type -P $tool)
+	if [[ -z $x ]]; then # is $x blank
+		echo "$tool is not it path! Exiting."
+		exit
+	fi
+done
 
+${TOOLDIR}/${TOOLNAME} "$@" || true

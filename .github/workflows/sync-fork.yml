@@ -1,0 +1,28 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # once every day
+  workflow_dispatch: # on button click
+  push:
+    paths:
+      - .github/workflows/sync-fork.yml
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  FORK_OWNER: NCIPangea
+  UPSTREAM_OWNER: CCBR
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get repo name
+        # required for actions scheduled via cron, as github.event.repository.name won't work
+        run: |
+            echo "REPO=$(basename ${{ github.repository }})" >> $GITHUB_ENV
+      - name: sync fork
+        # only run this action from the forked repo
+        if: ${{ github.repository_owner == env.FORK_OWNER }}
+        run: |
+          gh repo sync ${{ github.repository }} --source $UPSTREAM_OWNER/$REPO --force

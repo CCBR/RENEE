@@ -1,4 +1,5 @@
 from os.path import join, basename
+import json
 
 # Helper Functions
 def allocated(resource, rule, lookup, default="__default__"):
@@ -98,8 +99,8 @@ rule all:
     input:
         # expand("STAR/2.7.6a/genes-{readlength}/SA",readlength=READLENGTHS),
         expand("{genome}_{gtfver}.json",genome=GENOME, gtfver=GTFVER),
-        expand("{genome}.rRNA_interval_list",genome=GENOME),
-        expand("rsemref/{genome}.transcripts.ump",genome=GENOME),
+        expand("{genome}_{gtfver}.rRNA_interval_list",genome=GENOME, gtfver=GTFVER),
+        expand("rsemref/{genome}_{gtfver}.transcripts.ump",genome=GENOME, gtfver=GTFVER),
         "STAR/2.7.6a/genome/SA",
         "annotate.isoforms.txt",
         "annotate.genes.txt",
@@ -155,11 +156,12 @@ rule rsem:
         fa=REFFA,
         gtf=GTFFILE,
     output:
-        join("rsemref","{genome}.transcripts.ump"),
+        join("rsemref","{genome}_{gtfver}.transcripts.ump"),
     params:
         rname='bl:rsem',
         genome=GENOME,
-        prefix=join("rsemref", GENOME),
+        gtfver=GTFVER,
+        prefix=join("rsemref", GENOME+"_"+GTFVER),
     threads: int(allocated("threads", "rsem", cluster)),
     container: config['images']['rsem']
     shell: """
@@ -388,17 +390,18 @@ rule rRNA_list:
         fa=REFFA,
         gtf=GTFFILE,
     output:
-        "{genome}.rRNA_interval_list",
+        "{genome}_{gtfver}.rRNA_interval_list",
     params:
         rname='bl:rRNA_list',
         genome=GENOME,
+        gtfver=GTFVER,
         create_rRNA=join(SCRIPTSDIR, "create_rRNA_intervals.py"),
     container: config['images']['build_rnaseq']
     shell: """
     python3 {params.create_rRNA} \\
         {input.fa} \\
         {input.gtf} \\
-        {params.genome} > {params.genome}.rRNA_interval_list
+        {params.genome} > {params.genome}_{params.gtfver}.rRNA_interval_list
     """
 
 
@@ -659,17 +662,18 @@ rule jsonmaker:
         Genomic FASTA file
         Annotation file in GTF format
     @Output:
-        Generates '{genome}.json' which is used RENEE pipeline internally.
+        Generates '{genome}_{gtfver}.json' which is used RENEE pipeline internally.
     """
     input:
         fa=REFFA,
         gtf=GTFFILE,
     output:
-        json="{genome}.json",
+        json="{genome}_{gtfver}.json",
     params:
         rname='bl:jsonmaker',
         workdir=OUTDIR,
         genome=GENOME,
+        gtfver=GTFVER,
     run:
         import json
         outdir=params.workdir
@@ -690,9 +694,9 @@ rule jsonmaker:
         refdict["references"]["rnaseq"]["QUALIMAP_INFO"] = outdir+"qualimap_info.txt"
         refdict["references"]["rnaseq"]["KARYOBEDS"] = outdir+"karyobeds/"
         refdict["references"]["rnaseq"]["KARYOPLOTER"] = outdir+"karyoplot_gene_coordinates.txt"
-        refdict["references"]["rnaseq"]["RSEMREF"] = outdir+"rsemref/"+params.genome
-        refdict["references"]["rnaseq"]["RRNALIST"] = outdir+params.genome+".rRNA_interval_list"
-        refdict["references"]["rnaseq"]["ORGANISM"] = wildcards.genome
+        refdict["references"]["rnaseq"]["RSEMREF"] = outdir+"rsemref/"+params.genome+"_"+params.gtfver
+        refdict["references"]["rnaseq"]["RRNALIST"] = outdir+params.genome+"_"+params.gtfver+".rRNA_interval_list"
+        refdict["references"]["rnaseq"]["ORGANISM"] = params.genome
         refdict["references"]["rnaseq"]["TINREF"] = outdir+"transcripts.protein_coding_only.bed12"
 
         # Try to infer which Arriba reference files to add a user defined reference genome
