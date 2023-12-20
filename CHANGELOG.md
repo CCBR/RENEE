@@ -1,4 +1,6 @@
-# Version Notes
+## development version
+
+- Fix bugs that prevented single-end data from running through the pipeline. (#58, @kelly-sovacool)
 
 ## v2.5
 
