@@ -173,8 +173,8 @@ elif not paired_end:
             # FastQ Screen
             expand(join(workpath,"FQscreen","{name}.R1.trim_screen.txt"),name=samples),
             expand(join(workpath,"FQscreen","{name}.R1.trim_screen.png"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.txt"),name=samples),
-            expand(join(workpath,"FQscreen2","{name}.R1.trim_screen.png"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R1_2.trim_screen.txt"),name=samples),
+            expand(join(workpath,"FQscreen2","{name}.R1_2.trim_screen.png"),name=samples),
 
             # Kraken + Krona
             expand(join(workpath,kraken_dir,"{name}.trim.kraken_bacteria.taxa.txt"),name=samples),
@@ -229,12 +229,14 @@ if config['options']['create_nidap_folder']:
     include: "rules/nidap.smk"
 
 # create jobby tables
-jobby_cmd = join('resources', 'run_jobby_on_snakemake_log') + " " + join('logfiles', 'snakemake.log') + " | tee " + join('logfiles', 'snakemake.log.jobby') + " | cut -f2,3,18 > " + join('logfiles', 'snakemake.log.jobby.short')
-spook_cmd = join('resources', 'spooker') + " " + workpath + " | tee " + join('logfiles', 'spooker.log')
+jobby_cmd = "run_jobby_on_snakemake_log " + join('logfiles', 'snakemake.log') + " | tee " + join('logfiles', 'snakemake.log.jobby') + " | cut -f2,3,18 > " + join('logfiles', 'snakemake.log.jobby.short')
+spook_cmd = "spooker " + workpath + " RENEE | tee " + join('logfiles', 'spooker.log')
 
 onsuccess:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print("OnSuccess")
+    shell("printenv")
+    shell("module list")
     print(jobby_cmd)
     shell(jobby_cmd)
     print(spook_cmd)
@@ -243,6 +245,8 @@ onsuccess:
 onerror:
     #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print("OnError")
+    shell("printenv")
+    shell("module list")
     print(jobby_cmd)
     shell(jobby_cmd)
     print(spook_cmd)

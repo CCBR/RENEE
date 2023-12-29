@@ -141,7 +141,7 @@ function submit(){
 
   # SLURM inherits the environment from which the job was launched
   # Try to purge modules all modules from environment
-  command -V module &> /dev/null && module purge
+  # command -V module &> /dev/null && module purge
 
   # Check if singularity in $PATH
   # If not, try to module load singularity as a last resort
@@ -207,7 +207,7 @@ function submit(){
           if [[ "$8" == "biowulf" ]];then
             CLUSTER_OPTS="${CLUSTER_OPTS} --gres {cluster.gres}"
           fi
-          echo "TRIGGEROPTIONS:${triggeroptions}"
+          # echo "TRIGGEROPTIONS:${triggeroptions}"
           # Submit the master job to the cluster
           if [ "$wait" != "--wait" ];then
             job_id=$(sbatch --parsable -J "$2" --time=4-00:00:00 --mail-type=BEGIN,END,FAIL \

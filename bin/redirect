@@ -5,6 +5,15 @@
 # - loads require modules
 # - parses the variables directly to the python script
 
+
+function load_module_if_needed {
+	module_name=$1
+	x=$(type -P $module_name)
+	if [[ -z $x ]];then
+		module load $module_name
+	fi
+}
+
 SCRIPTNAME="$BASH_SOURCE"
 SCRIPTDIRNAME=$(readlink -f $(dirname "$SCRIPTNAME"))
 
@@ -15,7 +24,7 @@ fi
 
 TOOLDIR=$(dirname "$SCRIPTDIRNAME")
 TOOLNAME=$(basename "$SCRIPTNAME")
-echo $TOOLNAME
+# echo $TOOLNAME
 
 # find out if you are running on biowulf or frce
 nbiowulf=$(scontrol show config | grep -i -c biowulf)
@@ -47,14 +56,14 @@ fi
 #   - snakemake
 # are in PATH
 if [[ $ISBIOWULF == true ]];then
-	module purge
-	module load singularity
-	module load snakemake
+	# module purge
+	load_module_if_needed singularity
+	load_module_if_needed snakemake
 elif [[ $ISFRCE == true ]];then
 # snakemake module on FRCE does not work as expected
 # use the conda installed version of snakemake instead
-	module purge
-	module load singularity
+	# module purge
+	load_module_if_needed load singularity
 	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
 fi
 

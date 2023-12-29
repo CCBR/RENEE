@@ -14,7 +14,7 @@ Example:
 # Python standard library
 from __future__ import print_function
 from shutil import copy, copytree
-import sys, os, subprocess, re, json, textwrap, shlex
+import sys, os, subprocess, re, json, textwrap, shlex, glob
 from pathlib import Path
 from datetime import datetime
 
@@ -42,6 +42,22 @@ except AssertionError:
         f"{sys.argv[0]} requires Python {'.'.join([str(n) for n in MIN_PYTHON])} or newer"
     )
 
+# get prebuilt list
+p=Path(__file__)
+RENEEDIR=p.parents[1]
+resource_dir = os.path.join(RENEEDIR,"resources")
+if not os.path.exists(resource_dir):
+    sys.exit("ERROR: Folder does not exist : {}".format(resource_dir))
+searchterm = resource_dir+"/**/**/*json"
+jsonfiles = glob.glob(searchterm)
+if len(jsonfiles) == 0:
+    sys.exit("ERROR: No Genome+Annotation JSONs found in : {}".format(resource_dir))
+jsons = dict()
+for j in jsonfiles:
+    k = os.path.basename(j)
+    k = k.replace(".json","")
+    jsons[k] = j
+prebuilt_list=sorted(list(jsons.keys()))
 
 class Colors:
     """Class encoding for ANSI escape sequences for styling terminal text.
@@ -636,6 +652,32 @@ def get_repo_git_commit_hash(repo_path):
     return githash
 
 
+def scontrol_show():
+    """ Run scontrol show config and parse the output as a dictionary
+    @return scontrol_dict <dict>:
+    """
+    scontrol_dict = dict()
+    scontrol_out = subprocess.run(
+        "scontrol show config", shell=True, capture_output=True, text=True
+    ).stdout
+    if len(scontrol_out) > 0:
+        for line in scontrol_out.split("\n"):
+            line_split = line.split("=")
+            if len(line_split) > 1:
+                scontrol_dict[line_split[0].strip()] = line_split[1].strip()
+    return scontrol_dict
+
+
+def get_hpcname():
+    """ Get the HPC name (biowulf, frce, or an empty string)
+    @return hpcname <str>
+    """
+    scontrol_out = scontrol_show()
+    hpc = scontrol_out["ClusterName"] if "ClusterName" in scontrol_out.keys() else ''
+    if hpc == 'fnlcr':
+        hpc = 'frce'
+    return hpc
+
 def setup(sub_args, ifiles, repo_path, output_path):
     """Setup the pipeline for execution and creates config file from templates
     @param sub_args <parser.parse_args() object>:
@@ -651,18 +693,13 @@ def setup(sub_args, ifiles, repo_path, output_path):
     # Resolves PATH to template for genomic reference files to select from a
     # bundled reference genome or a user generated reference genome built via
     # renee build subcommand
-    x = subprocess.run(
-        "scontrol show config", shell=True, capture_output=True, text=True
-    )
-    hpcname = ""
-    if "biowulf" in x.stdout:
-        hpcname = "biowulf"
+    hpcname = get_hpcname()
+    if hpcname == "biowulf":
         print("Thank you for running RENEE on BIOWULF!")
         genome_config = os.path.join(
             output_path, "config", "genomes", hpcname, sub_args.genome + ".json"
         )
-    elif "fsitgl" in x.stdout:
-        hpcname = "frce"
+    elif hpcname == "frce":
         print("Thank you for running RENEE on FRCE!")
         genome_config = os.path.join(
             output_path, "config", "genomes", hpcname, sub_args.genome + ".json"
@@ -699,6 +736,8 @@ def setup(sub_args, ifiles, repo_path, output_path):
     config["project"]["version"] = __version__
     config["project"]["pipelinehome"] = os.path.dirname(__file__)
     config["project"]["workpath"] = os.path.abspath(sub_args.output)
+    genome_annotation = sub_args.genome
+    config["project"]["organism"] = genome_annotation.split("_")[0]
 
     # Add optional cli workflow steps
     config["options"] = {}
@@ -747,7 +786,7 @@ def setup(sub_args, ifiles, repo_path, output_path):
         json.dump(config, fh, indent=4, sort_keys=True)
     print("Done!")
 
-    return config, hpcname
+    return config
 
 
 def dryrun(
@@ -1034,14 +1073,21 @@ def run(sub_args):
     # Get PATH to RENEE git repository for copying over pipeline resources
     git_repo = os.path.dirname(os.path.abspath(__file__))
 
-    # Initialize working directory, copy over required pipeline resources
-    input_files = initialize(sub_args, repo_path=git_repo, output_path=sub_args.output)
+    # hpcname is either biowulf, frce, or blank
+    hpcname = get_hpcname()
+    if sub_args.runmode == 'init' or not os.path.exists(os.path.join(sub_args.output, 'config.json')):
+        # Initialize working directory, copy over required pipeline resources
+        input_files = initialize(sub_args, repo_path=git_repo, output_path=sub_args.output)
 
-    # Step pipeline for execution, create config.json config file from templates
-    # hpcname is either biowulf or frce or blank
-    config, hpcname = setup(
-        sub_args, ifiles=input_files, repo_path=git_repo, output_path=sub_args.output
-    )
+        # Step pipeline for execution, create config.json config file from templates
+        config = setup(
+            sub_args, ifiles=input_files, repo_path=git_repo, output_path=sub_args.output
+        )
+    # load config from existing file
+    else:
+        with open(os.path.join(sub_args.output, "config.json"), "r") as config_file:
+            config = json.load(config_file)
+        
 
     # Optional Step: Dry-run pipeline
     if sub_args.dry_run:
@@ -1226,6 +1272,8 @@ def _configure(sub_args, filename, git_repo):
                 fh.write('  {}: "{}"\n'.format(tag, uri))
     print("Done!")
 
+def _reset_write_permission(target):
+    os.system("chmod -R u+w,g-w,o-w "+target)
 
 def configure_build(sub_args, git_repo, output_path):
     """Setups up working directory for build option and creates config file (build.yml)
@@ -1256,6 +1304,7 @@ def configure_build(sub_args, git_repo, output_path):
     # Copy over templates are other required resources
     required_resources = ["workflow", "resources", "config"]
     _cp_r_safe_(source=git_repo, target=output_path, resources=required_resources)
+    _reset_write_permission(target=output_path)
     _configure(
         sub_args=sub_args,
         filename=os.path.join(output_path, "config", "build.yml"),
@@ -1299,6 +1348,14 @@ def build(sub_args):
 
     additional_bind_paths = ",".join(additional_bind_paths)
 
+    # determine "wait"
+    wait = ""
+    if sub_args.wait:
+        wait = "--wait"
+
+    # hpcname is either biowulf, frce, or blank
+    hpcname = get_hpcname()
+
     # Dryrun pipeline
     if sub_args.dry_run:
         dryrun_output = dryrun(
@@ -1323,6 +1380,8 @@ def build(sub_args):
         submission_script="builder",
         masterjob="pl:build",
         tmp_dir=sub_args.tmp_dir,
+        wait=wait,
+        hpcname=hpcname,
     )
 
     masterjob.wait()
@@ -1706,10 +1765,13 @@ def parsed_arguments(name, description):
                          --genome hg38_30 \\
                          --mode slurm
 
-        {2}{3}Version:{4}
+        {2}{3}Ver:{4}
           {1}
+
+        {2}{3}Prebuilt genome+annotation combos:{4}
+          {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end
+            name, __version__, c.bold, c.url, c.end, list(prebuilt_list)
         )
     )
 
@@ -1750,7 +1812,7 @@ def parsed_arguments(name, description):
         "--genome",
         required=True,
         type=lambda option: str(
-            genome_options(subparser_run, option, ["hg38_30", "mm10_M21"])
+            genome_options(subparser_run, option, prebuilt_list)
         ),
         help=argparse.SUPPRESS,
     )
@@ -1789,7 +1851,16 @@ def parsed_arguments(name, description):
         default=False,
         help=argparse.SUPPRESS,
     )
-
+    subparser_run.add_argument('--runmode',
+        # Determines how to run the pipeline: init, run
+        # TODO: this API is different from XAVIER & CARLISLE, which have a --runmode=dryrun option instead of a --dry-run flag.
+        required = False,
+        default = 'run',
+        choices = ['init','run'],
+        type = str,
+        help = argparse.SUPPRESS
+    )
+    
     # Execution Method, run locally
     # on a compute node or submit to
     # a supported job scheduler, etc.
@@ -1896,6 +1967,7 @@ def parsed_arguments(name, description):
                                 --ref-name REF_NAME \\
                                 --ref-gtf REF_GTF \\
                                 --gtf-ver GTF_VER \\
+                                --wait \\
                                 --output OUTPUT
 
         {1}{2}Description:{4}
@@ -2000,6 +2072,12 @@ def parsed_arguments(name, description):
                               please quote this options value in single quotes.
                                 Example: --tmp-dir '/cluster_scratch/$USER/'
 
+          --wait
+                                Wait until master job completes. This is required if
+                                the job is submitted using HPC API. If not provided
+                                the API may interpret submission of master job as
+                                completion of the pipeline!                                
+
         {1}{2}Misc Options:{4}
           -h, --help          Show usage information, help message, and exit.
                                 Example: --help
@@ -2036,8 +2114,11 @@ def parsed_arguments(name, description):
 
         {2}{3}Version:{4}
           {1}
+
+        {2}{3}Prebuilt genome+annotation combos:{4}
+          {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end
+            name, __version__, c.bold, c.url, c.end, list(prebuilt_list)
         )
     )
 
@@ -2151,6 +2232,19 @@ def parsed_arguments(name, description):
         default="/lscratch/$SLURM_JOBID/",
         help=argparse.SUPPRESS,
     )
+
+    # wait until master job finishes ... required for HPC API execution
+    subparser_build.add_argument(
+        "--wait",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Wait until master job completes. This is required if \
+                                the job is submitted using HPC API. If not provided \
+                                the API may interpret submission of master job as \
+                                completion of the pipeline!",
+    )
+
 
     # Sub-parser for the "unlock" sub-command
     # Grouped sub-parser arguments are currently
