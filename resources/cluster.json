@@ -11,6 +11,7 @@
     },
     "bbmerge": {
         "mem": "64g"
+	"time": "1-00:00:00"
     },
     "fastqc": {
         "threads": "32",
@@ -28,11 +29,13 @@
         "cpus-per-task": "32",
         "gres": "lscratch:256",
         "mem": "110g"
+        "time": "1-00:00:00"
     },
     "kraken_se": {
         "cpus-per-task": "32",
         "gres": "lscratch:256",
         "mem": "110g"
+        "time": "1-00:00:00"
     },
     "pca": {
         "mem": "110g",
