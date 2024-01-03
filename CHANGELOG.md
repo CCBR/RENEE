@@ -1,5 +1,7 @@
 ## development version
 
+## v2.5.9
+
 - Fix bugs that prevented single-end data from running through the pipeline. (#58, @kelly-sovacool)
 - Increase wall time for kraken and bbmerge rules. (#68, @slsevilla)
 
