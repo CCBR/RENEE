@@ -1,5 +1,9 @@
 ## development version
 
+## v2.5.10
+
+- Fix a bug that caused slurm jobs to fail (#74, @kopardev)
+
 ## v2.5.9
 
 - Fix bugs that prevented single-end data from running through the pipeline. (#58, @kelly-sovacool)
