@@ -13,6 +13,8 @@ repos:
       - id: check-added-large-files
       - id: end-of-file-fixer
       - id: trailing-whitespace
+      - id: check-json
+      - id: check-yaml
   # spell check
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.4
