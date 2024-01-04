@@ -1,0 +1,5 @@
+{
+    "FASTQ_SCREEN_CONFIG": "resources/biowulf/fastq_screen.conf",
+    "FASTQ_SCREEN_CONFIG2": "resources/biowulf/fastq_screen_2.conf",
+    "KRAKENBACDB": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/shared_resources/20180907_standard_kraken2"
+}
