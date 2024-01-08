@@ -1,5 +1,10 @@
 ## development version
 
+- Fix: set HPC-specific fastq screen config and kraken DB paths for Biowulf and FRCE. (#78, @kelly-sovacool)
+  - Previously, FRCE users were required to set `--shared-resources`, 
+    which were kept in a location on FRCE not under version control. 
+    This change brings the paths under version control so they're easier to recover if deleted. 
+
 ## v2.5.10
 
 - Fix a bug that caused slurm jobs to fail (#74, @kopardev)
