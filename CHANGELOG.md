@@ -4,6 +4,7 @@
   - Previously, FRCE users were required to set `--shared-resources`, 
     which were kept in a location on FRCE not under version control. 
     This change brings the paths under version control so they're easier to recover if deleted. 
+- Fix RSEM reference and rRNA interval list paths in FRCE-specific config files (#85, @kelly-sovacool & @slsevilla)
 
 ## v2.5.10
 
