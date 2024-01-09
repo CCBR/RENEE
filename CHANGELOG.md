@@ -1,5 +1,7 @@
 ## development version
 
+- Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
+
 ## v2.5.10
 
 - Fix a bug that caused slurm jobs to fail (#74, @kopardev)
