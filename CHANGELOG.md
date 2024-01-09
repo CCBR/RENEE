@@ -1,5 +1,7 @@
 ## development version
 
+- Fix RSEM reference and rRNA interval list paths in FRCE-specific config files (#85, @kelly-sovacool & @slsevilla)
+
 ## v2.5.10
 
 - Fix a bug that caused slurm jobs to fail (#74, @kopardev)
