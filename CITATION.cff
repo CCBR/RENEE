@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "Please cite RENEE as below."
+authors:
+    - family-names: Sevilla
+      given-names: Samantha
+      orcid: https://orcid.org/0000-0002-8734-9875
+    - family-names: Sovacool
+      given-names: Kelly
+      orcid: https://orcid.org/0000-0003-3283-829X
+    - family-names: Koparde
+      given-names: Vishal
+      orcid: https://orcid.org/0000-0001-8978-8495
+title: "RENEE: Rna sEquencing aNalysis pipElinE"
+url: https://ccbr.github.io/RENEE
+repository-code: https://github.com/CCBR/RENEE
+license: MIT
+type: software
+version: 2.5.10
+date-released: 2024-01-03
