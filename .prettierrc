@@ -1,4 +1,7 @@
 overrides:
-    - files: "*.md"
-      options:
-          tabWidth: 2
+  - files:
+      - "*.md"
+      - "citation.cff"
+      - ".prettierrc"
+    options:
+      tabWidth: 2
