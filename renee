@@ -17,6 +17,7 @@ from shutil import copy, copytree
 import sys, os, subprocess, re, json, textwrap, shlex, glob
 from pathlib import Path
 from datetime import datetime
+import warnings
 
 # 3rd party imports from pypi
 import argparse  # potential python3 3rd party package, added in python/3.5
@@ -24,8 +25,8 @@ import argparse  # potential python3 3rd party package, added in python/3.5
 
 # Pipeline Metadata and globals
 # __version__ = "v2.5.2"
-current_path = os.path.dirname(os.path.abspath(__file__))
-vfile = open(os.path.join(current_path, "VERSION"), "r")
+RENEE_PATH = os.path.dirname(os.path.abspath(__file__))
+vfile = open(os.path.join(RENEE_PATH, "VERSION"), "r")
 __version__ = "v" + vfile.read()
 __version__ = __version__.strip()
 vfile.close()
@@ -42,22 +43,49 @@ except AssertionError:
         f"{sys.argv[0]} requires Python {'.'.join([str(n) for n in MIN_PYTHON])} or newer"
     )
 
-# get prebuilt list
-p=Path(__file__)
-RENEEDIR=p.parents[1]
-resource_dir = os.path.join(RENEEDIR,"resources")
-if not os.path.exists(resource_dir):
-    sys.exit("ERROR: Folder does not exist : {}".format(resource_dir))
-searchterm = resource_dir+"/**/**/*json"
-jsonfiles = glob.glob(searchterm)
-if len(jsonfiles) == 0:
-    sys.exit("ERROR: No Genome+Annotation JSONs found in : {}".format(resource_dir))
-jsons = dict()
-for j in jsonfiles:
-    k = os.path.basename(j)
-    k = k.replace(".json","")
-    jsons[k] = j
-prebuilt_list=sorted(list(jsons.keys()))
+
+def scontrol_show():
+    """ Run scontrol show config and parse the output as a dictionary
+    @return scontrol_dict <dict>:
+    """
+    scontrol_dict = dict()
+    scontrol_out = subprocess.run(
+        "scontrol show config", shell=True, capture_output=True, text=True
+    ).stdout
+    if len(scontrol_out) > 0:
+        for line in scontrol_out.split("\n"):
+            line_split = line.split("=")
+            if len(line_split) > 1:
+                scontrol_dict[line_split[0].strip()] = line_split[1].strip()
+    return scontrol_dict
+
+
+def get_hpcname():
+    """ Get the HPC name (biowulf, frce, or an empty string)
+    @return hpcname <str>
+    """
+    scontrol_out = scontrol_show()
+    hpc = scontrol_out["ClusterName"] if "ClusterName" in scontrol_out.keys() else ''
+    if hpc == 'fnlcr':
+        hpc = 'frce'
+    return hpc
+
+
+def get_genomes_list(renee_path, hpcname = get_hpcname()):
+    """ Get list of genome annotations available for the current platform
+    @return genomes_list <list>
+    """
+    genome_config_dir = os.path.join(renee_path, "config", "genomes", hpcname)
+    json_files = glob.glob(genome_config_dir + "/*.json")
+    if not json_files:
+        warnings.warn(f"WARNING: No Genome Annotation JSONs found in {genome_config_dir}. Please specify a custom genome json file with `--genome`")
+    genomes = [os.path.basename(file).replace(".json", "") for file in json_files]
+    return sorted(genomes)
+
+
+# Get list of prebuilt genome annotations available for the platform
+GENOMES_LIST = get_genomes_list(RENEE_PATH)
+
 
 class Colors:
     """Class encoding for ANSI escape sequences for styling terminal text.
@@ -651,32 +679,6 @@ def get_repo_git_commit_hash(repo_path):
 
     return githash
 
-
-def scontrol_show():
-    """ Run scontrol show config and parse the output as a dictionary
-    @return scontrol_dict <dict>:
-    """
-    scontrol_dict = dict()
-    scontrol_out = subprocess.run(
-        "scontrol show config", shell=True, capture_output=True, text=True
-    ).stdout
-    if len(scontrol_out) > 0:
-        for line in scontrol_out.split("\n"):
-            line_split = line.split("=")
-            if len(line_split) > 1:
-                scontrol_dict[line_split[0].strip()] = line_split[1].strip()
-    return scontrol_dict
-
-
-def get_hpcname():
-    """ Get the HPC name (biowulf, frce, or an empty string)
-    @return hpcname <str>
-    """
-    scontrol_out = scontrol_show()
-    hpc = scontrol_out["ClusterName"] if "ClusterName" in scontrol_out.keys() else ''
-    if hpc == 'fnlcr':
-        hpc = 'frce'
-    return hpc
 
 def setup(sub_args, ifiles, repo_path, output_path):
     """Setup the pipeline for execution and creates config file from templates
@@ -1771,7 +1773,7 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end, list(prebuilt_list)
+            name, __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
         )
     )
 
@@ -1812,7 +1814,7 @@ def parsed_arguments(name, description):
         "--genome",
         required=True,
         type=lambda option: str(
-            genome_options(subparser_run, option, prebuilt_list)
+            genome_options(subparser_run, option, GENOMES_LIST)
         ),
         help=argparse.SUPPRESS,
     )
@@ -2118,7 +2120,7 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end, list(prebuilt_list)
+            name, __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
         )
     )
 
