@@ -1043,6 +1043,10 @@ def run(sub_args):
         sub_args, ifiles=input_files, repo_path=git_repo, output_path=sub_args.output
     )
 
+    # ensure the working dir is read/write friendly
+    workflow_path=os.path.join(sub_args.output,'workflow')
+    subprocess.call(['chmod', '-R', '777', workflow_path])
+
     # Optional Step: Dry-run pipeline
     if sub_args.dry_run:
         dryrun_output = dryrun(
@@ -1074,6 +1078,7 @@ def run(sub_args):
         list(config["references"]["rnaseq"].values()) + fq_screen_paths + kraken_db_path
     )
     all_bind_paths = "{},{}".format(",".join(genome_bind_paths), rawdata_bind_paths)
+    
     if sub_args.dry_run:  # print singularity bind baths and exit
         print("\nSingularity Bind Paths:{}".format(all_bind_paths))
         sys.exit(0)
