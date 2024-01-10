@@ -1091,6 +1091,10 @@ def run(sub_args):
             config = json.load(config_file)
         
 
+    # ensure the working dir is read/write friendly
+    scripts_path = os.path.join(sub_args.output,'workflow','scripts')
+    os.chmod(scripts_path, 0o755)
+
     # Optional Step: Dry-run pipeline
     if sub_args.dry_run:
         dryrun_output = dryrun(
@@ -1122,6 +1126,7 @@ def run(sub_args):
         list(config["references"]["rnaseq"].values()) + fq_screen_paths + kraken_db_path
     )
     all_bind_paths = "{},{}".format(",".join(genome_bind_paths), rawdata_bind_paths)
+    
     if sub_args.dry_run:  # print singularity bind baths and exit
         print("\nSingularity Bind Paths:{}".format(all_bind_paths))
         sys.exit(0)
