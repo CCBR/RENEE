@@ -1044,8 +1044,8 @@ def run(sub_args):
     )
 
     # ensure the working dir is read/write friendly
-    workflow_path=os.path.join(sub_args.output,'workflow')
-    subprocess.call(['chmod', '-R', '777', workflow_path])
+    scripts_path = os.path.join(sub_args.output,'workflow','scripts')
+    os.chmod(scripts_path, 0o755)
 
     # Optional Step: Dry-run pipeline
     if sub_args.dry_run:
