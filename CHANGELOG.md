@@ -2,6 +2,8 @@
 
 - Fix RSEM reference and rRNA interval list paths in FRCE-specific config files (#85, @kelly-sovacool & @slsevilla)
 - Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
+- Fix bug which caused incorrect genome annotation JSON files to be used (#87, @kelly-sovacool)
+
 
 ## v2.5.10
 
