@@ -1,5 +1,5 @@
 ## development version
-
+- Fix permissions to allow read/write access to the scripts dir which caused rNA report to fail (#91, @slsevilla)
 - Fix RSEM reference and rRNA interval list paths in FRCE-specific config files (#85, @kelly-sovacool & @slsevilla)
 - Fix bug which caused incorrect genome annotation JSON files to be used (#87, @kelly-sovacool)
 
