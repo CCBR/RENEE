@@ -1,7 +1,13 @@
 ## development version
+- Fix: set HPC-specific fastq screen config and kraken DB paths for Biowulf and FRCE. (#78, @kelly-sovacool)
+  - Previously, FRCE users were required to set `--shared-resources`, 
+    which were kept in a location on FRCE not under version control. 
+    This change brings the paths under version control so they're easier to recover if deleted. 
 - Fix permissions to allow read/write access to the scripts dir which caused rNA report to fail (#91, @slsevilla)
 - Fix RSEM reference and rRNA interval list paths in FRCE-specific config files (#85, @kelly-sovacool & @slsevilla)
+- Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
 - Fix bug which caused incorrect genome annotation JSON files to be used (#87, @kelly-sovacool)
+
 
 ## v2.5.10
 

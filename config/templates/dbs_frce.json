@@ -1,0 +1,5 @@
+{
+    "FASTQ_SCREEN_CONFIG": "resources/frce/fastq_screen.conf",
+    "FASTQ_SCREEN_CONFIG2": "resources/frce/fastq_screen_2.conf",
+    "KRAKENBACDB": "/mnt/projects/CCBR-Pipelines/Pipelines/RENEE/resources/shared_resources/20180907_standard_kraken2"
+}
