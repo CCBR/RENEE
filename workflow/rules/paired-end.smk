@@ -916,9 +916,8 @@ rule rna_report:
         html=join(workpath,"Reports","RNA_Report.html")
     params:
         rname='pl:rna_report',
-        rwrapper=join("workflow", "scripts", "rNA.R"),
-        rmarkdown=join("workflow", "scripts", "rNA_flowcells.Rmd"),
-        odir=join(workpath,"Reports"),
+        rwrapper=join(workpath,"workflow", "scripts", "rNA.R"),
+        rmarkdown=join(workpath,"workflow", "scripts", "rNA_flowcells.Rmd"),
     envmodules:
         config['bin'][pfamily]['tool_versions']['RVER']
     container: config['images']['rna']
@@ -932,6 +931,5 @@ rule rna_report:
         -r {input.counts} \
         -t {input.tins} \
         -q {input.qc} \
-        -o {params.odir} \
-        -f RNA_Report.html
+        -f {output.html}
     """

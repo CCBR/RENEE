@@ -5,7 +5,6 @@ params:
   raw: "/path/to/raw/counts/matrix.tsv"
   tin: "/path/to/tin/counts/martrix.tsv"
   qc: "/path/to/qc/table.tsv"
-  wdir: "/path/to/output/directory"
   annot: "FALSE"
 output:
   flexdashboard::flex_dashboard:
@@ -20,10 +19,6 @@ output:
 # Clear R environment
 # rm(list = ls())
 set.seed(42)
-
-# Set the working directory
-knitr::opts_knit$set(root.dir = params$wdir)
-knitr::opts_chunk$set(echo = FALSE, warning=FALSE, dev="png", fig.path=file.path(params$wdir, "figs/"))
 ```
 
 
