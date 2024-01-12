@@ -722,10 +722,17 @@ def setup(sub_args, ifiles, repo_path, output_path):
         "genome": genome_config,
         # Template for tool information
         "tools": os.path.join(output_path, "config", "templates", "tools.json"),
-    }
+    }   
 
     # Global config file for pipeline, config.json
     config = join_jsons(required.values())  # uses templates in the renee repo
+    # Update cluster-specific paths for fastq screen & kraken db
+    if hpcname == 'biowulf' or hpcname == 'frce':
+        db_json_filename = os.path.join(output_path, 'config', 'templates', f"dbs_{hpcname}.json")
+        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), db_json_filename), "r") as json_file:
+            config['bin']['rnaseq']['tool_parameters'].update(json.load(json_file))
+
+
     config = add_user_information(config)
     config = add_rawdata_information(sub_args, config, ifiles)
 
@@ -765,12 +772,12 @@ def setup(sub_args, ifiles, repo_path, output_path):
         config["bin"]["rnaseq"]["tool_parameters"][
             "FASTQ_SCREEN_CONFIG"
         ] = os.path.join(
-            sub_args.shared_resources, "fastq_screen_db", "fastq_screen_p1.conf"
+            sub_args.shared_resources, "fastq_screen_db", "fastq_screen.conf"
         )
         config["bin"]["rnaseq"]["tool_parameters"][
             "FASTQ_SCREEN_CONFIG2"
         ] = os.path.join(
-            sub_args.shared_resources, "fastq_screen_db", "fastq_screen_p2.conf"
+            sub_args.shared_resources, "fastq_screen_db", "fastq_screen_2.conf"
         )
         config["bin"]["rnaseq"]["tool_parameters"]["KRAKENBACDB"] = os.path.join(
             sub_args.shared_resources, "20180907_standard_kraken2"
