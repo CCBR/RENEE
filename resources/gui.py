@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
+
+
 global DEBUG
 
 DEBUG = True
 
+import glob
 import os
+import PySimpleGUI as sg
 import sys
 import stat
 import subprocess
-import glob
+from tkinter import Tk
 import uuid
+
 
 # getting the name of the directory
 # where the this file is present.
@@ -22,16 +27,6 @@ parent = os.path.dirname(current)
 # the sys.path.
 sys.path.append(parent)
 imgdir = os.path.join(parent, "resources", "images")
-
-# Check if python 3.11 or later is available and running
-from src.VersionCheck import version_check
-
-version_check()
-
-from src.Utils import *  # copy_to_clipboard comes from Utils
-
-# import pysimplegui
-import PySimpleGUI as sg
 
 global RENEEDIR
 global SIFCACHE
@@ -50,6 +45,32 @@ RANDOMSTR = str(uuid.uuid4())
 FILES2DELETE = list()
 
 # sg.SetOptions(button_color=sg.COLOR_SYSTEM_DEFAULT)
+
+
+def version_check():
+    # version check
+    # glob.iglob requires 3.11 for using "include_hidden=True"
+    MIN_PYTHON = (3, 11)
+    try:
+        assert sys.version_info >= MIN_PYTHON
+        print(
+            "Python version: {0}.{1}.{2}".format(
+                sys.version_info.major, sys.version_info.minor, sys.version_info.micro
+            )
+        )
+    except AssertionError:
+        exit(
+            f"{sys.argv[0]} requires Python {'.'.join([str(n) for n in MIN_PYTHON])} or newer"
+        )
+
+
+def copy_to_clipboard(string):
+    r = Tk()
+    r.withdraw()
+    r.clipboard_clear()
+    r.clipboard_append(string)
+    r.update()
+    r.destroy()
 
 
 def get_combos():
@@ -314,4 +335,5 @@ def main():
 #   --mode slurm
 
 if __name__ == "__main__":
+    version_check()
     main()
