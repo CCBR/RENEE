@@ -21,6 +21,7 @@ jobs:
               --input .tests/KO_S3.R1.fastq.gz .tests/KO_S3.R2.fastq.gz .tests/KO_S4.R1.fastq.gz .tests/KO_S4.R2.fastq.gz .tests/WT_S1.R1.fastq.gz .tests/WT_S1.R2.fastq.gz .tests/WT_S2.R1.fastq.gz .tests/WT_S2.R2.fastq.gz \
               --output output \
               --genome config/genomes/biowulf/hg38_30.json \
+              --shared-resources .tests/shared_resources/ \
               --mode local \
               --dry-run
       - name: Lint workflow
