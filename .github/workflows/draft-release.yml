@@ -1,0 +1,143 @@
+name: draft-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: Semantic version tag for next release. If not provided, it will be determined based on conventional commit history.
+        required: false
+        type: string
+        default: ""
+  push:
+    branches:
+      - release-draft
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  BRANCH: release-draft
+
+jobs:
+  draft-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # required to include tags
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - run: pip install cffconvert>=2.0.0 pyyaml
+
+      - name: Get Date
+        run: |
+          echo "DATE=$(date +"%Y-%m-%d")" >> "$GITHUB_ENV"
+
+      - name: Get current and next versions
+        id: semver
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+          branch: ${{ github.ref_name }}
+
+      - name: Set version variables
+        shell: python {0}
+        run: |
+          import os
+          import re
+          import warnings
+
+          convco_version = "${{ steps.semver.outputs.next }}"
+          if "${{ github.event_name }}" == 'workflow_dispatch' and "${{ github.event.inputs.version_tag }}":
+            next_version = "${{ github.event.inputs.version_tag }}"
+            if next_version != convco_version:
+              warnings.warn(f"Manual version ({next_version}) not equal to version determined by conventional commit history ({convco_version})")
+          else:
+            next_version = convco_version
+
+          with open(os.getenv("GITHUB_ENV"), 'a') as out_env:
+            out_env.write(f"NEXT_VERSION={next_version}\n")
+            out_env.write(f"NEXT_STRICT={next_version.strip('v')}\n")
+          current_version = "${{ steps.semver.outputs.current }}"
+
+          # assert semantic version pattern
+          semver_pattern = 'v(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?'
+          next_semver = re.match(semver_pattern, next_version)
+          if not next_semver:
+            raise ValueError(f"Tag {next_version} does not match semantic versioning guidelines")
+
+          # assert next version is only 1 greater than current
+          current_semver = re.match(semver_pattern, current_version)
+          groups = ['major', 'minor', 'patch']
+          greater = sum([next_semver.group(grp) > current_semver.group(grp) for grp in groups])
+          equal = sum([next_semver.group(grp) == current_semver.group(grp) for grp in groups])
+          if not (greater == 1 and equal == 2):
+            raise ValueError(f"Next version must only increment one number at a time. Current version: {current_version}. Proposed next version: {next_version}")
+
+      - name: Get release notes, update changelog & version file
+        shell: python {0}
+        run: |
+          import os
+          latest_version = "${{ steps.semver.outputs.current }}".strip('v')
+          next_version = "${{ env.NEXT_STRICT }}"
+
+          changelog_lines = list()
+          next_release_lines = list()
+          for_next = True
+          with open("CHANGELOG.md", "r") as infile:
+            for line in infile:
+              if line.startswith('#') and 'development version' in line:
+                line = line.replace('development version', next_version)
+              elif latest_version in line:
+                for_next = False
+
+              changelog_lines.append(line)
+              if for_next:
+                next_release_lines.append(line)
+
+          with open(".github/latest-release.md", "w") as outfile:
+            outfile.writelines(next_release_lines)
+          with open('CHANGELOG.md', 'w') as outfile:
+            outfile.writelines(changelog_lines)
+          with open("VERSION", "w") as outfile:
+            outfile.write(f"{next_version}\n")
+
+      - name: Update citation
+        shell: python {0}
+        run: |
+          from cffconvert.cli.create_citation import create_citation
+          from cffconvert.cli.validate_or_write_output import validate_or_write_output
+          import yaml
+
+          citation = create_citation('CITATION.cff', None)
+          citation._implementation.cffobj['version'] = "${{ env.NEXT_VERSION }}"
+          citation._implementation.cffobj['date-released'] = "${{ env.DATE }}"
+          with open('CITATION.cff', 'w') as outfile:
+            outfile.write(yaml.dump(citation._implementation.cffobj, sort_keys=False))
+
+      - name: Commit & push to branch
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git push origin --delete ${{ env.BRANCH }} || echo "No ${{ env.BRANCH }} branch to delete"
+          git switch -c ${{ env.BRANCH }} || git switch ${{ env.BRANCH }}
+          git merge --ff-only ${{ github.ref_name }}
+
+          git add CITATION.cff CHANGELOG.md VERSION
+          git commit -m 'chore: prepare release ${{ env.NEXT_VERSION }}'
+          git push --set-upstream origin ${{ env.BRANCH }}
+
+          echo "COMMIT_HASH=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Tag & draft release
+        run: |
+          gh release create ${{ env.NEXT_VERSION }} \
+            --draft \
+            --notes-file .github/latest-release.md \
+            --target ${{ env.COMMIT_HASH }} \
+            --title "${{ github.event.repository.name }} ${{ env.NEXT_STRICT }}"
+
+      - name: Next steps
+        run: |
+          echo "Next steps: Take a look at the changes in the ${{ env.BRANCH }} branch and the release notes on the web. If everything is correct, publish the release. Otherwise, delete the release draft and cut the release manually."
