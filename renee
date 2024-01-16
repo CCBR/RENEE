@@ -1508,6 +1508,11 @@ def cache(sub_args):
             )
 
 
+def gui(sub_args):
+    gui_job = subprocess.Popen(os.path.join(RENEE_PATH, "resources", "gui.py"))
+    gui_job.wait()
+
+
 def genome_options(parser, user_option, prebuilt):
     """Dynamically checks if --genome option is a valid choice. Compares against a
     list of prebuilt or bundled genome reference genomes and accepts a custom reference
@@ -2468,11 +2473,18 @@ def parsed_arguments(name, description):
     # Add custom help message
     subparser_cache.add_argument("-h", "--help", action="help", help=argparse.SUPPRESS)
 
+    subparser_gui = subparsers.add_parser(
+        "gui",
+        help="Launch the RENEE pipeline with a Graphical User Interface (GUI)",
+        description="",
+    )
+
     # Define handlers for each sub-parser
     subparser_run.set_defaults(func=run)
     subparser_unlock.set_defaults(func=unlock)
     subparser_build.set_defaults(func=build)
     subparser_cache.set_defaults(func=cache)
+    subparser_gui.set_defaults(func=gui)
 
     # Parse command-line args
     args = parser.parse_args()
