@@ -70,8 +70,7 @@ jobs:
           current_semver = re.match(semver_pattern, current_version)
           groups = ['major', 'minor', 'patch']
           greater = sum([next_semver.group(grp) > current_semver.group(grp) for grp in groups])
-          equal = sum([next_semver.group(grp) == current_semver.group(grp) for grp in groups])
-          if not (greater == 1 and equal == 2):
+          if not (greater == 1):
             raise ValueError(f"Next version must only increment one number at a time. Current version: {current_version}. Proposed next version: {next_version}")
 
       - name: Get release notes, update changelog & version file
