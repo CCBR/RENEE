@@ -8,9 +8,6 @@ on:
         required: false
         type: string
         default: ""
-  push:
-    branches:
-      - release-draft
 
 env:
   GH_TOKEN: ${{ github.token }}
