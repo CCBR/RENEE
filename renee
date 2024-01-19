@@ -73,6 +73,7 @@ def get_hpcname():
 
 def get_tmp_dir(tmp_dir, outdir):
     """Get default temporary directory for biowulf and frce. Allow user override."""
+    hpc = get_hpcname()
     if not tmp_dir:
         if hpc == "biowulf":
             tmp_dir = "/lscratch/$SLURM_JOBID"
