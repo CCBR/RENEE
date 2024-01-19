@@ -1977,7 +1977,7 @@ def parsed_arguments(name, description):
         "--tmp-dir",
         type=str,
         required=False,
-        default="/lscratch/$SLURM_JOBID/",
+        default="",
         help=argparse.SUPPRESS,
     )
 
