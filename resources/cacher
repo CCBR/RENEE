@@ -8,7 +8,7 @@ USAGE:
 SYNOPSIS:
   This script submits the cacher master job to the cluster. This main process dictates
 how subsequent resources are pulled onto the cluster's filesystem. cacher utilizes SLURM
-to avoid pull into resources on a compute node but support for additional job schedulers 
+to avoid pull into resources on a compute node but support for additional job schedulers
 (i.e. PBS, SGE, LSF, Tibanna) may be added in the near future.
   The main entry point of the pipeline 'renee' calls this job submission wrapper script.
 As so, this script can be used to manually by-pass 'renee' for a previously failed cache.
@@ -25,14 +25,14 @@ Required Positional Argument:
                              most of the steps are computationally intensive.
 Required Arguments:
   -s, --sif-cache   [Type: Path]  Path to output directory to cache remote resources.
-  -i, --image-uris  [Type: Str]   Image(s) to pull from Dockerhub. Multiple images 
+  -i, --image-uris  [Type: Str]   Image(s) to pull from Dockerhub. Multiple images
                                    are seperated by a comma.
 OPTIONS:
   -t, --tmp-dir     [Type: Path]  Path to tmp singularity dir. Singularity uses this
                                    directory when images are pulled from DockerHub
-                                   and coverted into SIFs. If not provided, the 
-                                   location to the temp dir will default to the 
-                                   following "/tmp/$USER/cacher/.singularity/" 
+                                   and coverted into SIFs. If not provided, the
+                                   location to the temp dir will default to the
+                                   following "/tmp/$USER/cacher/.singularity/"
                                    directory.
   -h, --help        [Type: Bool]  Displays usage and help information.
 Example:
@@ -103,19 +103,19 @@ function check(){
 
 
 function retry() {
-  # Tries to run a cmd 5 times before failing 
+  # Tries to run a cmd 5 times before failing
   # If a command is successful, it will break out of attempt loop
-  # Failed attempts are padding with the following exponential 
+  # Failed attempts are padding with the following exponential
   # back-off strategy {4, 16, 64, 256, 1024} in seconds
-  # @INPUTS "$@"" = cmd to run 
+  # @INPUTS "$@"" = cmd to run
   # @CALLS fatal() if command cannot be run in 5 attempts
   local n=1
   local max=5
   local attempt=true # flag for while loop
   while $attempt; do
-    # Attempt command and break if successful 
+    # Attempt command and break if successful
     "$@" && attempt=false || {
-      # Try again up to 5 times 
+      # Try again up to 5 times
       if [[ $n -le $max ]]; then
         err "Command failed: $@"
         delay=$(( 4**$n ))
@@ -139,8 +139,8 @@ function _pull(){
 
   # Check if singularity in $PATH
   # If not, try to module load singularity as a last resort
-  command -V singularity &> /dev/null || { 
-    command -V module &> /dev/null && 
+  command -V singularity &> /dev/null || {
+    command -V module &> /dev/null &&
     module purge && module load singularity
   } || fatal "Fail to find or load 'singularity', not installed on target system."
 
@@ -159,7 +159,7 @@ function _pull(){
   case "$executor" in
     slurm)
           # Create directory for logfiles
-          for image in ${4//,/$'\t'}; do 
+          for image in ${4//,/$'\t'}; do
             # Try to pull image from URI with 5 max attempt
             echo "Singularity pulling ${image}"
             retry singularity pull -F ${image}
@@ -209,7 +209,7 @@ function main(){
   echo -e "Running with the following parameters:"
   for key in "${!Arguments[@]}"; do echo -e "\t${key}\t${Arguments["$key"]}"; done
 
-  # Pull remote resources into RENEE cache 
+  # Pull remote resources into RENEE cache
   # Cache remote image from DockerHub
   # INPUT $1 = Snakemake Mode of execution
   # INPUT $2 = Cache output directory

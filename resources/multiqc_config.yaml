@@ -2,7 +2,7 @@
 # eg. FastQC is usually the first step, so should be last in this list
 # USAGE: multiqc -f -c multiqc_config.yaml --interactive  -d ../  -n multiqc_report.html
 
-custom_logo: 'resources/nih-bnfo-logo.png'
+custom_logo: "resources/nih-bnfo-logo.png"
 
 fastqscreen_simpleplot: true
 
@@ -11,146 +11,145 @@ fn_ignore_files:
   - Log.final.out
 
 module_order:
-# Pre-alignment QC
-    - 'fastq_screen'
-    - 'kraken'
-    - 'fastqc':
-        name: 'FastQC'
-        info: 'This section of the report shows FastQC results before and after adapter trimming.'
-        path_filters:
-            - '*_fastqc.zip' 
-    - 'cutadapt'
-    - 'trimmomatic'
-# Alignment tool stats
-    - 'bismark'
-    - 'hicup'
-    - 'salmon'
-    - 'kallisto'
-    - 'star'
-    - 'tophat'
-    - 'bowtie2'
-    - 'bowtie1'
-# Post-alignment analysis results
-    - 'quast'
-    - 'preseq'
-    - 'rsem'
-    - 'snpeff'
-    - 'qualimap'
-    - 'bcftools'
-    - 'featureCounts'
-    - 'methylQA'
-    - 'rseqc'
-    - 'picard'
-    - 'prokka'
-    - 'samblaster'
-    - 'samtools'
-    - 'bamtools'
+  # Pre-alignment QC
+  - "fastq_screen"
+  - "kraken"
+  - "fastqc":
+      name: "FastQC"
+      info: "This section of the report shows FastQC results before and after adapter trimming."
+      path_filters:
+        - "*_fastqc.zip"
+  - "cutadapt"
+  - "trimmomatic"
+  # Alignment tool stats
+  - "bismark"
+  - "hicup"
+  - "salmon"
+  - "kallisto"
+  - "star"
+  - "tophat"
+  - "bowtie2"
+  - "bowtie1"
+  # Post-alignment analysis results
+  - "quast"
+  - "preseq"
+  - "rsem"
+  - "snpeff"
+  - "qualimap"
+  - "bcftools"
+  - "featureCounts"
+  - "methylQA"
+  - "rseqc"
+  - "picard"
+  - "prokka"
+  - "samblaster"
+  - "samtools"
+  - "bamtools"
 
 # Example of adding a comment
 #section_comments:
 #    featurecounts: 'This comment is for a module header, but should still work'
 #    star_alignments: 'This new way of commenting above sections is **awesome**!'
 
-
 table_columns_visible:
-    QualiMap:
-        avg_gc: False 
-        median_insert_size: True
-        30_x_pc: False
-    featureCounts:
-        percent_assigned: False
-        Assigned: False
+  QualiMap:
+    avg_gc: False
+    median_insert_size: True
+    30_x_pc: False
+  featureCounts:
+    percent_assigned: False
+    Assigned: False
 
 # Using MultiQC/1.9 extensions
-# for cleaning sample name to 
+# for cleaning sample name to
 # ensure backwards compatibility
 fn_clean_exts:
-    - '.gz'
-    - '.fastq'
-    - '.fq'
-    - '.bam'
-    - '.sam'
-    - '.sra'
-    - '.vcf'
-    - '.dat'
-    - '_tophat'
-    - '.log'
-    - '.stderr'
-    - '.out'
-    - '.spp'
-    - '.fa'
-    - '.fasta'
-    - '.png'
-    - '.jpg'
-    - '.jpeg'
-    - '.html'
-    - 'Log.final'
-    - 'ReadsPerGene'
-    - '.flagstat'
-    - '_star_aligned'
-    - '_fastqc'
-    - '.hicup'
-    - '.counts'
-    - '_counts'
-    - '.txt'
-    - '.tsv'
-    - '.csv'
-    - '.aligned'
-    - 'Aligned'
-    - '.merge'
-    - '.deduplicated'
-    - '.dedup'
-    - '.clean'
-    - '.sorted'
-    - '.report'
-    - '| stdin'
-    - '.geneBodyCoverage'
-    - '.inner_distance_freq'
-    - '.junctionSaturation_plot.r'
-    - '.pos.DupRate.xls'
-    - '.GC.xls'
-    - '_slamdunk'
-    - '_bismark'
-    - '.conpair'
-    - '.concordance'
-    - '.contamination'
-    - '.BEST.results'
-    - '_peaks.xls'
-    - '.relatedness'
-    - '.cnt'
-    - '.aqhist'
-    - '.bhist'
-    - '.bincov'
-    - '.bqhist'
-    - '.covhist'
-    - '.covstats'
-    - '.ehist'
-    - '.gchist'
-    - '.idhist'
-    - '.ihist'
-    - '.indelhist'
-    - '.lhist'
-    - '.mhist'
-    - '.qahist'
-    - '.qhist'
-    - '.rpkm'
-    - '.selfSM'
-    - '.extendedFrags'
-    - '_SummaryStatistics'
+  - ".gz"
+  - ".fastq"
+  - ".fq"
+  - ".bam"
+  - ".sam"
+  - ".sra"
+  - ".vcf"
+  - ".dat"
+  - "_tophat"
+  - ".log"
+  - ".stderr"
+  - ".out"
+  - ".spp"
+  - ".fa"
+  - ".fasta"
+  - ".png"
+  - ".jpg"
+  - ".jpeg"
+  - ".html"
+  - "Log.final"
+  - "ReadsPerGene"
+  - ".flagstat"
+  - "_star_aligned"
+  - "_fastqc"
+  - ".hicup"
+  - ".counts"
+  - "_counts"
+  - ".txt"
+  - ".tsv"
+  - ".csv"
+  - ".aligned"
+  - "Aligned"
+  - ".merge"
+  - ".deduplicated"
+  - ".dedup"
+  - ".clean"
+  - ".sorted"
+  - ".report"
+  - "| stdin"
+  - ".geneBodyCoverage"
+  - ".inner_distance_freq"
+  - ".junctionSaturation_plot.r"
+  - ".pos.DupRate.xls"
+  - ".GC.xls"
+  - "_slamdunk"
+  - "_bismark"
+  - ".conpair"
+  - ".concordance"
+  - ".contamination"
+  - ".BEST.results"
+  - "_peaks.xls"
+  - ".relatedness"
+  - ".cnt"
+  - ".aqhist"
+  - ".bhist"
+  - ".bincov"
+  - ".bqhist"
+  - ".covhist"
+  - ".covstats"
+  - ".ehist"
+  - ".gchist"
+  - ".idhist"
+  - ".ihist"
+  - ".indelhist"
+  - ".lhist"
+  - ".mhist"
+  - ".qahist"
+  - ".qhist"
+  - ".rpkm"
+  - ".selfSM"
+  - ".extendedFrags"
+  - "_SummaryStatistics"
 
 # These are removed after the above
 extra_fn_clean_exts:
-    - type: regex
-      pattern: 'QualiMap \| \w.* |'
-    - type: regex
-      pattern: 'DEG_ALL \| \w.* |'
-    - type: regex
-      pattern: 'STAR_files \|'
-    - type: regex
-      pattern: 'logfiles \|'
-    - type: remove
-      pattern: '.star_rg_added'
-    - type: remove
-      pattern: '.RSEM'
-    - type: remove
-      pattern: '.p2'
+  - type: regex
+    pattern: 'QualiMap \| \w.* |'
+  - type: regex
+    pattern: 'DEG_ALL \| \w.* |'
+  - type: regex
+    pattern: 'STAR_files \|'
+  - type: regex
+    pattern: 'logfiles \|'
+  - type: remove
+    pattern: ".star_rg_added"
+  - type: remove
+    pattern: ".RSEM"
+  - type: remove
+    pattern: ".p2"

@@ -1,6 +1,6 @@
 # Single-end snakemake rules imported in the main Snakefile.
 from scripts.common import (
-    abstract_location, 
+    abstract_location,
     allocated,
     references
 )
@@ -58,7 +58,7 @@ rule rawfastqc:
 
 if config['options']['small_rna']:
     # Run STAR with ENCODE's recommendations for small RNA sequencing.
-    # Set the min read legth to 
+    # Set the min read legth to
     rule trim_se:
         """
         Data-processing step to remove adapter sequences and perform quality trimming
@@ -224,13 +224,13 @@ rule kraken_se:
     container: config['images']['kraken']
     shell: """
     # Setups temporary directory for
-    # intermediate files with built-in 
+    # intermediate files with built-in
     # mechanism for deletion on exit
     if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
     tmp=$(mktemp -d -p "{params.tmpdir}")
     trap 'rm -rf "${{tmp}}"' EXIT
 
-    # Copy kraken2 db to /lscratch or temp 
+    # Copy kraken2 db to /lscratch or temp
     # location to reduce filesytem strain
     cp -rv {params.bacdb}/* ${{tmp}}/
     kraken2 --db ${{tmp}} \
@@ -299,7 +299,7 @@ if config['options']['star_2_pass_basic']:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -346,7 +346,7 @@ elif config['options']['small_rna']:
     rule star_small:
         """
         Data processing step to align reads against reference genome using STAR using
-        ENCODE's recommendations for small RNA. 
+        ENCODE's recommendations for small RNA.
         Please see this links for more information:
         https://www.encodeproject.org/pipelines/ENCPL337CSA/
         https://github.com/ENCODE-DCC/long-rna-seq-pipeline/tree/master/dnanexus/small-rna
@@ -393,7 +393,7 @@ elif config['options']['small_rna']:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -479,7 +479,7 @@ else:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -592,7 +592,7 @@ else:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -664,7 +664,7 @@ rule rsem:
     container: config['images']['rsem']
     shell: """
     # Setups temporary directory for
-    # intermediate files with built-in 
+    # intermediate files with built-in
     # mechanism for deletion on exit
     if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
     tmp=$(mktemp -d -p "{params.tmpdir}")
