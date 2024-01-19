@@ -1758,7 +1758,7 @@ def parsed_arguments(name, description):
                                 Path on the file system for writing temporary output
                                 files. By default, the temporary directory is set to
                                 '/lscratch/$SLURM_JOBID' on NIH's Biowulf cluster and
-                                'outdir' on the FRCE cluster.
+                                'OUTPUT' on the FRCE cluster.
                                 However, if you are running the pipeline on another cluster,
                                 this option will need to be specified.
                                 Ideally, this path should point to a dedicated location on

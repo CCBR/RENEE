@@ -169,7 +169,7 @@ Each of the following arguments are optional and do not need to be provided.
 > _type: path_  
 > _default: `/lscratch/$SLURM_JOBID`_
 >
-> Path on the file system for writing temporary output files. By default, the temporary directory is set to '/lscratch/$SLURM_JOBID' on NIH's Biowulf cluster and 'outdir' on the FRCE cluster. However, if you are running the pipeline on another cluster, this option will need to be specified. Ideally, this path should point to a dedicated location on the filesystem for writing tmp files. On many systems, this location is set to somewhere in /scratch. If you need to inject avariable into this string that should NOT be expanded,please quote this options value in single quotes.
+> Path on the file system for writing temporary output files. By default, the temporary directory is set to '/lscratch/$SLURM_JOBID' on NIH's Biowulf cluster and 'OUTPUT' on the FRCE cluster. However, if you are running the pipeline on another cluster, this option will need to be specified. Ideally, this path should point to a dedicated location on the filesystem for writing tmp files. On many systems, this location is set to somewhere in /scratch. If you need to inject avariable into this string that should NOT be expanded,please quote this options value in single quotes.
 >
 > **_Example:_** --tmp-dir '/cluster_scratch/$USER/'
 
