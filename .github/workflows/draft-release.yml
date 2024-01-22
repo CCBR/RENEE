@@ -132,8 +132,7 @@ jobs:
             --draft \
             --notes-file .github/latest-release.md \
             --target ${{ env.COMMIT_HASH }} \
-            --title "${{ github.event.repository.name }} ${{ env.NEXT_STRICT }}" \
-            --reviewer ${{ github.event.release.author.login }}
+            --title "${{ github.event.repository.name }} ${{ env.NEXT_STRICT }}"
 
       - name: Next steps
         run: |
