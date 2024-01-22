@@ -1,13 +1,15 @@
 # <code>renee <b>run</b></code>
 
-## 1. About 
+## 1. About
+
 The `renee` executable is composed of several inter-related sub commands. Please see `renee -h` for all available options.
 
-This part of the documentation describes options and concepts for <code>renee <b>run</b></code> sub command in more detail. With minimal configuration, the **`run`** sub command enables you to start running the data processing and quality-control pipeline. 
+This part of the documentation describes options and concepts for <code>renee <b>run</b></code> sub command in more detail. With minimal configuration, the **`run`** sub command enables you to start running the data processing and quality-control pipeline.
 
-Setting up the RENEE pipeline is fast and easy! In its most basic form, <code>renee <b>run</b></code> only has *three required inputs*.
+Setting up the RENEE pipeline is fast and easy! In its most basic form, <code>renee <b>run</b></code> only has _three required inputs_.
 
 ## 2. Synopsis
+
 ```text
 $ renee run [--help] \
             [--small-rna] [--star-2-pass-basic] \
@@ -26,163 +28,183 @@ The synopsis for each command shows its parameters and their usage. Optional par
 
 A user **must** provide a list of FastQ files (globbing is supported) to analyze via `--input` argument, an output directory to store results via `--output` argument and select reference genome for alignment and annotation via the `--genome` argument. If you are running the pipeline outside of Biowulf, you will need to additionally provide the the following options: `--shared-resources`, `--tmp-dir`. More information about each of these options can be found below.
 
-Use you can always use the `-h` option for information on a specific sub command.  
+Use you can always use the `-h` option for information on a specific sub command.
 
 ### 2.1 Required Arguments
 
 Each of the following arguments are required. Failure to provide a required argument will result in a non-zero exit-code.
 
-  `--input INPUT [INPUT ...]`  
+`--input INPUT [INPUT ...]`
+
 > **Input FastQ file(s) to process.**  
-> *type: file*  
-> 
-> One or more FastQ files can be provided. From the command-line, each FastQ file should seperated by a space. Globbing is supported! This makes selecting FastQ files easier. Input FastQ files should be gzipp-ed. The pipeline supports single-end and pair-end RNA-seq data; however, the pipeline will not process a mixture of single-end and paired-end samples together. If you have a mixture of single-end and pair-end samples to process, please process them as two seperate instances of the RENEE pipeline (with two seperate output directories).   
-> 
-> ***Example:*** `--input .tests/*.R?.fastq.gz`
-
----  
-  `--output OUTPUT`
-> **Path to an output directory.**   
-> *type: path*
->   
-> This location is where the pipeline will create all of its output files, also known as the pipeline's working directory. If the provided output directory does not exist, it will be initialized automatically.
-> 
-> ***Example:*** `--output /data/$USER/RNA_hg38`
-
----  
-  `--genome {hg38_30,mm10_M21,custom.json}`
-> **Reference genome.**   
-> *type: string or file*
->   
-> This option defines the reference genome for your set of samples. On Biowulf, RENEE does comes bundled with pre built reference files for human and mouse samples; however, it is worth noting that the pipeline does accept a custom reference genome built with the build sub command. Building a new reference genome is easy! You can create a custom reference genome with a single command. This is extremely useful when working with non-model organisms. New users can reference the documentation's [getting started](../TLDR-RNA-seq/#3-building-reference-files) section to see how a reference genome is built. 
+> _type: file_
 >
-> ***Pre built Option***  
+> One or more FastQ files can be provided. From the command-line, each FastQ file should seperated by a space. Globbing is supported! This makes selecting FastQ files easier. Input FastQ files should be gzipp-ed. The pipeline supports single-end and pair-end RNA-seq data; however, the pipeline will not process a mixture of single-end and paired-end samples together. If you have a mixture of single-end and pair-end samples to process, please process them as two seperate instances of the RENEE pipeline (with two seperate output directories).
+>
+> **_Example:_** `--input .tests/*.R?.fastq.gz`
+
+---
+
+`--output OUTPUT`
+
+> **Path to an output directory.**  
+> _type: path_
+>
+> This location is where the pipeline will create all of its output files, also known as the pipeline's working directory. If the provided output directory does not exist, it will be initialized automatically.
+>
+> **_Example:_** `--output /data/$USER/RNA_hg38`
+
+---
+
+`--genome {hg38_30,mm10_M21,custom.json}`
+
+> **Reference genome.**  
+> _type: string or file_
+>
+> This option defines the reference genome for your set of samples. On Biowulf, RENEE does comes bundled with pre built reference files for human and mouse samples; however, it is worth noting that the pipeline does accept a custom reference genome built with the build sub command. Building a new reference genome is easy! You can create a custom reference genome with a single command. This is extremely useful when working with non-model organisms. New users can reference the documentation's [getting started](../TLDR-RNA-seq/#3-building-reference-files) section to see how a reference genome is built.
+>
+> **_Pre built Option_**  
 > Pre build genomes are avaiable with RENEE. Please see the [resources page](../Resources/#1.-Reference-genomes) for more information about each pre built option.
 >
-> ***Custom Option***   
-> A user can also supply a custom reference genome built with the build sub command. Please supply the custom reference JSON file that was generated by the build sub command. The name of this custom reference JSON file is dependent on the values provided to the following *renee build* args, `--ref-name REF_NAME` and `--gtf-ver GTF_VER`, where the name of the provided custom reference JSON file would be: `{REF_NAME}_{GTF_VER}.json`.
->   
-> ***Example:*** `--genome hg38_30` *OR* `--genome /data/${USER}/hg38_36/hg38_36.json`  
+> **_Custom Option_**  
+> A user can also supply a custom reference genome built with the build sub command. Please supply the custom reference JSON file that was generated by the build sub command. The name of this custom reference JSON file is dependent on the values provided to the following _renee build_ args, `--ref-name REF_NAME` and `--gtf-ver GTF_VER`, where the name of the provided custom reference JSON file would be: `{REF_NAME}_{GTF_VER}.json`.
+>
+> **_Example:_** `--genome hg38_30` _OR_ `--genome /data/${USER}/hg38_36/hg38_36.json`
 
 ### 2.2 Analysis Options
 
-  `--small-rna`  
-> **Run STAR using ENCODE's recomendations for small RNA.**  
-> *type: boolean*
-> 
-> This option should only be used with small RNA libraries. These are rRNA-depleted libraries that have been size selected to contain fragments shorter than 200bp. Size selection enriches for small RNA species such as miRNAs, siRNAs, or piRNAs. Also, this option should not be combined with the star 2-pass basic option. If the two options are combined, STAR will run in pass basic mode. This means that STAR will not run with ENCODE's recommendations for small RNA alignment. As so, please take caution not to combine both options together. 
-> 
-> Please note: This option is only supported with single-end data. 
->
-> ***Example:*** `--small-rna`
+`--small-rna`
 
----  
-  `--star-2-pass-basic`  
+> **Run STAR using ENCODE's recomendations for small RNA.**  
+> _type: boolean_
+>
+> This option should only be used with small RNA libraries. These are rRNA-depleted libraries that have been size selected to contain fragments shorter than 200bp. Size selection enriches for small RNA species such as miRNAs, siRNAs, or piRNAs. Also, this option should not be combined with the star 2-pass basic option. If the two options are combined, STAR will run in pass basic mode. This means that STAR will not run with ENCODE's recommendations for small RNA alignment. As so, please take caution not to combine both options together.
+>
+> Please note: This option is only supported with single-end data.
+>
+> **_Example:_** `--small-rna`
+
+---
+
+`--star-2-pass-basic`
+
 > **Run STAR in per sample 2-pass mapping mode.**  
-> *type: boolean*
-> 
-> It is recommended to use this option when processing a set of unrelated samples or when processing samples in a clinical setting. It is not adivsed to use this option for a study with multiple related samples. 
-> 
+> _type: boolean_
+>
+> It is recommended to use this option when processing a set of unrelated samples or when processing samples in a clinical setting. It is not adivsed to use this option for a study with multiple related samples.
+>
 > By default, the pipeline ultilizes a multi sample 2-pass mapping approach where the set of splice junctions detected across all samples are provided to the second pass of STAR. This option overrides the default behavior so each sample will be processed in a per sample two-pass basic mode. This option should not be combined with the small RNA option. If the two options are combined, STAR will run in pass basic mode.
-> 
-> ***Example:*** `--star-2-pass-basic`
+>
+> **_Example:_** `--star-2-pass-basic`
 
 ### 2.3 Orchestration Options
 
-Each of the following arguments are optional and do not need to be provided. 
-  
-  `--dry-run`            
+Each of the following arguments are optional and do not need to be provided.
+
+`--dry-run`
+
 > **Dry run the pipeline.**  
-> *type: boolean*
-> 
+> _type: boolean_
+>
 > Displays what steps in the pipeline remain or will be run. Does not execute anything!
 >
-> ***Example:*** `--dry-run`
+> **_Example:_** `--dry-run`
 
----  
-  `--mode {slurm,local}`  
-> **Execution Method.** 
-> *type: string*  
-> *default: slurm*  
-> 
-> Execution Method. Defines the mode or method of execution. Vaild mode options include: slurm or local. 
-> 
-> ***local***  
-> Local executions will run serially on compute instance. This is useful for testing, debugging, or when a users does not have access to a high performance computing environment. If this option is not provided, it will default to a local execution mode. 
-> 
-> ***slurm***    
+---
+
+`--mode {slurm,local}`
+
+> **Execution Method.** > _type: string_  
+> _default: slurm_
+>
+> Execution Method. Defines the mode or method of execution. Vaild mode options include: slurm or local.
+>
+> **_local_**  
+> Local executions will run serially on compute instance. This is useful for testing, debugging, or when a users does not have access to a high performance computing environment. If this option is not provided, it will default to a local execution mode.
+>
+> **_slurm_**  
 > The slurm execution method will submit jobs to a cluster using a slurm + singularity backend. This method will automatically submit the master job to the cluster. It is recommended running RENEE in this mode as execution will be significantly faster in a distributed environment.
-> 
-> ***Example:*** `--mode slurm`
+>
+> **_Example:_** `--mode slurm`
 
----  
-  `--shared-resources SHARED_RESOURCES`  
+---
+
+`--shared-resources SHARED_RESOURCES`
+
 > **Local path to shared resources.**  
-> *type: path*
+> _type: path_
 >
-> The pipeline uses a set of shared reference files that can be re-used across reference genomes. These currently include reference files for kraken and FQScreen. These reference files can be downloaded with the build sub command's `--shared-resources`  option. With that being said, these files only need to be downloaded once. We recommend storing this files in a shared location on the filesystem that other people can access. If you are running the pipeline on Biowulf, you do NOT need to download these reference files! They already exist on the filesystem in a location that anyone can acceess; however, if you are running the pipeline on another cluster or target system, you will need to download the shared resources with the build sub command, and you will need to provide this option every time you run the pipeline. Please provide the same path that was provided to the build sub command's --shared-resources option. Again, if you are running the pipeline on Biowulf, you do NOT need to provide this option. For more information about how to download shared resources, please reference the build sub command's `--shared-resources` option.
-> 
-> ***Example:*** `--shared-resources /data/shared/renee`
+> The pipeline uses a set of shared reference files that can be re-used across reference genomes. These currently include reference files for kraken and FQScreen. These reference files can be downloaded with the build sub command's `--shared-resources` option. With that being said, these files only need to be downloaded once. We recommend storing this files in a shared location on the filesystem that other people can access. If you are running the pipeline on Biowulf, you do NOT need to download these reference files! They already exist on the filesystem in a location that anyone can acceess; however, if you are running the pipeline on another cluster or target system, you will need to download the shared resources with the build sub command, and you will need to provide this option every time you run the pipeline. Please provide the same path that was provided to the build sub command's --shared-resources option. Again, if you are running the pipeline on Biowulf, you do NOT need to provide this option. For more information about how to download shared resources, please reference the build sub command's `--shared-resources` option.
+>
+> **_Example:_** `--shared-resources /data/shared/renee`
 
----  
-  `--singularity-cache SINGULARITY_CACHE`  
+---
+
+`--singularity-cache SINGULARITY_CACHE`
+
 > **Overrides the $SINGULARITY_CACHEDIR environment variable.**  
-> *type: path*  
-> *default: `--output OUTPUT/.singularity`*
+> _type: path_  
+> _default: `--output OUTPUT/.singularity`_
 >
-> Singularity will cache image layers pulled from remote registries. This ultimately speeds up the process of pull an image from DockerHub if an image layer already exists in the singularity cache directory. By default, the cache is set to the value provided to the `--output` argument. Please note that this cache cannot be shared across users. Singularity strictly enforces you own the cache directory and will return a non-zero exit code if you do not own the cache directory! See the `--sif-cache` option to create a shareable resource. 
-> 
-> ***Example:*** `--singularity-cache /data/$USER/.singularity`
+> Singularity will cache image layers pulled from remote registries. This ultimately speeds up the process of pull an image from DockerHub if an image layer already exists in the singularity cache directory. By default, the cache is set to the value provided to the `--output` argument. Please note that this cache cannot be shared across users. Singularity strictly enforces you own the cache directory and will return a non-zero exit code if you do not own the cache directory! See the `--sif-cache` option to create a shareable resource.
+>
+> **_Example:_** `--singularity-cache /data/$USER/.singularity`
 
----  
-  `--sif-cache SIF_CACHE`
+---
+
+`--sif-cache SIF_CACHE`
+
 > **Path where a local cache of SIFs are stored.**  
-> *type: path*  
+> _type: path_
 >
 > Uses a local cache of SIFs on the filesystem. This SIF cache can be shared across users if permissions are set correctly. If a SIF does not exist in the SIF cache, the image will be pulled from Dockerhub and a warning message will be displayed. The `renee cache` subcommand can be used to create a local SIF cache. Please see `renee cache` for more information. This command is extremely useful for avoiding DockerHub pull rate limits. It also remove any potential errors that could occur due to network issues or DockerHub being temporarily unavailable. We recommend running RENEE with this option when ever possible.
-> 
-> ***Example:*** `--singularity-cache /data/$USER/SIFs`
+>
+> **_Example:_** `--singularity-cache /data/$USER/SIFs`
 
----  
-  `--tmp-dir TMP_DIR`   
+---
+
+`--tmp-dir TMP_DIR`
+
 > **Path on the file system for writing temporary files.**  
-> *type: path*  
-> *default: `/lscratch/$SLURM_JOBID`*
-> 
-> This is a path on the file system for writing temporary output files. By default, the temporary directory is set to '/lscratch/$SLURM_JOBID' for backwards compatibility with the NIH's Biowulf cluster; however, if you are running the pipeline on another cluster, this option will need to be specified. Ideally, this path should point to a dedicated location on the filesystem for writing tmp files. On many systems, this location is set to somewhere in /scratch. If you need to inject a variable into this string that should NOT be expanded, please quote this options value in single quotes. Again, if you are running the pipeline on Biowulf, you do NOT need to provide this option. 
-> 
-> ***Example:*** `--tmp-dir /cluster_scratch/$USER/`
+> _type: path_  
+> _default: `/lscratch/$SLURM_JOBID`_
+>
+> Path on the file system for writing temporary output files. By default, the temporary directory is set to '/lscratch/$SLURM_JOBID' on NIH's Biowulf cluster and 'OUTPUT' on the FRCE cluster. However, if you are running the pipeline on another cluster, this option will need to be specified. Ideally, this path should point to a dedicated location on the filesystem for writing tmp files. On many systems, this location is set to somewhere in /scratch. If you need to inject avariable into this string that should NOT be expanded,please quote this options value in single quotes.
+>
+> **_Example:_** --tmp-dir '/cluster_scratch/$USER/'
 
----  
-  `--threads THREADS`   
+---
+
+`--threads THREADS`
+
 > **Max number of threads for each process.**  
-> *type: int*  
-> *default: 2*
-> 
-> Max number of threads for each process. This option is more applicable when running the pipeline with `--mode local`.  It is recommended setting this vaule to the maximum number of CPUs available on the host machine.
-> 
-> ***Example:*** `--threads 12`
+> _type: int_  
+> _default: 2_
+>
+> Max number of threads for each process. This option is more applicable when running the pipeline with `--mode local`. It is recommended setting this vaule to the maximum number of CPUs available on the host machine.
+>
+> **_Example:_** `--threads 12`
 
 ### 2.4 Misc Options
 
-Each of the following arguments are optional and do not need to be provided. 
+Each of the following arguments are optional and do not need to be provided.
 
-  `-h, --help`            
+`-h, --help`
+
 > **Display Help.**  
-> *type: boolean*
-> 
+> _type: boolean_
+>
 > Shows command's synopsis, help message, and an example command
-> 
-> ***Example:*** `--help`
-
+>
+> **_Example:_** `--help`
 
 ## 3. Example
 
-### 3.1 Biowulf  
+### 3.1 Biowulf
 
-On Biowulf getting started with the pipeline is fast and easy! The pipeline comes bundled with pre-built human and mouse reference genomes. In the example below, we will use the pre-built human reference genome. 
+On Biowulf getting started with the pipeline is fast and easy! The pipeline comes bundled with pre-built human and mouse reference genomes. In the example below, we will use the pre-built human reference genome.
 
-```bash 
+```bash
 # Step 0.) Grab an interactive node (do not run on head node)
 srun -N 1 -n 1 --time=12:00:00 -p interactive --mem=8gb  --cpus-per-task=4 --pty bash
 module purge
@@ -210,9 +232,9 @@ renee run --input .tests/*.R?.fastq.gz \
 
 ### 3.2 Generic SLURM Cluster
 
-Running the pipeline outside of Biowulf is easy; however, there are a few extra steps you must first take. Before getting started, you will need to [build](../TLDR-RNA-seq/#3-building-reference-files) reference files for the pipeline. Please note when running the build sub command for the first time, you will also need to provide the `--shared-resources` option. This option will download our kraken2 database and bowtie2 indices for FastQ Screen. The path provided to this option should be provided to the `--shared-resources` option of the run sub command. Next, you will also need to provide a path to write temporary output files via the `--tmp-dir` option. We also recommend providing a path to a SIF cache. You can cache software containers locally with the [cache](../cache/) sub command. 
+Running the pipeline outside of Biowulf is easy; however, there are a few extra steps you must first take. Before getting started, you will need to [build](../TLDR-RNA-seq/#3-building-reference-files) reference files for the pipeline. Please note when running the build sub command for the first time, you will also need to provide the `--shared-resources` option. This option will download our kraken2 database and bowtie2 indices for FastQ Screen. The path provided to this option should be provided to the `--shared-resources` option of the run sub command. Next, you will also need to provide a path to write temporary output files via the `--tmp-dir` option. We also recommend providing a path to a SIF cache. You can cache software containers locally with the [cache](../cache/) sub command.
 
-```bash 
+```bash
 # Step 0.) Grab an interactive node (do not run on head node)
 srun -N 1 -n 1 --time=2:00:00 -p interactive --mem=8gb  --cpus-per-task=4 --pty bash
 # Add snakemake and singularity to $PATH,

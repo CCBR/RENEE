@@ -45,7 +45,7 @@ except AssertionError:
 
 
 def scontrol_show():
-    """ Run scontrol show config and parse the output as a dictionary
+    """Run scontrol show config and parse the output as a dictionary
     @return scontrol_dict <dict>:
     """
     scontrol_dict = dict()
@@ -61,24 +61,39 @@ def scontrol_show():
 
 
 def get_hpcname():
-    """ Get the HPC name (biowulf, frce, or an empty string)
+    """Get the HPC name (biowulf, frce, or an empty string)
     @return hpcname <str>
     """
     scontrol_out = scontrol_show()
-    hpc = scontrol_out["ClusterName"] if "ClusterName" in scontrol_out.keys() else ''
-    if hpc == 'fnlcr':
-        hpc = 'frce'
+    hpc = scontrol_out["ClusterName"] if "ClusterName" in scontrol_out.keys() else ""
+    if hpc == "fnlcr":
+        hpc = "frce"
     return hpc
 
 
-def get_genomes_list(renee_path, hpcname = get_hpcname()):
-    """ Get list of genome annotations available for the current platform
+def get_tmp_dir(tmp_dir, outdir):
+    """Get default temporary directory for biowulf and frce. Allow user override."""
+    hpc = get_hpcname()
+    if not tmp_dir:
+        if hpc == "biowulf":
+            tmp_dir = "/lscratch/$SLURM_JOBID"
+        elif hpc == "frce":
+            tmp_dir = outdir
+        else:
+            tmp_dir = None
+    return tmp_dir
+
+
+def get_genomes_list(renee_path, hpcname=get_hpcname()):
+    """Get list of genome annotations available for the current platform
     @return genomes_list <list>
     """
     genome_config_dir = os.path.join(renee_path, "config", "genomes", hpcname)
     json_files = glob.glob(genome_config_dir + "/*.json")
     if not json_files:
-        warnings.warn(f"WARNING: No Genome Annotation JSONs found in {genome_config_dir}. Please specify a custom genome json file with `--genome`")
+        warnings.warn(
+            f"WARNING: No Genome Annotation JSONs found in {genome_config_dir}. Please specify a custom genome json file with `--genome`"
+        )
     genomes = [os.path.basename(file).replace(".json", "") for file in json_files]
     return sorted(genomes)
 
@@ -722,16 +737,20 @@ def setup(sub_args, ifiles, repo_path, output_path):
         "genome": genome_config,
         # Template for tool information
         "tools": os.path.join(output_path, "config", "templates", "tools.json"),
-    }   
+    }
 
     # Global config file for pipeline, config.json
     config = join_jsons(required.values())  # uses templates in the renee repo
     # Update cluster-specific paths for fastq screen & kraken db
-    if hpcname == 'biowulf' or hpcname == 'frce':
-        db_json_filename = os.path.join(output_path, 'config', 'templates', f"dbs_{hpcname}.json")
-        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), db_json_filename), "r") as json_file:
-            config['bin']['rnaseq']['tool_parameters'].update(json.load(json_file))
-
+    if hpcname == "biowulf" or hpcname == "frce":
+        db_json_filename = os.path.join(
+            output_path, "config", "templates", f"dbs_{hpcname}.json"
+        )
+        with open(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), db_json_filename),
+            "r",
+        ) as json_file:
+            config["bin"]["rnaseq"]["tool_parameters"].update(json.load(json_file))
 
     config = add_user_information(config)
     config = add_rawdata_information(sub_args, config, ifiles)
@@ -752,7 +771,7 @@ def setup(sub_args, ifiles, repo_path, output_path):
     config["options"] = {}
     config["options"]["star_2_pass_basic"] = sub_args.star_2_pass_basic
     config["options"]["small_rna"] = sub_args.small_rna
-    config["options"]["tmp_dir"] = sub_args.tmp_dir
+    config["options"]["tmp_dir"] = get_tmp_dir(sub_args.tmp_dir, output_path)
     config["options"]["shared_resources"] = sub_args.shared_resources
     if sub_args.wait:
         config["options"]["wait"] = "True"
@@ -864,7 +883,7 @@ def orchestrate(
     threads=2,
     submission_script="runner",
     masterjob="pl:renee",
-    tmp_dir="/lscratch/$SLURM_JOBID/",
+    tmp_dir=None,
     wait="",
     hpcname="",
 ):
@@ -907,6 +926,8 @@ def orchestrate(
     # the container's filesystem, like
     # tmp directories, /lscratch
     addpaths = []
+    # set tmp_dir depending on hpc
+    tmp_dir = get_tmp_dir(tmp_dir, outdir)
     temp = os.path.dirname(tmp_dir.rstrip("/"))
     if temp == os.sep:
         temp = tmp_dir.rstrip("/")
@@ -1084,22 +1105,28 @@ def run(sub_args):
 
     # hpcname is either biowulf, frce, or blank
     hpcname = get_hpcname()
-    if sub_args.runmode == 'init' or not os.path.exists(os.path.join(sub_args.output, 'config.json')):
+    if sub_args.runmode == "init" or not os.path.exists(
+        os.path.join(sub_args.output, "config.json")
+    ):
         # Initialize working directory, copy over required pipeline resources
-        input_files = initialize(sub_args, repo_path=git_repo, output_path=sub_args.output)
+        input_files = initialize(
+            sub_args, repo_path=git_repo, output_path=sub_args.output
+        )
 
         # Step pipeline for execution, create config.json config file from templates
         config = setup(
-            sub_args, ifiles=input_files, repo_path=git_repo, output_path=sub_args.output
+            sub_args,
+            ifiles=input_files,
+            repo_path=git_repo,
+            output_path=sub_args.output,
         )
     # load config from existing file
     else:
         with open(os.path.join(sub_args.output, "config.json"), "r") as config_file:
             config = json.load(config_file)
-        
 
     # ensure the working dir is read/write friendly
-    scripts_path = os.path.join(sub_args.output,'workflow','scripts')
+    scripts_path = os.path.join(sub_args.output, "workflow", "scripts")
     os.chmod(scripts_path, 0o755)
 
     # Optional Step: Dry-run pipeline
@@ -1133,7 +1160,7 @@ def run(sub_args):
         list(config["references"]["rnaseq"].values()) + fq_screen_paths + kraken_db_path
     )
     all_bind_paths = "{},{}".format(",".join(genome_bind_paths), rawdata_bind_paths)
-    
+
     if sub_args.dry_run:  # print singularity bind baths and exit
         print("\nSingularity Bind Paths:{}".format(all_bind_paths))
         sys.exit(0)
@@ -1145,7 +1172,7 @@ def run(sub_args):
         additional_bind_paths=all_bind_paths,
         alt_cache=sub_args.singularity_cache,
         threads=sub_args.threads,
-        tmp_dir=sub_args.tmp_dir,
+        tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
         wait=wait,
         hpcname=hpcname,
     )
@@ -1286,8 +1313,10 @@ def _configure(sub_args, filename, git_repo):
                 fh.write('  {}: "{}"\n'.format(tag, uri))
     print("Done!")
 
+
 def _reset_write_permission(target):
-    os.system("chmod -R u+w,g-w,o-w "+target)
+    os.system("chmod -R u+w,g-w,o-w " + target)
+
 
 def configure_build(sub_args, git_repo, output_path):
     """Setups up working directory for build option and creates config file (build.yml)
@@ -1393,7 +1422,7 @@ def build(sub_args):
         alt_cache=sub_args.singularity_cache,
         submission_script="builder",
         masterjob="pl:build",
-        tmp_dir=sub_args.tmp_dir,
+        tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
         wait=wait,
         hpcname=hpcname,
     )
@@ -1729,12 +1758,13 @@ def parsed_arguments(name, description):
           --tmp-dir TMP_DIR
                                 Path on the file system for writing temporary output
                                 files. By default, the temporary directory is set to
-                                '/lscratch/$SLURM_JOBID' for backwards compatibility
-                                with the NIH's Biowulf cluster; however, if you are
-                                running the pipeline on another cluster, this option
-                                will need to be specified. Ideally, this path should
-                                point to a dedicated location on the filesystem for
-                                writing tmp files. On many systems, this location is
+                                '/lscratch/$SLURM_JOBID' on NIH's Biowulf cluster and
+                                'OUTPUT' on the FRCE cluster.
+                                However, if you are running the pipeline on another cluster,
+                                this option will need to be specified.
+                                Ideally, this path should point to a dedicated location on
+                                the filesystem for writing tmp files.
+                                On many systems, this location is
                                 set to somewhere in /scratch. If you need to inject a
                                 variable into this string that should NOT be expanded,
                                 please quote this options value in single quotes.
@@ -1825,9 +1855,7 @@ def parsed_arguments(name, description):
     subparser_run.add_argument(
         "--genome",
         required=True,
-        type=lambda option: str(
-            genome_options(subparser_run, option, GENOMES_LIST)
-        ),
+        type=lambda option: str(genome_options(subparser_run, option, GENOMES_LIST)),
         help=argparse.SUPPRESS,
     )
 
@@ -1865,16 +1893,17 @@ def parsed_arguments(name, description):
         default=False,
         help=argparse.SUPPRESS,
     )
-    subparser_run.add_argument('--runmode',
+    subparser_run.add_argument(
+        "--runmode",
         # Determines how to run the pipeline: init, run
         # TODO: this API is different from XAVIER & CARLISLE, which have a --runmode=dryrun option instead of a --dry-run flag.
-        required = False,
-        default = 'run',
-        choices = ['init','run'],
-        type = str,
-        help = argparse.SUPPRESS
+        required=False,
+        default="run",
+        choices=["init", "run"],
+        type=str,
+        help=argparse.SUPPRESS,
     )
-    
+
     # Execution Method, run locally
     # on a compute node or submit to
     # a supported job scheduler, etc.
@@ -1949,7 +1978,7 @@ def parsed_arguments(name, description):
         "--tmp-dir",
         type=str,
         required=False,
-        default="/lscratch/$SLURM_JOBID/",
+        default="",
         help=argparse.SUPPRESS,
     )
 
@@ -2073,24 +2102,25 @@ def parsed_arguments(name, description):
                                 Example: --sif-cache /data/$USER/sifs/
 
           --tmp-dir TMP_DIR
-                              Path on the file system for writing temporary output
-                              files. By default, the temporary directory is set to
-                              '/lscratch/$SLURM_JOBID' for backwards compatibility
-                              with the NIH's Biowulf cluster; however, if you are
-                              running the pipeline on another cluster, this option
-                              will need to be specified. Ideally, this path should
-                              point to a dedicated location on the filesystem for
-                              writing tmp files. On many systems, this location is
-                              set to somewhere in /scratch. If you need to inject a
-                              variable into this string that should NOT be expanded,
-                              please quote this options value in single quotes.
+                            Path on the file system for writing temporary output
+                            files. By default, the temporary directory is set to
+                            '/lscratch/$SLURM_JOBID' on NIH's Biowulf cluster and
+                            'outdir' on the FRCE cluster.
+                            However, if you are running the pipeline on another cluster,
+                            this option will need to be specified.
+                            Ideally, this path should point to a dedicated location on
+                            the filesystem for writing tmp files.
+                            On many systems, this location is
+                            set to somewhere in /scratch. If you need to inject a
+                            variable into this string that should NOT be expanded,
+                            please quote this options value in single quotes.
                                 Example: --tmp-dir '/cluster_scratch/$USER/'
 
           --wait
                                 Wait until master job completes. This is required if
                                 the job is submitted using HPC API. If not provided
                                 the API may interpret submission of master job as
-                                completion of the pipeline!                                
+                                completion of the pipeline!
 
         {1}{2}Misc Options:{4}
           -h, --help          Show usage information, help message, and exit.
@@ -2258,7 +2288,6 @@ def parsed_arguments(name, description):
                                 the API may interpret submission of master job as \
                                 completion of the pipeline!",
     )
-
 
     # Sub-parser for the "unlock" sub-command
     # Grouped sub-parser arguments are currently
