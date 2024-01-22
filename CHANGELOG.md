@@ -1,5 +1,7 @@
 ## RENEE development version
 
+## RENEE 2.5.11
+
 - Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
 - Fix: set HPC-specific fastq screen config and kraken DB paths for Biowulf and FRCE. (#78, @kelly-sovacool)
   - Previously, FRCE users were required to set `--shared-resources`,
