@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Minor documentation improvements. (#100, @kelly-sovacool)
+
 ## RENEE 2.5.11
 
 - Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
