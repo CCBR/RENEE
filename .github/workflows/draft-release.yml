@@ -4,7 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       version_tag:
-        description: Semantic version tag for next release. If not provided, it will be determined based on conventional commit history.
+        description: |
+          Semantic version tag for next release.
+          If not provided, it will be determined based on conventional commit history.
+          Example: v2.5.11
         required: false
         type: string
         default: ""
@@ -61,7 +64,10 @@ jobs:
           semver_pattern = 'v(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?'
           next_semver = re.match(semver_pattern, next_version)
           if not next_semver:
-            raise ValueError(f"Tag {next_version} does not match semantic versioning guidelines")
+            extra_msg = ''
+            if not next_version.startswith('v'):
+              extra_msg = "The tag does not start with 'v'."
+            raise ValueError(f"Tag {next_version} does not match semantic versioning guidelines. {extra_msg}\nView the guidelines here: https://semver.org/")
 
           # assert next version is only 1 greater than current
           current_semver = re.match(semver_pattern, current_version)
@@ -109,7 +115,7 @@ jobs:
           citation._implementation.cffobj['version'] = "${{ env.NEXT_VERSION }}"
           citation._implementation.cffobj['date-released'] = "${{ env.DATE }}"
           with open('CITATION.cff', 'w') as outfile:
-            outfile.write(yaml.dump(citation._implementation.cffobj, sort_keys=False))
+            outfile.write(yaml.dump(citation._implementation.cffobj, sort_keys=False, indent=2))
 
       - name: Commit & push to branch
         run: |
@@ -132,8 +138,7 @@ jobs:
             --draft \
             --notes-file .github/latest-release.md \
             --target ${{ env.COMMIT_HASH }} \
-            --title "${{ github.event.repository.name }} ${{ env.NEXT_STRICT }}" \
-            --reviewer ${{ github.event.release.author.login }}
+            --title "${{ github.event.repository.name }} ${{ env.NEXT_STRICT }}"
 
       - name: Next steps
         run: |
