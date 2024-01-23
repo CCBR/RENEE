@@ -36,6 +36,11 @@ jobs:
           with open('VERSION', 'w') as outfile:
             outfile.write(f"{version}-dev\n")
 
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: --files CITATION.cff CHANGELOG.md VERSION
+        continue-on-error: true
+
       - name: Open pull request
         run: |
           git add CHANGELOG.md VERSION
