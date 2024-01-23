@@ -115,7 +115,7 @@ jobs:
           citation._implementation.cffobj['version'] = "${{ env.NEXT_VERSION }}"
           citation._implementation.cffobj['date-released'] = "${{ env.DATE }}"
           with open('CITATION.cff', 'w') as outfile:
-            outfile.write(yaml.dump(citation._implementation.cffobj, sort_keys=False))
+            outfile.write(yaml.dump(citation._implementation.cffobj, sort_keys=False, indent=2))
 
       - name: Commit & push to branch
         run: |
