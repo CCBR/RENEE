@@ -2,6 +2,12 @@
 
 <b>R</b>na s<b>E</b>quencing a<b>N</b>alysis pip<b>E</b>lin<b>E</b> or **RENEE** is an open-source, reproducible, and scalable solution for analyzing RNA-sequencing data.
 
+
+[![Tests](https://github.com/CCBR/RENEE/actions/workflows/main.yaml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/main.yaml)
+[![mkdocs](https://github.com/CCBR/RENEE/actions/workflows/docs.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/docs.yml)
+[![DOI](https://zenodo.org/badge/447297455.svg)](https://zenodo.org/doi/10.5281/zenodo.10553198)
+
+
 > NOTE: Currently, RENEE takes sequencing FASTQ files as input and generates **genes** X **samples** _counts matrix_ as one of the outputs. Differential Gene Expression or DEG analysis can be performed by uploading the counts matrix to [NIDAP](https://nidap.nih.gov/workspace/slate/documents/nidap-home) or [iDEP](http://bioinformatics.sdstate.edu/idep/)
 
 ## 1. Introduction
