@@ -16,7 +16,7 @@ def get_value(mykey, lookup):
     return myvalue.strip('"').strip("'")
 
 
-def seperated(pairslist):
+def separated(pairslist):
     for kv in pairslist:
         k = kv.split(" ")[0]
         v = " ".join(kv.split(" ")[1:]).rstrip(";")
@@ -27,7 +27,7 @@ def get_id_and_type(last_column):
     pairs = {}
     kv_pairs_list = last_column.strip().split("; ")
 
-    for k, v in seperated(kv_pairs_list):
+    for k, v in separated(kv_pairs_list):
         pairs[k] = v
 
     gene_id = get_value("gene_id", pairs)

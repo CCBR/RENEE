@@ -7,7 +7,7 @@ import pandas as pd
 
 def Counts(fpattern, searchpath, anno, ftype, mycols):
     """
-    Get each samples FPKM vaules from RSEMs *.RSEM.genes.results and *.RSEM.isoform.results
+    Get each samples FPKM values from RSEMs *.RSEM.genes.results and *.RSEM.isoform.results
     """
     # Collect RSEM Results
     files = sorted(list(filter(lambda x: fpattern in x, os.listdir(searchpath))))

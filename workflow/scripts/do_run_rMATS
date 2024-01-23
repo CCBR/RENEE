@@ -11,10 +11,10 @@ USAGE:
   $ ./do_run_rMATS [-h] \\
         [--skip-index]
 SYNOPSIS:
-  Convience script to run rMATS with an RENEE output directory. A
+  Convenience script to run rMATS with an RENEE output directory. A
   user just needs to create a 'groups.tab' and 'contrasts.tab' file in the
   RENEE output directory of interest. This script will run rMATS Turbo
-  for each comparsion defined in 'contrasts.tab' file. The '--skip-index'
+  for each comparison defined in 'contrasts.tab' file. The '--skip-index'
   option can be provided if this script has already been run to generate
   an STAR index for rMATS.
 OPTIONS:
@@ -69,8 +69,8 @@ function create_groups(){
 }
 
 
-function initalize(){
-    # Creates output directory heirarchy
+function initialize(){
+    # Creates output directory hierarchy
     # $1 = output directory
     local wd="$1"
 
@@ -234,7 +234,7 @@ function main(){
     done
 
     # Step 1. Create a base output directory hierarchy
-    initalize "${PWD}"
+    initialize "${PWD}"
 
     # Step 2. Create samples sheet for each contrast
     # from a groups.tab file and contrasts.tab file
@@ -250,7 +250,7 @@ function main(){
                         | awk -v wd="$PWD" \
                             '{print wd"/rMATS/STAR/2.7.6a/genes-"$1"/"}')
     while read g1 g2; do
-        # Run rMATS for each constrast
+        # Run rMATS for each contrast
         # $1 = Group 1
         # $2 = Group 2
         # $3 = STAR Index

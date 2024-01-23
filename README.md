@@ -51,7 +51,7 @@ The accuracy of the downstream interpretations made from transcriptomic data are
 
 [_RSeQC_<sup>9</sup>](http://rseqc.sourceforge.net/) is another particularity useful package that is tailored for RNA-seq data. It is used to calculate the inner distance between paired-end reads and calculate TIN values for a set of canonical protein-coding transcripts. A median TIN value is calucated for each sample, which analogous to a computationally derived RIN.
 
-[MultiQC<sup>11</sup>](https://multiqc.info/) is used to aggreate the results of each tool into a single interactive report.
+[MultiQC<sup>11</sup>](https://multiqc.info/) is used to aggregate the results of each tool into a single interactive report.
 
 **Quantification**  
 [_Cutadapt_<sup>3</sup>](https://cutadapt.readthedocs.io/en/stable/) is used to remove adapter sequences, perform quality trimming, and remove very short sequences that would otherwise multi-map all over the genome prior to alignment.

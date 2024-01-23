@@ -147,7 +147,7 @@ def abstract_location(file_address, *args, **kwargs):
                 # If botocore cannot find credentials, try connecting unsigned.
                 # This will work for anonymous S3 resources if the resources in the
                 # s3 bucket are configured correctly.
-                # If a file in provieded as input to a Snakemake rule, only read
+                # If a file in provided as input to a Snakemake rule, only read
                 # access is needed to access the remote S3 object.
                 remote_provider = snakemake.remote.S3.RemoteProvider(
                     config=botocore.client.Config(signature_version=botocore.UNSIGNED)

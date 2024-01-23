@@ -37,7 +37,7 @@ def reader(filename, subset=[], skip="#", **kwargs):
         return csv(filename, subset, skip, **kwargs)
     else:
         # Default to reading in as an TSV file
-        # Tab is the normal delimeter for MAF or VCF files
+        # Tab is the normal delimiter for MAF or VCF files
         # MAF files usually have one of the following
         # extensions: '.tsv', '.txt', '.text', '.vcf', '.maf'
         return tsv(filename, subset, skip, **kwargs)

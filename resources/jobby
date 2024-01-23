@@ -63,7 +63,7 @@ _description = "Will take your job(s)... and display their information!"
 
 # Classes
 class Colors:
-    """Class encoding for ANSI escape sequeces for styling terminal text.
+    """Class encoding for ANSI escape sequences for styling terminal text.
     Any string that is formatting with these styles must be terminated with
     the escape sequence, i.e. `Colors.end`.
     """
@@ -75,7 +75,7 @@ class Colors:
     italic = "\33[3m"
     url = "\33[4m"
     blink = "\33[5m"
-    higlighted = "\33[7m"
+    highlighted = "\33[7m"
     # Text Colors
     black = "\33[30m"
     red = "\33[31m"
@@ -181,7 +181,7 @@ def add_missing(linelist, insertion_dict):
         Dictionary used to insert missing information to a given
         index, where the keys are indices of the `linelist` and the
         values are information to add. Please note that the indices
-        should be zero based. Note that multiple consequetive values
+        should be zero based. Note that multiple consecutive values
         should be inserted at once as a list, see example below:
     Example:
         add_missing([0,1,2,3,4], {3:['+','++'], 1:'-', 4:'@'})
@@ -584,7 +584,7 @@ def parsed_arguments(name, description):
           <JOB_ID [JOB_ID ...]>
                                Identiers of past jobs. One or more JOB_IDs
                                can be provided. Multiple JOB_IDs should be
-                               seperated by a space. Information for each
+                               separated by a space. Information for each
                                of the JOB_IDs will be displayed to standard
                                output. Please see example section below for
                                more information.
@@ -653,7 +653,7 @@ def parsed_arguments(name, description):
     parser.add_argument("JOB_ID", nargs="+", help=argparse.SUPPRESS)
 
     # Options
-    # Adding verison information
+    # Adding version information
     parser.add_argument(
         "-v",
         "--version",

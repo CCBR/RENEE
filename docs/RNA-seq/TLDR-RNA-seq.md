@@ -1,6 +1,6 @@
 ## 1. Introduction
 
-When processing RNA-sequencing data, there are often many steps that we must repeat. These are usually steps like removing adapter sequences, aligning reads against a reference genome, checking the quality of the data, and quantifying counts. RENEE is composed of several sub commands or convience functions to automate these repetitive steps.
+When processing RNA-sequencing data, there are often many steps that we must repeat. These are usually steps like removing adapter sequences, aligning reads against a reference genome, checking the quality of the data, and quantifying counts. RENEE is composed of several sub commands or convenience functions to automate these repetitive steps.
 
 With RENEE, you can run your samples through our highly-reproducible pipeline, build resources for new reference genomes, and more!
 
@@ -35,7 +35,7 @@ ssh -Y $USER@biowulf.nih.gov
 srun -N 1 -n 1 --time=12:00:00 -p interactive --mem=8gb  --cpus-per-task=4 --pty bash
 ```
 
-### 2.3 Load dependecies
+### 2.3 Load dependencies
 
 ```bash
 # Setup Step 2.) Add singularity and snakemake executables to $PATH
@@ -47,7 +47,7 @@ module load ccbrpipeliner
 
 In this example, we will start off by building reference files downloaded from [GENCODE](https://www.gencodegenes.org/). We recommend downloading the `PRI` Genome FASTA file and annotation from [GENCODE](https://www.gencodegenes.org/). These `PRI` reference files contain the primary chromosomes and scaffolds. We **do not** recommend downloading the `CHR` reference files!
 
-Checkout [this](./Resources.md) list for currently avaiable resources on Biowulf. If your required **genome + annotation combination** is NOT available, only then proceed to building your own reference files. Also, if you think that your **genome + annotation combination** may be beneficial for other Biowulf users of RENEE as well, then please request it to be added to RENEE's default resources by [opening an issue on Github](https://github.com/CCBR/RENEE/issues).
+Checkout [this](./Resources.md) list for currently available resources on Biowulf. If your required **genome + annotation combination** is NOT available, only then proceed to building your own reference files. Also, if you think that your **genome + annotation combination** may be beneficial for other Biowulf users of RENEE as well, then please request it to be added to RENEE's default resources by [opening an issue on Github](https://github.com/CCBR/RENEE/issues).
 
 ### 3.1 Download References from GENCODE
 
@@ -87,15 +87,15 @@ renee build  --ref-fa GRCh38.primary_assembly.genome.fa \
                 --gtf-ver 36 --output /data/$USER/hg38_36
 ```
 
-An email notification will be sent out when the pipeline starts and ends. Once the build pipeline completes, you can run RENEE with the provided test dataset. Please see the intructions below for more information.
+An email notification will be sent out when the pipeline starts and ends. Once the build pipeline completes, you can run RENEE with the provided test dataset. Please see the instructions below for more information.
 
 ## 4. Running RENEE
 
-Run RENEE with the reference files we built above using hg38 (GRCh38.p13) Genome FASTA file and GENCODE release 36 annotation (GTF). For more information about how the reference files we generated, please see the intructions above. You can use those instructions as a guide for building any new reference genomes in the future.
+Run RENEE with the reference files we built above using hg38 (GRCh38.p13) Genome FASTA file and GENCODE release 36 annotation (GTF). For more information about how the reference files we generated, please see the instructions above. You can use those instructions as a guide for building any new reference genomes in the future.
 
 ### 4.1 Dry-run pipeline
 
-Dry-run the pipeline prior to submiting the pipeline's master job. Please note that if you wish to run RENEE with a new dataset, you will only need to update the values provided to the `--input` and `--output` arguments (and maybe `--genome`). The `--input` argument supports globbing. If this is the first time running RENEE with for given dataset, the `--output` directory should _**not**_ exist on your local filesystem. It will be created automatically during runtime.
+Dry-run the pipeline prior to submitting the pipeline's master job. Please note that if you wish to run RENEE with a new dataset, you will only need to update the values provided to the `--input` and `--output` arguments (and maybe `--genome`). The `--input` argument supports globbing. If this is the first time running RENEE with for given dataset, the `--output` directory should _**not**_ exist on your local filesystem. It will be created automatically during runtime.
 
 ```bash
 # Run Step 0.) Please do not run RENEE on the head node!
@@ -121,7 +121,7 @@ renee run \
 
 ### 4.2 Run pipeline
 
-Kick off the pipeline by submiting the master job to the cluster. It is essentially the same command above without the `--dry-run` flag.
+Kick off the pipeline by submitting the master job to the cluster. It is essentially the same command above without the `--dry-run` flag.
 
 ```bash
 # Run Step 3.) Submit the master job

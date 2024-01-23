@@ -17,7 +17,7 @@ import sys, gzip
 # +
 # AAAFFJJFJJJJJJFJJJJJJJJJJFJAJJJJJFJJJJJFFJJAJJJJ7JJ
 
-# Input 2 (SRA doesn't store FC ID, use intrument name instead)
+# Input 2 (SRA doesn't store FC ID, use instrument name instead)
 # @SRR5351039.1 SN608:8:1101:31.20:96.50 length=51
 # NTTTANNNNNNGNGCNCTGNNNNNNNNGNNNNNAAGGGNTNNNNNNNNNNN
 # +SRR5351039.1 SN608:8:1101:31.20:96.50 length=51
@@ -58,20 +58,20 @@ def reader(fname):
         return open
 
 
-def get_flowcell_lane(sequence_identifer):
+def get_flowcell_lane(sequence_identifier):
     """Returns flowcell and lane information for different fastq formats.
     FastQ files generated with older versions of Casava or downloaded from
     SRA have a different format than newer FastQ files generated with the
     current version of Casava. It is worth noting that FastQ files downloaded from SRA
     or FastQ files generated with Casava version < 1.8 do not have Flowcell
-    IDs in its sequence indentifer.
+    IDs in its sequence identifier.
     For more information visit: https://en.wikipedia.org/wiki/FASTQ_format
     """
-    id_list = sequence_identifer.strip().split(":")
+    id_list = sequence_identifier.strip().split(":")
     if len(id_list) < 7:
         # No Flowcell IDs in this format
         # Return next instrument id instead (next best thing)
-        if sequence_identifer.startswith("@SRR"):
+        if sequence_identifier.startswith("@SRR"):
             # SRA format or downloaded SRA FastQ file
             # SRA format 1: contains machine and lane information
             # @SRR001666.1 071112_SLXA-EAS1_s_7:5:1:817:345 length=36
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         )
         for line in file:
             line = line.strip()
-            if i % 4 == 0:  # read id or sequence identifer
+            if i % 4 == 0:  # read id or sequence identifier
                 fc, lane = get_flowcell_lane(line)
                 fc = fc.lstrip("@")
                 fc_lane = "{}_{}".format(fc, lane)

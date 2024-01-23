@@ -45,7 +45,7 @@ config = {
         }
     },
     "multiqc_cutadapt.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": ["\.R1$", "\.R2$"],
         "parse_column": ["Sample", "pairs_processed", "r_processed"],
         "rename_field": {
@@ -55,7 +55,7 @@ config = {
         "typecast": {"total_read_pairs": int},
     },
     "multiqc_fastqc.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": ["^QC \\| ", "^rawQC \\| ", "\.trim$", "\.R1$", "\.R2$"],
         "collapse": True,
         "parse_column": [
@@ -74,7 +74,7 @@ config = {
         "typecast": {"trimmed_read_pairs": int, "avg_sequence_length": float},
     },
     "multiqc_fastq_screen.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": [
             "^FQscreen \\| ",
             "^FQscreen2 \\| ",
@@ -115,7 +115,7 @@ config = {
         },
     },
     "multiqc_picard_dups.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": ["\.p2$"],
         "parse_column": ["Sample", "PERCENT_DUPLICATION"],
         "rename_field": {"PERCENT_DUPLICATION": "percent_duplication"},
@@ -123,7 +123,7 @@ config = {
         "scaling_factor": {"percent_duplication": 100.0},
     },
     "multiqc_picard_RnaSeqMetrics.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": ["\.p2$"],
         "parse_column": [
             "Sample",
@@ -161,7 +161,7 @@ config = {
         },
     },
     "multiqc_rseqc_infer_experiment.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": [
             "^RSeQC \\| ",
             "\.strand\.info$",
@@ -189,30 +189,30 @@ config = {
         },
     },
     "rseqc_inner_distances.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": ["\.inner_distance_freq\.txt$"],
         "parse_column": ["Sample", "Inner_Dist_Maxima"],
         "rename_field": {"Inner_Dist_Maxima": "inner_distance_maxima"},
         "typecast": {"inner_distance_maxima": float},
     },
     "rseqc_median_tin.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": ["\.star_rg_added\.sorted\.dmark\.bam$"],
         "parse_column": ["Sample", "median_tin"],
         "typecast": {"median_tin": float},
     },
     "sample_group.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": [],
         "parse_column": ["Sample", "TissueType"],
     },
     "fastq_flowcell_lanes.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": [],
         "parse_column": ["Sample", "flowcell_lanes"],
     },
     "multiqc_star.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": ["\.p2$"],
         "parse_column": ["Sample", "uniquely_mapped_percent", "avg_input_read_length"],
         "rename_field": {
@@ -222,7 +222,7 @@ config = {
         "typecast": {"percent_aligned": float, "avg_aligned_read_length": int},
     },
     "multiqc_qualimap_bamqc_genome_results.txt": {
-        "delimeter": "\t",
+        "delimiter": "\t",
         "clean_sample_name": ["\.p2$"],
         "parse_column": [
             "Sample",
@@ -254,7 +254,7 @@ USAGE:
                                    output files generated from MultiQC. Each provided
                                    file is parsed, and information is aggregated
                                    across all samples into a single tab-seperated
-                                   ouput file: multiqc_matrix.tsv
+                                   output file: multiqc_matrix.tsv
 
             Currently Supported MultiQC Files:
             multiqc_cutadapt.txt, multiqc_star.txt, multiqc_picard_dups.txt,
@@ -272,7 +272,7 @@ USAGE:
         # Creates QC table: multiqc_matrix.tsv in users working directory
         $ python pyparser.py multiqc_cutadapt.txt multiqc_fastqc.txt multiqc_fastq_screen.txt $PWD
         # Supports globbing
-        $ python pyparser.py /path/to/MultiQC/ouput/folder/*.txt $PWD
+        $ python pyparser.py /path/to/MultiQC/output/folder/*.txt $PWD
 
     Requirements:
         multiqc == 1.9
@@ -439,7 +439,9 @@ def scaled(value, column, filename):
     filename = os.path.basename(filename)
     try:
         # Get the scaling factor
-        scaling_unit = config[filename]["scaling_factor"][column]  # KeyError if DNE
+        scaling_unit = config[filename]["scaling_factor"][
+            column
+        ]  # KeyError if does not exist
         value = value * scaling_unit  # TypeError if string
         value = round(value, 3)
     except TypeError:
@@ -481,7 +483,7 @@ def populate_table(parsed_header, parsed_line, file, data_dict):
     return data_dict
 
 
-def parsed(file, delimeter="\t"):
+def parsed(file, delimiter="\t"):
     """Parses columns of file according to specification in config[filename]['parse_column'].
     Column names are renamed according to specification in config[filename]['rename_field'].
     Sample names are cleaned to removed any prefixes or suffixes specified in config[filename]['clean_sample_name'].
@@ -491,7 +493,7 @@ def parsed(file, delimeter="\t"):
     # print('\nBeginning to parse {}'.format(file))
     with open(file, "r") as fh:
         # Parse header
-        header = next(fh).strip().split(delimeter)  # Get file header
+        header = next(fh).strip().split(delimiter)  # Get file header
         indexes = column_indexes(header, file)  # Indexes of columns to parse
         header = [header[i] for i in indexes]  # Parse each column of interest
         header = rename(header, file)  # Rename columns
@@ -500,7 +502,7 @@ def parsed(file, delimeter="\t"):
         sample_index = header.index("Sample")
         for line in fh:
             # linelist = line.strip().split(delimiter)
-            linelist = line.rstrip("\n").split(delimeter)
+            linelist = line.rstrip("\n").split(delimiter)
             parsed_line = [linelist[i] for i in indexes]
             parsed_line = clean(
                 parsed_line, sample_index, file
@@ -514,7 +516,7 @@ def main():
     #       1. Get rid of pandas dependency (add transpose function and loop through dict to print table)
     #       2. Add more advanced argument parsing, make path to config an arg
 
-    # Check for usage and optional arguements, get list of files to parse and output directory
+    # Check for usage and optional arguments, get list of files to parse and output directory
     ifiles, outdir = args(sys.argv)
 
     # Check if files are supported, see config specification, and if file is readable
@@ -528,12 +530,12 @@ def main():
 
     df = pd.DataFrame(QC).transpose()
 
-    # Get default output peference
+    # Get default output preference
     try:
         output_preference = config[".rnaseq"][".default"][".output_preference"]
         df = df.reindex(columns=output_preference)
     except KeyError:
-        # Output peference is not defined in config
+        # Output preference is not defined in config
         pass
 
     # Write to file

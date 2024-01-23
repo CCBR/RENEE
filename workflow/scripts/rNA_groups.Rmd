@@ -636,12 +636,12 @@ Corr plots {data-orientation=columns data-icon="ion-stats-bars"}
 Column {data-width=500}
 -------------------------------------
 
-### Heirarchical clustering of pairwise spearman correlation coefficients
+### Hierarchical clustering of pairwise spearman correlation coefficients
 
-```{r heirarchical-correlation-matrix, dpi=300}
+```{r hierarchical-correlation-matrix, dpi=300}
 # Helper Function
 reorder_cormat <- function(cormat) {
-  # Use correlation between variables as distance for heirarchincal clustering
+  # Use correlation between variables as distance for hierarchincal clustering
   dd <- as.dist((1 - cormat) / 2)
   hc <- hclust(dd)
   cormat <- cormat[hc$order, hc$order]
@@ -673,7 +673,7 @@ cormat <- reorder_cormat(cormatrix)
 # Get upper triangle of the correlation matrix
 cormat[lower.tri(cormat)] <- NA
 
-# Remove lower trinagle and reshape from wide to long format
+# Remove lower triangle and reshape from wide to long format
 cormat <- melt(cormat, na.rm = TRUE)
 
 # Correlation ggheatmap

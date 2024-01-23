@@ -14,15 +14,15 @@ Welcome to RENEE's documentation!
 
 This guide is the main source of documentation for users that are getting started with the [RENEE pipeline](https://github.com/CCBR/RENEE). If you are not familiar with RNA-sequencing, please checkout our [theory and practical guide](RNA-seq/Theory.md). That section provides a conceptual overview to RNA-seq analysis and as well as a set of generalized guidelines to interpret different quality-control metrics. If you are a new user, we highly recommend reading through our [getting started](RNA-seq/TLDR-RNA-seq.md) section. This page contains information needed to quickly build new reference files and setup the pipeline for running in your compute environment.
 
-RENEE is composed several inter-related sub commands to faciliate the analysis of RNA-sequencing data. For more information about each available sub command, please see the [usage section](RNA-seq/run.md). To help out new users, an example of each command is also provided. The [resources page](RNA-seq/Resources.md) contains more information about the pipeline's default reference genomes along with every tool and Docker image the pipeline employs.
+RENEE is composed several inter-related sub commands to facilitate the analysis of RNA-sequencing data. For more information about each available sub command, please see the [usage section](RNA-seq/run.md). To help out new users, an example of each command is also provided. The [resources page](RNA-seq/Resources.md) contains more information about the pipeline's default reference genomes along with every tool and Docker image the pipeline employs.
 
 For more information about issues or trouble-shooting a problem, please checkout our [FAQ](troubleshooting.md) prior to [opening an issue on Github](https://github.com/CCBR/RENEE/issues).
 
 ## 2. Overview
 
-**RENEE** is a comprehensive, open-source RNA-seq pipeline that relies on technologies like [Docker<sup>1</sup>](https://www.docker.com/why-docker) and [Singularity<sup>2</sup>... now called Apptainer](https://apptainer.org/docs/) to maintain the highest-level of reproducibility. The pipeline consists of a series of data processing and quality-control steps orchestrated by [Snakemake<sup>3</sup>](https://snakemake.readthedocs.io/en/stable/), a flexible and scalable workflow management system, to submit jobs to a cluster or cloud provider (comming soon!).
+**RENEE** is a comprehensive, open-source RNA-seq pipeline that relies on technologies like [Docker<sup>1</sup>](https://www.docker.com/why-docker) and [Singularity<sup>2</sup>... now called Apptainer](https://apptainer.org/docs/) to maintain the highest-level of reproducibility. The pipeline consists of a series of data processing and quality-control steps orchestrated by [Snakemake<sup>3</sup>](https://snakemake.readthedocs.io/en/stable/), a flexible and scalable workflow management system, to submit jobs to a cluster or cloud provider (coming soon!).
 
-RENEE can be run locally on a compute instance, on-premise using a cluster, or on the cloud using AWS (comming soon!). A user can define the method or mode of execution. The pipeline can submit jobs to a cluster using a job scheduler like SLURM, or run on AWS using Tibanna (feature coming soon!). A hybrid approach ensures the pipeline is accessible to all users.
+RENEE can be run locally on a compute instance, on-premise using a cluster, or on the cloud using AWS (coming soon!). A user can define the method or mode of execution. The pipeline can submit jobs to a cluster using a job scheduler like SLURM, or run on AWS using Tibanna (feature coming soon!). A hybrid approach ensures the pipeline is accessible to all users.
 
 A bioinformatics pipeline is more than the sum of its data processing steps. A pipeline without quality-control steps provides a myopic view of the potential sources of variation within your data (i.e., biological verses technical sources of variation). RENEE pipeline is composed of a series of quality-control and data processing steps.
 
@@ -47,7 +47,7 @@ In addition to generating a MultiQC report, the RENEE pipeline also generates a 
 
 [_RSeQC_<sup>10</sup>](http://rseqc.sourceforge.net/) is another particularity useful package that is tailored for RNA-seq data. It is used to calculate the inner distance between paired-end reads and calculate TIN values for a set of canonical protein-coding transcripts. A median TIN value is calucated for each sample, which analogous to a computationally derived RIN.
 
-[MultiQC<sup>11</sup>](https://multiqc.info/) is used to aggreate the results of each tool into a single interactive report.
+[MultiQC<sup>11</sup>](https://multiqc.info/) is used to aggregate the results of each tool into a single interactive report.
 
 ### 3.2 Data Processing
 

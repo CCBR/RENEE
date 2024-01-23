@@ -116,7 +116,7 @@ Once you've ensured that all running jobs have been stopped, you need to unlock 
 
 ```bash
 # Load Dependencies
-modue load ccbrpipeliner
+module load ccbrpipeliner
 
 # Unlock the working directory
 rna-seek unlock --output /path/to/working/dir

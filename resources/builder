@@ -29,10 +29,10 @@ Required Positional Argument:
 Required Arguments:
   -j, --job-name [Type: Str]    Name of pipeline's master job.
   -b, --bind-paths [Type:Path]  Singularity bind paths. The RENEE pipeline uses
-                                 singaularity images for exection. Bind paths are
+                                 singularity images for execution. Bind paths are
                                  used to mount the host filesystem to the container's
                                  filesystem. Multiple bind paths can be provided
-                                 as a comma seperated list. The main entry point
+                                 as a comma-separated list. The main entry point
                                  of the pipeline internally collects and aggregates
                                  bindpaths to mount to the container's filesystem.
                                  If you are manually running this script or by-passing
@@ -157,9 +157,9 @@ function submit(){
   # Snakemake executor
   executor=${1}
 
-  # Goto Pipeline Ouput directory
+  # Goto Pipeline Output directory
   # Create a local singularity cache in output directory
-  # cache can be re-used instead of re-pulling from DockerHub everytime
+  # cache can be re-used instead of re-pulling from DockerHub every time
   cd "$3" && export SINGULARITY_CACHEDIR="${5}"
 
   # unsetting XDG_RUNTIME_DIR to avoid some unsighly but harmless warnings

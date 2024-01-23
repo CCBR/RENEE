@@ -273,7 +273,7 @@ if SMALL_GENOME == "True":
         """
         Builds STAR Index to align reads against reference genome without the
         GTF or readlength provided. This index only contain information pertaining
-        to the asssembly or reference genome in FASTA format. This indice represents a
+        to the assembly or reference genome in FASTA format. This indice represents a
         base index from which processing annotations from a GTF and insert junctions
         on the fly. This has the advantage of saving diskspace as an index will not be
         created for a list of predefined readlengths. This rule replaces star_rl above.
@@ -332,7 +332,7 @@ else:
         """
         Builds STAR Index to align reads against reference genome without the
         GTF or readlength provided. This index only contain information pertaining
-        to the asssembly or reference genome in FASTA format. This indice represents a
+        to the assembly or reference genome in FASTA format. This indice represents a
         base index from which processing annotations from a GTF and insert junctions
         on the fly. This has the advantage of saving diskspace as an index will not be
         created for a list of predefined readlengths. This rule replaces star_rl above.
@@ -379,7 +379,7 @@ rule rRNA_list:
     estimate rRNA content or abundance. rRNA can make up a significant proportion
     of an RNA-seq library if not properly depleted either through poly-selection
     or ribosomal depletion. Samples with very high rRNA content could signal an issue
-    occured with library prepartion.
+    occurred with library preparation.
     @Input:
         Genomic FASTA file
         Annotation file in GTF format
@@ -450,7 +450,7 @@ rule karyo_beds:
 
 rule tin_ref:
     """
-    Builds RSeQC tin.py reference file containing all canocical protein coding genes.
+    Builds RSeQC tin.py reference file containing all canonical protein coding genes.
     @Input:
         Annotation file in GTF format
     @Output:

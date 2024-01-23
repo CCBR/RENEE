@@ -26,11 +26,11 @@ Required Positional Argument:
 Required Arguments:
   -s, --sif-cache   [Type: Path]  Path to output directory to cache remote resources.
   -i, --image-uris  [Type: Str]   Image(s) to pull from Dockerhub. Multiple images
-                                   are seperated by a comma.
+                                   are separated by a comma.
 OPTIONS:
   -t, --tmp-dir     [Type: Path]  Path to tmp singularity dir. Singularity uses this
                                    directory when images are pulled from DockerHub
-                                   and coverted into SIFs. If not provided, the
+                                   and converted into SIFs. If not provided, the
                                    location to the temp dir will default to the
                                    following "/tmp/$USER/cacher/.singularity/"
                                    directory.
@@ -147,9 +147,9 @@ function _pull(){
   # cache executor
   executor=${1}
 
-  # Goto Pipeline Ouput directory
+  # Goto Pipeline Output directory
   # Create a local singularity cache in output directory
-  # cache can be re-used instead of re-pulling from DockerHub everytime
+  # cache can be re-used instead of re-pulling from DockerHub every time
   cd "$2" && export SINGULARITY_CACHEDIR="${3}"
 
   # unsetting XDG_RUNTIME_DIR to avoid some unsighly but harmless warnings

@@ -35,7 +35,7 @@ def replace_nested_quotes(line, find_char='"', replace_char=""):
     """
     Assumes the quote character in the 9th column is a double
     quote or <"> character. This is the correct character to
-    use based on the speficiation.
+    use based on the specification.
     """
     # Normal:
     #   protein_id "XP_040355194.1";
@@ -72,7 +72,7 @@ def replace_nested_quotes(line, find_char='"', replace_char=""):
 
         if inside_quotes:
             # Fix evil mistakes of the past,
-            # replace reserved delimeter with
+            # replace reserved delimiter with
             # another character, let's use a
             # url encoding of the character
             if curr_char == find_char and quote_count > 1:
@@ -90,7 +90,7 @@ def url_escape_inside_quotes(line, delimiter=";", url_encoding="%3B"):
 
     Assumes the quote character in the 9th column is a double
     quote or <"> character. This is the correct character to
-    use based on the speficiation.
+    use based on the specification.
     """
     quote_count = 0
     inside_quotes = False
@@ -111,7 +111,7 @@ def url_escape_inside_quotes(line, delimiter=";", url_encoding="%3B"):
 
         if inside_quotes:
             # Fix evil mistakes of the past,
-            # replace reserved delimeter with
+            # replace reserved delimiter with
             # another character, let's use a
             # url encoding of the character
             if c == delimiter:

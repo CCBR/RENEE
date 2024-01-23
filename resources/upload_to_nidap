@@ -17,7 +17,7 @@ Usage:
 Synopsis:
   This script provides a high level wrapper to the NIDAP API.
 Given a list of local file paths, a NIDAP API token, and a NIDAP
-dataset identifer, it will upload those files to a dataset on NIDAP.
+dataset identifier, it will upload those files to a dataset on NIDAP.
 
 Required Arguments:
   -f, --files  FILE   [Type: Str]  Files to upload to NIDAP.
@@ -26,12 +26,12 @@ Required Arguments:
                                      be uploaded at once by providing
                                      a quoted space separated list of
                                      local files.
-  -d, --dataid DATAID [Type: Path] Dataset Identifer for NIDAP upload.
-                                     Identifer to a dataset on NIDAP
+  -d, --dataid DATAID [Type: Path] Dataset identifier for NIDAP upload.
+                                     identifier to a dataset on NIDAP
                                      where file(s) will be uploaded.
-  -r, --rid    RID    [Type: Str]  Request Identifer. This transaction
-                                     identifer is used to help track a
-                                     given request. This identifer is
+  -r, --rid    RID    [Type: Str]  Request identifier. This transaction
+                                     identifier is used to help track a
+                                     given request. This identifier is
                                      also appended to any log files.
   -t, --token  TOKEN  [Type: Str]  API token for NIDAP. A text file
                                      containing an API token for NIDAP
@@ -235,7 +235,7 @@ function _upload(){
   # INPUT $3 = NIDAP API token
   # INPUT $4 = NIDAP Request or transaction ID
   # INPUT $5 = HTTPS Proxy, defaults to no proxy set
-  # @CALLS require() to enfore cURL installation
+  # @CALLS require() to enforce cURL installation
   # @CALLS timestamp() to log time of file uploads
   # @CALLS fatal() if curl returns a non-200 http response
   # @CALLS _commit() to close an open upload transaction and commit the files to dataset
