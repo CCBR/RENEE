@@ -71,10 +71,9 @@ deg_voom$E <- deg_voom$E[apply(deg_voom$E, 1, var) != 0, ]
 
 # Principal Components Analysis
 PC_labels <- c("PC1_tin", "PC2_tin", "PC3_tin")
-if (length(prcomp(t(as.matrix(deg_voom$E)), scale. = T)$sdev) < 3) {
-  pca_max <- 2
-} else {
-  pca_max <- 3
+pca_max <- min(length(prcomp(t(as.matrix(deg_voom$E)), scale. = T)$sdev), 3)
+if (pca_max < 2) {
+  stop("Fewer than 2 principle components were found")
 }
 pca_exp <- prcomp(t(as.matrix(deg_voom$E)), scale. = T)$x[, 1:pca_max] # Expression PC Analysis
 pca_tin <- prcomp(t(as.matrix(tincounts)), scale. = T)$x[, 1:pca_max] # Transcript Integrity Number PC Analysis
