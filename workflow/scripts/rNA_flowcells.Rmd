@@ -2,9 +2,9 @@
 title: "RNA Report"
 author: "Assess the quality of RNA-seq samples"
 params:
-  raw: "/path/to/raw/counts/matrix.tsv"
-  tin: "/path/to/tin/counts/martrix.tsv"
-  qc: "/path/to/qc/table.tsv"
+  raw: "/data/sevillas2/tmp/RSEM.genes.expected_counts.all_samples.reformatted.tsv"
+  tin: "/data/sevillas2/tmp/combined_TIN.tsv"
+  qc: "/data/sevillas2/tmp/multiqc_matrix.tsv"
   annot: "FALSE"
 output:
   flexdashboard::flex_dashboard:
@@ -12,6 +12,8 @@ output:
     navbar:
       - { title: "Pipeline Documentation", href: "https://ccbr.github.io/pipeliner-docs/RNA-seq/Theory-and-practical-guide-for-RNA-seq/", align: right }
     source_code: "embed"
+editor_options: 
+  chunk_output_type: console
 ---
 
 
@@ -70,9 +72,14 @@ deg_voom$E <- deg_voom$E[order(apply(deg_voom$E, 1, mad), decreasing = T), ]
 deg_voom$E <- deg_voom$E[apply(deg_voom$E, 1, var) != 0, ]
 
 # Principal Components Analysis
-pca_exp <- prcomp(t(as.matrix(deg_voom$E)), scale. = T)$x[, 1:3] # Expression PC Analysis
-pca_tin <- prcomp(t(as.matrix(tincounts)), scale. = T)$x[, 1:3] # Transcript Integrity Number PC Analysis
-colnames(pca_tin) <- c("PC1_tin", "PC2_tin", "PC3_tin") # Renaming PC cols to avoid collision with gene expression PCs
+PC_labels <- c("PC1_tin", "PC2_tin", "PC3_tin")
+pca_max <- min(length(prcomp(t(as.matrix(deg_voom$E)), scale. = T)$sdev), 3)
+if (pca_max < 2) {
+  stop("Fewer than 2 principle components were found")
+}
+pca_exp <- prcomp(t(as.matrix(deg_voom$E)), scale. = T)$x[, 1:pca_max] # Expression PC Analysis
+pca_tin <- prcomp(t(as.matrix(tincounts)), scale. = T)$x[, 1:pca_max] # Transcript Integrity Number PC Analysis
+colnames(pca_tin) <- PC_labels[1:pca_max] # Renaming PC cols to avoid collision with gene expression PCs
 
 # Merge both dataframes on rowname
 multiQC <- transform(merge(multiQC, as.data.frame(pca_exp), by = "row.names", all = TRUE), row.names = Row.names, Row.names = NULL)
@@ -100,7 +107,6 @@ filter_select(
   group = ~flowcell_lanes
 )
 
-
 # Sequence Ranges
 filter_select(
   id = "sequence_length",
@@ -108,7 +114,6 @@ filter_select(
   sharedData = shared_metadata,
   group = ~sequence_length
 )
-
 
 # Median TIN
 filter_slider(
@@ -124,7 +129,6 @@ filter_slider(
   max = 100
 )
 
-
 # Trimmed Reads
 filter_slider(
   id = "trimmed_read_pairs",
@@ -137,7 +141,6 @@ filter_slider(
   ticks = TRUE,
   min = 0
 )
-
 
 # % Duplicates
 filter_slider(
@@ -153,7 +156,6 @@ filter_slider(
   max = 100
 )
 
-
 # % Aligned
 filter_slider(
   id = "percent_aligned",
@@ -167,7 +169,6 @@ filter_slider(
   min = 0,
   max = 100
 )
-
 
 # % Coding
 filter_slider(
@@ -183,7 +184,6 @@ filter_slider(
   max = 100
 )
 
-
 # % Intronic
 filter_slider(
   id = "pct_intronic_bases",
@@ -197,7 +197,6 @@ filter_slider(
   max = 100
 )
 
-
 # % UTR
 filter_slider(
   id = "pct_utr_bases",
@@ -210,7 +209,6 @@ filter_slider(
   min = 0,
   max = 100
 )
-
 
 # % rRNA
 filter_slider(
@@ -226,7 +224,6 @@ filter_slider(
   max = 100
 )
 
-
 # GC content
 filter_slider(
   id = "gc_content",
@@ -237,7 +234,6 @@ filter_slider(
   ticks = TRUE
 )
 
-
 # CV Coverage
 filter_slider(
   id = "median_cv_coverage",
@@ -247,7 +243,6 @@ filter_slider(
   sep = "",
   ticks = TRUE
 )
-
 
 # Inner Distance Maxima
 filter_slider(
@@ -338,73 +333,85 @@ shared_metadata %>%
 Row {data-height=600}
 -------------------------------------
 
-### Expression PCA
-
-```{r 3d-expression-pca}
-# Principal Components Analysis
-pca <- prcomp(t(as.matrix(deg_voom$E)), scale. = T)
-
+```{r prep-plotly, echo=FALSE, include=FALSE}
 # Variance explained for PCs: 1, 2, 3
-pc1 <- round(pca$sdev[1]^2 / sum(pca$sdev^2) * 100, 2)
-pc2 <- round(pca$sdev[2]^2 / sum(pca$sdev^2) * 100, 2)
-pc3 <- round(pca$sdev[3]^2 / sum(pca$sdev^2) * 100, 2)
+define_pcs <- function(pca_in){
+  pc1 <<- round(pca_in$sdev[1]^2 / sum(pca_in$sdev^2) * 100, 2)
+  pc2 <<- round(pca_in$sdev[2]^2 / sum(pca_in$sdev^2) * 100, 2)
+  pc3 <<- round(pca_in$sdev[3]^2 / sum(pca_in$sdev^2) * 100, 2)
+}
 
+# set axis list
+define_axis<-function(){
+  axis_list<<-list(
+      xaxis = list(title = paste0("PC1 (", pc1, "%)")),
+      yaxis = list(title = paste0("PC2 (", pc2, "%)")),
+      zaxis = list(title = paste0("PC3 (", pc3, "%)")))[1:pca_max]
+}
+
+# set group info
 cgroups <- as.factor(multiQC$flowcell_lanes)
 cgroups <- addNA(cgroups)
 cpalette <- brewer.pal(nlevels(cgroups), "Paired")
 
-p <- plot_ly(shared_metadata,
-  x = ~PC1, y = ~PC2, z = ~PC3, color = cgroups, colors = cpalette, hoverinfo = "text", marker = list(size = 8),
-  text = ~ paste(
-    "</br><b> Sample: ", Sample, "</br> Flowcell Lanes: ", flowcell_lanes, "</br> medTIN: ", median_tin, "</b></br></br> % Aligned: ", percent_aligned,
-    "</br> % Dup: ", percent_duplication, "</br> % Coding: ", pct_coding_bases, "</br> % UTR: ", pct_utr_bases,
-    "</br> % Intronic: ", pct_intronic_bases, "</br></br> Sequence Range: ", sequence_length,
-    "</br> GC Content: ", gc_content, "</br> Inner Distance Maxima: ", inner_distance_maxima, "</br> Insert Size: ", median_insert_size
-  )
-) %>%
-  add_markers() %>%
-  layout(scene = list(
-    xaxis = list(title = paste0("PC1 (", pc1, "%)")),
-    yaxis = list(title = paste0("PC2 (", pc2, "%)")),
-    zaxis = list(title = paste0("PC3 (", pc3, "%)"))
-  ))
-# Important: disable onclick() events
-plotly::highlight(p, on = NULL) # fixes unexpected behavior when multiple plots via crosstalk
+```
+
+```{r plotly-function, include=FALSE, echo=FALSE}
+# plot expression
+plot_pca_data <- function(dat, pca_max) {
+  if (pca_max > 3 | pca_max < 2) {
+    stop(glue::glue("Number of principle components must be 2 or 3, but is {pca_max}"))
+  }
+  pcs <- c(x = ~PC1, y = ~PC2, z = ~PC3)[1:pca_max]
+  args <-c(pcs, list(
+    data = dat,
+    hoverinfo = "text",
+    marker = list(size = 8),
+    color = cgroups,
+    colors = cpalette,
+    text = ~ paste(
+      "</br><b> Sample: ", Sample,
+      "</br> Flowcell Lanes: ", flowcell_lanes,
+      "</br> medTIN: ", median_tin,
+      "</b></br></br> % Aligned: ", percent_aligned,
+      "</br> % Dup: ", percent_duplication,
+      "</br> % Coding: ", pct_coding_bases,
+      "</br> % UTR: ", pct_utr_bases,
+      "</br> % Intronic: ", pct_intronic_bases,
+      "</br></br> Sequence Range: ", sequence_length,
+      "</br> GC Content: ", gc_content, 
+      "</br> Inner Distance Maxima: ", inner_distance_maxima, 
+      "</br> Insert Size: ", median_insert_size
+    )
+      ))
+  do.call(plot_ly, args) %>%
+    add_markers()%>%
+    layout(scene = axis_list)
+}
+```
+
+### Expression PCA
+
+```{r 3d-expression-pca}
+# set pca variables
+pca=prcomp(t(as.matrix(deg_voom$E)), scale. = T)
+define_pcs(pca)
+define_axis()
+
+# plot expression
+plot_pca_data(shared_metadata, pca_max)
 ```
 
 ### TIN PCA
 
 ```{r 3d-tin-pca}
-# Principal Components Analysis
-pca <- prcomp(t(as.matrix(tincounts)), scale. = T)
+# set pca variables
+pca=prcomp(t(as.matrix(tincounts)), scale. = T)
+define_pcs(pca)
+define_axis()
 
-# Variance explained for PCs: 1, 2, 3
-pc1 <- round(pca$sdev[1]^2 / sum(pca$sdev^2) * 100, 2)
-pc2 <- round(pca$sdev[2]^2 / sum(pca$sdev^2) * 100, 2)
-pc3 <- round(pca$sdev[3]^2 / sum(pca$sdev^2) * 100, 2)
-
-cgroups <- as.factor(multiQC$flowcell_lanes)
-cgroups <- addNA(cgroups)
-cpalette <- brewer.pal(nlevels(cgroups), "Paired")
-
-p <- plot_ly(shared_metadata,
-  x = ~PC1_tin, y = ~PC2_tin, z = ~PC3_tin, color = cgroups, colors = cpalette, hoverinfo = "text", marker = list(size = 8),
-  text = ~ paste(
-    "</br><b> Sample: ", Sample, "</br> Flowcell Lanes: ", flowcell_lanes, "</br> medTIN: ", median_tin, "</b></br></br> % Aligned: ", percent_aligned,
-    "</br> % Dup: ", percent_duplication, "</br> % Coding: ", pct_coding_bases,
-    "</br> % Intronic: ", pct_intronic_bases, "</br></br> medTIN: ", median_tin, "</br> Sequence Range: ", sequence_length,
-    "</br> GC Content: ", gc_content, "</br> Inner Distance Maxima: ", inner_distance_maxima, "</br> Insert Size: ", median_insert_size
-  )
-) %>%
-  add_markers() %>%
-  layout(scene = list(
-    xaxis = list(title = paste0("PC1 (", pc1, "%)")),
-    yaxis = list(title = paste0("PC2 (", pc2, "%)")),
-    zaxis = list(title = paste0("PC3 (", pc3, "%)"))
-  ))
-
-# Important: disable onclick() events
-plotly::highlight(p, on = NULL) # fixes unexpected behavior when multiple plots via crosstalk
+# plot expression
+plot_pca_data(shared_metadata, pca_max)
 ```
 
 Subplots {data-icon="ion-grid"}
@@ -696,7 +703,7 @@ Column {data-width=500}
 # Try to use first five Expression PCs
 pca_exp <- prcomp(t(as.matrix(deg_voom$E)), scale. = T)
 pca_exp <- tryCatch(pca_exp$x[, 1:5], error = function(e) {
-  pca_exp$x[, 1:3]
+  pca_exp$x[, 1:pca_max]
 })
 
 # Input for heatmap
