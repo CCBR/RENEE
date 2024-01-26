@@ -48,7 +48,8 @@ jobs:
           git push --set-upstream origin ${{ env.BRANCH }}
 
           gh pr create \
-            --fill-first
+            --fill-first \
+            --reviewer ${{ github.triggering_actor }}
 
       - name: Clean up release-draft branch
         run: |
