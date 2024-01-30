@@ -14,6 +14,7 @@ Example:
 # Python standard library
 from __future__ import print_function
 from shutil import copy, copytree
+import shutil
 import sys, os, subprocess, re, json, textwrap, shlex, glob
 from pathlib import Path
 from datetime import datetime
@@ -69,6 +70,53 @@ def get_hpcname():
     if hpc == "fnlcr":
         hpc = "frce"
     return hpc
+
+
+def modules_command(hpc_name):
+    """
+    Detect whether snakemake, singularity, and conda are in the path.
+    If the platform is either biowulf or frce, return a command string to load them.
+    Otherwise, throw error.
+
+    @param hpcname <str>  HPC name (biowulf, frce, or an empty string)
+    @return command <str>
+    """
+    dep_paths = {
+        dep: shutil.which(dep)
+        for dep in (
+            "conda",
+            "singularity",
+            "snakemake",
+        )
+    }
+
+    hpc_module_commands = {  # TODO reimplement as classes or namedtuples
+        "frce": {
+            "conda": '. "/mnt/projects/CCBR-Pipelines/resources/miniconda3/etc/profile.d/conda.sh" && conda activate py311',
+            "snakemake": 'export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"',
+            "singularity": "module load singularity",
+        },
+        "biowulf": {
+            "conda": '. "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh" && conda activate py311',
+            "snakemake": "module load snakemake",
+            "singularity": "module load singularity",
+        },
+    }
+    command = []
+    if hpc_name:
+        # activate conda env
+        for dep, path in dep_paths.items():
+            if (
+                not path or dep == "conda"
+            ):  # allow users to override snakemake & singularity, but conda env must be used
+                command.append(hpc_module_commands[hpc_name][dep])
+    else:
+        missing_deps = {dep for dep, path in dep_paths.items() if not path}
+        if missing_deps:
+            raise ValueError(
+                f"Missing required dependencies: {', '.join(missing_deps)}"
+            )
+    return " && ".join(command)
 
 
 def get_tmp_dir(tmp_dir, outdir):
