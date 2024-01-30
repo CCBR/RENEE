@@ -878,21 +878,27 @@ def dryrun(
         Byte string representation of dryrun command
     """
     try:
-        dryrun_output = subprocess.check_output(
-            [
-                "snakemake",
-                "-npr",
-                "-s",
-                str(snakefile),
-                "--use-singularity",
-                "--rerun-incomplete",
-                "--cores",
-                "4",
-                "--configfile={}".format(config),
-            ],
+        dryrun_output = subprocess.run(
+            modules_command(get_hpcname())
+            + " && "
+            + " ".join(
+                [
+                    "snakemake",
+                    "-npr",
+                    "-s",
+                    str(snakefile),
+                    "--use-singularity",
+                    "--rerun-incomplete",
+                    "--cores",
+                    "4",
+                    "--configfile={}".format(config),
+                ]
+            ),
             cwd=outdir,
             stderr=subprocess.STDOUT,
-        )
+            capture_output=True,
+            text=True,
+        ).stdout
 
     except subprocess.CalledProcessError as e:
         # Singularity is NOT in $PATH
@@ -918,7 +924,7 @@ def dryrun(
     if write_to_file:
         now = _now()
         with open(os.path.join(outdir, "dryrun." + str(now) + ".log"), "w") as outfile:
-            outfile.write("{}".format(dryrun_output.decode("utf-8")))
+            outfile.write("{}".format(dryrun_output))
 
     return dryrun_output
 
@@ -1025,20 +1031,27 @@ def orchestrate(
         # snakemake API call: https://snakemake.readthedocs.io/en/stable/api_reference/snakemake.html
         # Create log file for pipeline
         logfh = open(os.path.join(outdir, "logfiles", "snakemake.log"), "w")
-        masterjob = subprocess.Popen(
-            [
-                "snakemake",
-                "-pr",
-                "--use-singularity",
-                "--singularity-args",
-                "'-B {}'".format(bindpaths),
-                "--cores",
-                str(threads),
-                "--configfile=config.json",
-            ],
+        masterjob = subprocess.run(
+            modules_command(get_hpcname())
+            + " && "
+            + " ".join(
+                [
+                    "snakemake",
+                    "-pr",
+                    "--use-singularity",
+                    "--singularity-args",
+                    "'-B {}'".format(bindpaths),
+                    "--cores",
+                    str(threads),
+                    "--configfile=config.json",
+                ]
+            ),
             cwd=outdir,
             env=my_env,
-        )
+            shell=True,
+            capture_output=True,
+            text=True,
+        ).stdout
 
     # Submitting jobs to cluster via SLURM's job scheduler
     elif mode == "slurm":
@@ -1266,10 +1279,15 @@ def unlock(sub_args):
     outdir = sub_args.output
 
     try:
-        unlock_output = subprocess.check_output(
-            ["snakemake", "--unlock", "--cores", "1", "--configfile=config.json"],
+        subprocess.run(
+            modules_command(get_hpcname())
+            + " && "
+            + " ".join(
+                ["snakemake", "--unlock", "--cores", "1", "--configfile=config.json"]
+            ),
             cwd=outdir,
             stderr=subprocess.STDOUT,
+            shell=True,
         )
     except subprocess.CalledProcessError as e:
         # Unlocking process returned a non-zero exit code
