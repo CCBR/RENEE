@@ -1,6 +1,8 @@
 ## RENEE development version
+
 - Fix: RNA report bug, caused by hard-coding of PC1-3, when only PC1-2 were generated (#104, @slsevilla)
 - Minor documentation improvements. (#100, @kelly-sovacool)
+- Fix: allow printing the version or help message even if singularity is not in the path. (#110, @kelly-sovacool)
 
 ## RENEE 2.5.11
 
