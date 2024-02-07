@@ -67,13 +67,4 @@ elif [[ $ISFRCE == true ]];then
 	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
 fi
 
-# check if singularity, snakemake are in PATH
-for tool in singularity snakemake;do
-	x=$(type -P $tool)
-	if [[ -z $x ]]; then # is $x blank
-		echo "$tool is not it path! Exiting."
-		exit
-	fi
-done
-
 ${TOOLDIR}/${TOOLNAME} "$@" || true
