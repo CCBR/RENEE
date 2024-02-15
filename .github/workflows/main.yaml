@@ -17,7 +17,7 @@ jobs:
       - name: Dry-run pipeline
         run: |
           docker run -v $PWD:/opt2 -w /opt2 snakemake/snakemake:v5.24.2 \
-            python ./renee.py run \
+            python src/renee/__main__.py run \
               --input .tests/KO_S3.R1.fastq.gz .tests/KO_S3.R2.fastq.gz .tests/KO_S4.R1.fastq.gz .tests/KO_S4.R2.fastq.gz .tests/WT_S1.R1.fastq.gz .tests/WT_S1.R2.fastq.gz .tests/WT_S2.R1.fastq.gz .tests/WT_S2.R2.fastq.gz \
               --output output \
               --genome config/genomes/biowulf/hg38_30.json \
