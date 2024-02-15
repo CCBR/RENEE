@@ -25,7 +25,10 @@ import argparse  # potential python3 3rd party package, added in python/3.5
 
 # Pipeline Metadata and globals
 # __version__ = "v2.5.2"
-RENEE_PATH = os.path.dirname(os.path.abspath(__file__))
+RENEE_PATH = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
+
 vfile = open(os.path.join(RENEE_PATH, "VERSION"), "r")
 __version__ = "v" + vfile.read()
 __version__ = __version__.strip()
@@ -1588,7 +1591,7 @@ def parsed_arguments(name, description):
 
     # Adding Version information
     parser.add_argument(
-        "--version", action="version", version="%(prog)s {}".format(__version__)
+        "--version", action="version", version="renee {}".format(__version__)
     )
 
     # Create sub-command parser
