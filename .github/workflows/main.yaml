@@ -42,6 +42,10 @@ jobs:
         with:
           environment-name: test
           cache-environment: true
+          condarc: |
+            channels:
+              - conda-forge
+              - bioconda
           create-args: >-
             python=${{ matrix.python-version }}
             snakemake=${{ matrix.snakemake-version }}
