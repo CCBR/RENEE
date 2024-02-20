@@ -35,6 +35,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11"]
+        snakemake-version: ["7.32.3"]
     steps:
       - uses: actions/checkout@v4
       - uses: mamba-org/setup-micromamba@v1
@@ -43,7 +44,7 @@ jobs:
           cache-environment: true
           create-args: |
             python=${{ matrix.python-version }}
-            snakemake
+            snakemake=${{ matrix.snakemake-version }}
             setuptools
             pip
             pytest
