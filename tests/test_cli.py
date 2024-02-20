@@ -5,7 +5,7 @@ renee_run = (
     "src/renee/__main__.py run "
     "--mode local --runmode init --dry-run "
     "--input .tests/*.fastq.gz "
-    "--genome hg38_30 "
+    "--genome config/genomes/biowulf/hg38_30.json "
 )
 
 
