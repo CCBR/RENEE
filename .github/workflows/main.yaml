@@ -52,6 +52,8 @@ jobs:
       - name: Test
         run: |
           python -m pytest
+        env:
+          TMPDIR: ${{ runner.temp }}
 
   build-status: # https://github.com/orgs/community/discussions/4324#discussioncomment-3477871
     runs-on: ubuntu-latest
