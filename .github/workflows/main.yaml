@@ -34,7 +34,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.11"]
         snakemake-version: ["7.32.3"]
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +42,6 @@ jobs:
           environment-name: test
           cache-environment: true
           create-args: |
-            python=${{ matrix.python-version }}
             snakemake=${{ matrix.snakemake-version }}
             setuptools
             pip
