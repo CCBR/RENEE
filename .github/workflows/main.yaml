@@ -37,23 +37,31 @@ jobs:
         python-version: ["3.11"]
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - uses: mamba-org/setup-micromamba@v1
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
+          micromamba-version: "1.3.1-0"
+          cache-environment: true
+          create-args: |
+            python=${{ matrix.python-version }}
+            snakemake
+            setuptools
+            pip
+            pytest
       - name: pip
         run: |
-          python -m pip install --upgrade pip setuptools pytest
+          python -m pip install
+        shell: micromamba-shell {0}
       - name: check CLI basics
         run: |
           ./bin/renee --help
           ./bin/renee --version
+        shell: micromamba-shell {0}
       - name: Test
         run: |
           python -m pytest
         env:
           TMPDIR: ${{ runner.temp }}
+        shell: micromamba-shell {0}
 
   build-status: # https://github.com/orgs/community/discussions/4324#discussioncomment-3477871
     runs-on: ubuntu-latest
