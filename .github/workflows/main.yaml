@@ -52,10 +52,6 @@ jobs:
             setuptools
             pip
             pytest
-      - name: pip
-        run: |
-          python -m pip install
-        shell: micromamba-shell {0}
       - name: check CLI basics
         run: |
           ./bin/renee --help
