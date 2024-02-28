@@ -1,6 +1,12 @@
 import pytest
 import subprocess
-from src.renee.__main__ import exists
+
+renee_run = (
+    "src/renee/__main__.py run "
+    "--mode local --runmode init --dry-run "
+    "--input .tests/*.fastq.gz "
+    "--genome config/genomes/biowulf/hg38_30.json "
+)
 
 
 def test_help():
@@ -15,3 +21,12 @@ def test_version():
         "src/renee/__main__.py --version", capture_output=True, shell=True, text=True
     ).stdout
     assert "renee v" in output
+
+
+def test_run_error():
+    assert (
+        "the following arguments are required: --output"
+        in subprocess.run(
+            f"{renee_run}", capture_output=True, shell=True, text=True
+        ).stderr
+    )

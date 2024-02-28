@@ -812,7 +812,6 @@ def setup(sub_args, ifiles, repo_path, output_path):
         ),
         end="",
     )
-    # print(json.dumps(config, indent = 4, sort_keys=True))
     with open(os.path.join(output_path, "config.json"), "w") as fh:
         json.dump(config, fh, indent=4, sort_keys=True)
     print("Done!")

@@ -17,7 +17,7 @@ jobs:
       - name: Dry-run pipeline
         run: |
           docker run -v $PWD:/opt2 -w /opt2 snakemake/snakemake:v5.24.2 \
-            python ./src/renee/__main__.py run \
+            python src/renee/__main__.py run \
               --input .tests/KO_S3.R1.fastq.gz .tests/KO_S3.R2.fastq.gz .tests/KO_S4.R1.fastq.gz .tests/KO_S4.R2.fastq.gz .tests/WT_S1.R1.fastq.gz .tests/WT_S1.R2.fastq.gz .tests/WT_S2.R1.fastq.gz .tests/WT_S2.R2.fastq.gz \
               --output output \
               --genome config/genomes/biowulf/hg38_30.json \
@@ -35,23 +35,34 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11"]
+        snakemake-version: ["7.32.3"]
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - uses: mamba-org/setup-micromamba@v1
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-      - name: pip
-        run: |
-          python -m pip install --upgrade pip setuptools pytest
+          environment-name: test
+          cache-environment: true
+          condarc: |
+            channels:
+              - conda-forge
+              - bioconda
+          create-args: >-
+            python=${{ matrix.python-version }}
+            snakemake=${{ matrix.snakemake-version }}
+            setuptools
+            pip
+            pytest
       - name: check CLI basics
         run: |
           ./bin/renee --help
           ./bin/renee --version
+        shell: micromamba-shell {0}
       - name: Test
         run: |
           python -m pytest
+        env:
+          TMPDIR: ${{ runner.temp }}
+        shell: micromamba-shell {0}
 
   build-status: # https://github.com/orgs/community/discussions/4324#discussioncomment-3477871
     runs-on: ubuntu-latest
