@@ -25,7 +25,10 @@ import argparse  # potential python3 3rd party package, added in python/3.5
 
 # Pipeline Metadata and globals
 # __version__ = "v2.5.2"
-RENEE_PATH = os.path.dirname(os.path.abspath(__file__))
+RENEE_PATH = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
+
 vfile = open(os.path.join(RENEE_PATH, "VERSION"), "r")
 __version__ = "v" + vfile.read()
 __version__ = __version__.strip()
@@ -1101,7 +1104,6 @@ def run(sub_args):
         Parsed arguments for run sub-command
     """
     # Get PATH to RENEE git repository for copying over pipeline resources
-    git_repo = os.path.dirname(os.path.abspath(__file__))
 
     # hpcname is either biowulf, frce, or blank
     hpcname = get_hpcname()
@@ -1110,14 +1112,14 @@ def run(sub_args):
     ):
         # Initialize working directory, copy over required pipeline resources
         input_files = initialize(
-            sub_args, repo_path=git_repo, output_path=sub_args.output
+            sub_args, repo_path=RENEE_PATH, output_path=sub_args.output
         )
 
         # Step pipeline for execution, create config.json config file from templates
         config = setup(
             sub_args,
             ifiles=input_files,
-            repo_path=git_repo,
+            repo_path=RENEE_PATH,
             output_path=sub_args.output,
         )
     # load config from existing file
@@ -1370,7 +1372,6 @@ def build(sub_args):
     """
     # Get PATH to RENEE git repository
     # for copying over pipeline resources
-    git_repo = os.path.dirname(os.path.abspath(__file__))
 
     # Build Output directory
     output_path = os.path.abspath(sub_args.output)
@@ -1379,7 +1380,7 @@ def build(sub_args):
     # initialize, copy resources, and
     # generate config file
     additional_bind_paths = configure_build(
-        sub_args=sub_args, git_repo=git_repo, output_path=output_path
+        sub_args=sub_args, git_repo=RENEE_PATH, output_path=output_path
     )
 
     # Add any additional bindpaths
@@ -1588,7 +1589,7 @@ def parsed_arguments(name, description):
 
     # Adding Version information
     parser.add_argument(
-        "--version", action="version", version="%(prog)s {}".format(__version__)
+        "--version", action="version", version="renee {}".format(__version__)
     )
 
     # Create sub-command parser
