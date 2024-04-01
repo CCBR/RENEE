@@ -17,7 +17,7 @@
         "qualimap": "docker://nciccbr/ccbr_qualimap:v0.0.1",
         "rna": "docker://nciccbr/ccbr_rna:v0.0.1",
         "rsem": "docker://nciccbr/ccbr_rsem_1.3.3:v1.0",
-        "rseqc": "docker://nciccbr/ccbr_rseqc_4.0.0:v1.0",
+        "rseqc": "docker://nciccbr/ccbr_rseqc_4.0.0:v2",
         "rstat": "docker://nciccbr/ccbr_rstat:v0.0.1"
     }
 }
