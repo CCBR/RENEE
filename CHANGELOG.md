@@ -1,3 +1,7 @@
+## development version
+
+- Set RSeQC envmodule version to 4.0.0, which synchronizes it with the version in the docker container used by singularity. (#122, @kelly-sovacool)
+
 ## RENEE 2.5.11
 
 - Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
