@@ -1,7 +1,7 @@
 ## RENEE 2.5.11
 
 - Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
-- Fix: set HPC-specific fastq screen config and kraken DB paths for Biowulf and FRCE. (#78, @kelly-sovacool)
+- Set HPC-specific fastq screen config and kraken DB paths for Biowulf and FRCE. (#78, @kelly-sovacool)
   - Previously, FRCE users were required to set `--shared-resources`,
     which were kept in a location on FRCE not under version control.
     This change brings the paths under version control so they're easier to recover if deleted.
@@ -9,6 +9,7 @@
 - Fix RSEM reference and rRNA interval list paths in FRCE-specific config files (#85, @kelly-sovacool & @slsevilla)
 - Fix bug which caused incorrect genome annotation JSON files to be used (#87, @kelly-sovacool)
 - Set default temporary directory depending on HPC platform. (#98, @kelly-sovacool)
+- Update docker for RSEQC with tools properly added to the path. (#123, @kelly-sovacool)
 
 ## RENEE 2.5.10
 
