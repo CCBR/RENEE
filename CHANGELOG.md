@@ -1,3 +1,12 @@
+## RENEE development version
+
+- Minor documentation improvements. (#100, @kelly-sovacool)
+- Fix RNA report bug, caused by hard-coding of PC1-3, when only PC1-2 were generated. (#104, @slsevilla)
+- Allow printing the version or help message even if singularity is not in the path. (#110, @kelly-sovacool)
+- Fix RSeQC environments:
+  - Set RSeQC envmodule version to 4.0.0, which synchronizes it with the version in the docker container used by singularity. (#122, @kelly-sovacool)
+  - Update docker with RSeQC's tools properly added to the path. (#123, @kelly-sovacool)
+
 ## RENEE 2.5.11
 
 - Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
@@ -9,7 +18,6 @@
 - Fix RSEM reference and rRNA interval list paths in FRCE-specific config files (#85, @kelly-sovacool & @slsevilla)
 - Fix bug which caused incorrect genome annotation JSON files to be used (#87, @kelly-sovacool)
 - Set default temporary directory depending on HPC platform. (#98, @kelly-sovacool)
-- Update docker for RSEQC with tools properly added to the path. (#123, @kelly-sovacool)
 
 ## RENEE 2.5.10
 

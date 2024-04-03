@@ -29,10 +29,10 @@ Required Positional Argument:
 Required Arguments:
   -j, --job-name [Type: Str]    Name of pipeline's master job.
   -b, --bind-paths [Type:Path]  Singularity bind paths. The RENEE pipeline uses
-                                 singaularity images for exection. Bind paths are
+                                 singularity images for execution. Bind paths are
                                  used to mount the host filesystem to the container's
                                  filesystem. Multiple bind paths can be provided
-                                 as a comma seperated list. The main entry point
+                                 as a comma-separated list. The main entry point
                                  of the pipeline internally collects and aggregates
                                  bindpaths to mount to the container's filesystem.
                                  If you are manually running this script or by-passing
@@ -40,13 +40,13 @@ Required Arguments:
                                  the rawdata directory(s) along with the pipeline's
                                  output directory. Please see example usage below.
   -t, --tmp-dir [Type:Path]      Temporary directory. The pipeline generates
-                                 intermediate, temporary output files. Any 
+                                 intermediate, temporary output files. Any
                                  temporary output files will be written to
-                                 this location. On Biowulf, it should be 
+                                 this location. On Biowulf, it should be
                                  set to '/lscratch/\$SLURM_JOBID/'. On FRCE,
-                                 this value should be set to the following: 
+                                 this value should be set to the following:
                                  '/scratch/cluster_scratch/\$USER/'.
-  -h, --hpc-name [Type: Str]     biowulf or frce or unknown                        
+  -h, --hpc-name [Type: Str]     biowulf or frce or unknown
 OPTIONS:
   -o,  --outdir  [Type: Path]  Path to output directory. If not provided, the Path
                                 will default to the current working directory of
@@ -157,9 +157,9 @@ function submit(){
   # Snakemake executor
   executor=${1}
 
-  # Goto Pipeline Ouput directory
+  # Goto Pipeline Output directory
   # Create a local singularity cache in output directory
-  # cache can be re-used instead of re-pulling from DockerHub everytime
+  # cache can be re-used instead of re-pulling from DockerHub every time
   cd "$3" && export SINGULARITY_CACHEDIR="${5}"
 
   # unsetting XDG_RUNTIME_DIR to avoid some unsighly but harmless warnings
@@ -186,17 +186,17 @@ function submit(){
             triggeroptions=""
           fi
           # Check if NOT running on Biowulf
-          # Assumes other clusters do NOT 
+          # Assumes other clusters do NOT
           # have GRES for local node disk,
-          # long term it might be worth 
-          # adding a new option to allow 
-          # a user to decide whether to 
+          # long term it might be worth
+          # adding a new option to allow
+          # a user to decide whether to
           # use GRES at job submission,
           # trying to infer this because
           # most users will not even know
           # what GRES is and how or why
           # it should be used and by default
-          # SLURM is not configured to use 
+          # SLURM is not configured to use
           # GRES, remove prefix single quote
           # if [[ ${6#\'} != /lscratch* ]]; then
           #   CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -t {cluster.time} --mem {cluster.mem} --job-name={params.rname}"

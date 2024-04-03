@@ -2,9 +2,9 @@
 title: "RNA Report"
 author: "Assess the quality of RNA-seq samples"
 params:
-  raw: "/path/to/raw/counts/matrix.tsv"
-  tin: "/path/to/tin/counts/martrix.tsv"
-  qc: "/path/to/qc/table.tsv"
+  raw: "/data/sevillas2/tmp/RSEM.genes.expected_counts.all_samples.reformatted.tsv"
+  tin: "/data/sevillas2/tmp/combined_TIN.tsv"
+  qc: "/data/sevillas2/tmp/multiqc_matrix.tsv"
   annot: "FALSE"
 output:
   flexdashboard::flex_dashboard:
@@ -12,6 +12,8 @@ output:
     navbar:
       - { title: "Pipeline Documentation", href: "https://ccbr.github.io/pipeliner-docs/RNA-seq/Theory-and-practical-guide-for-RNA-seq/", align: right }
     source_code: "embed"
+editor_options: 
+  chunk_output_type: console
 ---
 
 
@@ -38,48 +40,53 @@ suppressMessages(library(ComplexHeatmap))
 suppressMessages(library(circlize))
 
 # Reading in raw counts matrix, TIN matrix, and QC metadata
-rawcounts = read.table(file = params$raw, sep = '\t', header = TRUE, row.names = 1, quote = "")
-#rawcounts = read.table(file = 'data/Test_Raw_RSEM_Genes_Dataset.txt', sep = '\t', header = TRUE, row.names = 1)
+rawcounts <- read.table(file = params$raw, sep = "\t", header = TRUE, row.names = 1, quote = "")
+# rawcounts = read.table(file = 'data/Test_Raw_RSEM_Genes_Dataset.txt', sep = '\t', header = TRUE, row.names = 1)
 
-tincounts = read.table(file = params$tin, sep = '\t', header = TRUE, row.names = 1)
-#tincounts = read.table(file = 'data/Test_TIN_Dataset.txt', sep = '\t', header = TRUE, row.names = 1)
+tincounts <- read.table(file = params$tin, sep = "\t", header = TRUE, row.names = 1)
+# tincounts = read.table(file = 'data/Test_TIN_Dataset.txt', sep = '\t', header = TRUE, row.names = 1)
 
 # Remove zero variance rows prior to PC
-tincounts = tincounts[apply(tincounts, 1, var) != 0, ]
+tincounts <- tincounts[apply(tincounts, 1, var) != 0, ]
 
-multiQC = read.table(file = params$qc, sep = '\t', header = TRUE, stringsAsFactors = TRUE)
-rownames(multiQC) = make.names(multiQC$Sample)
+multiQC <- read.table(file = params$qc, sep = "\t", header = TRUE, stringsAsFactors = TRUE)
+rownames(multiQC) <- make.names(multiQC$Sample)
 
 # Create DGEList
-deg = edgeR::DGEList(counts = rawcounts)
+deg <- edgeR::DGEList(counts = rawcounts)
 
 # Filter lowly expressed genes
-keep_genes = edgeR::filterByExpr(deg)        # Using default: Gene must have 10 reads in >= 70% samples
-deg = deg[keep_genes,,keep.lib.sizes=FALSE]  # Recaluate new lib.sizes after filtering
+keep_genes <- edgeR::filterByExpr(deg) # Using default: Gene must have 10 reads in >= 70% samples
+deg <- deg[keep_genes, , keep.lib.sizes = FALSE] # Recaluate new lib.sizes after filtering
 
 # edgeR TMM normalization
-deg = calcNormFactors(deg, method = "TMM")   # calculate scaling norm.factors
+deg <- calcNormFactors(deg, method = "TMM") # calculate scaling norm.factors
 
 # limma voom normalization
-deg_voom = voom(deg, normalize="quantile", plot = TRUE, save.plot = TRUE)
+deg_voom <- voom(deg, normalize = "quantile", plot = TRUE, save.plot = TRUE)
 
 # Order genes by MAD
-deg_voom$E <- deg_voom$E[order(apply(deg_voom$E, 1, mad), decreasing = T),]
+deg_voom$E <- deg_voom$E[order(apply(deg_voom$E, 1, mad), decreasing = T), ]
 
 # Remove zero variance rows prior to PC
 deg_voom$E <- deg_voom$E[apply(deg_voom$E, 1, var) != 0, ]
 
 # Principal Components Analysis
-pca_exp = prcomp(t(as.matrix(deg_voom$E)), scale.=T)$x[,1:3] # Expression PC Analysis
-pca_tin = prcomp(t(as.matrix(tincounts)), scale.=T)$x[,1:3]  # Transcript Integrity Number PC Analysis
-colnames(pca_tin) = c("PC1_tin", "PC2_tin", "PC3_tin")       # Renaming PC cols to avoid collision with gene expression PCs
+PC_labels <- c("PC1_tin", "PC2_tin", "PC3_tin")
+pca_max <- min(length(prcomp(t(as.matrix(deg_voom$E)), scale. = T)$sdev), 3)
+if (pca_max < 2) {
+  stop("Fewer than 2 principle components were found")
+}
+pca_exp <- prcomp(t(as.matrix(deg_voom$E)), scale. = T)$x[, 1:pca_max] # Expression PC Analysis
+pca_tin <- prcomp(t(as.matrix(tincounts)), scale. = T)$x[, 1:pca_max] # Transcript Integrity Number PC Analysis
+colnames(pca_tin) <- PC_labels[1:pca_max] # Renaming PC cols to avoid collision with gene expression PCs
 
 # Merge both dataframes on rowname
-multiQC = transform(merge(multiQC, as.data.frame(pca_exp), by='row.names', all=TRUE), row.names=Row.names, Row.names=NULL)
-multiQC = transform(merge(multiQC, as.data.frame(pca_tin), by='row.names', all=TRUE), row.names=Row.names, Row.names=NULL)
+multiQC <- transform(merge(multiQC, as.data.frame(pca_exp), by = "row.names", all = TRUE), row.names = Row.names, Row.names = NULL)
+multiQC <- transform(merge(multiQC, as.data.frame(pca_tin), by = "row.names", all = TRUE), row.names = Row.names, Row.names = NULL)
 
 # Crosstalk object (inter-widget connectivity)
-shared_metadata = SharedData$new(multiQC)
+shared_metadata <- SharedData$new(multiQC)
 ```
 
 
@@ -92,7 +99,6 @@ Inputs {.sidebar}
 ### Filters
 
 ```{r filters}
-
 # Flowcell Lanes
 filter_select(
   id = "flowcell_lanes",
@@ -101,7 +107,6 @@ filter_select(
   group = ~flowcell_lanes
 )
 
-
 # Sequence Ranges
 filter_select(
   id = "sequence_length",
@@ -109,7 +114,6 @@ filter_select(
   sharedData = shared_metadata,
   group = ~sequence_length
 )
-
 
 # Median TIN
 filter_slider(
@@ -125,7 +129,6 @@ filter_slider(
   max = 100
 )
 
-
 # Trimmed Reads
 filter_slider(
   id = "trimmed_read_pairs",
@@ -138,7 +141,6 @@ filter_slider(
   ticks = TRUE,
   min = 0
 )
-
 
 # % Duplicates
 filter_slider(
@@ -154,7 +156,6 @@ filter_slider(
   max = 100
 )
 
-
 # % Aligned
 filter_slider(
   id = "percent_aligned",
@@ -168,7 +169,6 @@ filter_slider(
   min = 0,
   max = 100
 )
-
 
 # % Coding
 filter_slider(
@@ -184,7 +184,6 @@ filter_slider(
   max = 100
 )
 
-
 # % Intronic
 filter_slider(
   id = "pct_intronic_bases",
@@ -198,7 +197,6 @@ filter_slider(
   max = 100
 )
 
-
 # % UTR
 filter_slider(
   id = "pct_utr_bases",
@@ -211,7 +209,6 @@ filter_slider(
   min = 0,
   max = 100
 )
-
 
 # % rRNA
 filter_slider(
@@ -227,7 +224,6 @@ filter_slider(
   max = 100
 )
 
-
 # GC content
 filter_slider(
   id = "gc_content",
@@ -238,7 +234,6 @@ filter_slider(
   ticks = TRUE
 )
 
-
 # CV Coverage
 filter_slider(
   id = "median_cv_coverage",
@@ -248,7 +243,6 @@ filter_slider(
   sep = "",
   ticks = TRUE
 )
-
 
 # Inner Distance Maxima
 filter_slider(
@@ -272,7 +266,6 @@ filter_slider(
   sep = "",
   ticks = TRUE
 )
-
 ```
 
 
@@ -286,28 +279,28 @@ shared_metadata %>%
     # selection = 'none', # disable datatable row selection
     # filter = "top",     # allows filtering on each column
     extensions = c(
-      "Buttons",      # add download buttons
-      "Scroller"      # for scrolling instead of pagination
+      "Buttons", # add download buttons
+      "Scroller" # for scrolling instead of pagination
     ),
-    rownames = FALSE,  # remove rownames
+    rownames = FALSE, # remove rownames
     style = "bootstrap",
     class = "compact",
     width = "100%",
     options = list(
-      dom = "Blrtip",  # specify content (search box, etc)
+      dom = "Blrtip", # specify content (search box, etc)
       deferRender = TRUE,
       scrollY = 300,
       scroller = TRUE,
       columnDefs = list(
         list(
           visible = FALSE,
-          targets = c(1, 11, 14, 15, 18, 19, 21:23, 27, 30, 31, 32, 33, 34, 35)   # hide columes
+          targets = c(1, 11, 14, 15, 18, 19, 21:23, 27, 30, 31, 32, 33, 34, 35) # hide columes
         )
       ),
       buttons = list(
-        I("colvis"),  # turn columns on and off
-        "csv",  # download as .csv
-        "excel"  # download as .xlsx
+        I("colvis"), # turn columns on and off
+        "csv", # download as .csv
+        "excel" # download as .xlsx
       )
     ),
     colnames = c(
@@ -327,7 +320,7 @@ shared_metadata %>%
       "% UTR" = "pct_utr_bases",
       "% Intronic" = "pct_intronic_bases",
       "CV Coverage" = "median_cv_coverage",
-      "% rRNA" = "rRNA_percent_aligned" ,
+      "% rRNA" = "rRNA_percent_aligned",
       "% UniVec" = "uni_vec_percent_aligned",
       "% Anti-sense" = "percent_antisense_strand",
       "medTIN" = "median_tin",
@@ -340,59 +333,85 @@ shared_metadata %>%
 Row {data-height=600}
 -------------------------------------
 
+```{r prep-plotly, echo=FALSE, include=FALSE}
+# Variance explained for PCs: 1, 2, 3
+define_pcs <- function(pca_in){
+  pc1 <<- round(pca_in$sdev[1]^2 / sum(pca_in$sdev^2) * 100, 2)
+  pc2 <<- round(pca_in$sdev[2]^2 / sum(pca_in$sdev^2) * 100, 2)
+  pc3 <<- round(pca_in$sdev[3]^2 / sum(pca_in$sdev^2) * 100, 2)
+}
+
+# set axis list
+define_axis<-function(){
+  axis_list<<-list(
+      xaxis = list(title = paste0("PC1 (", pc1, "%)")),
+      yaxis = list(title = paste0("PC2 (", pc2, "%)")),
+      zaxis = list(title = paste0("PC3 (", pc3, "%)")))[1:pca_max]
+}
+
+# set group info
+cgroups <- as.factor(multiQC$flowcell_lanes)
+cgroups <- addNA(cgroups)
+cpalette <- brewer.pal(nlevels(cgroups), "Paired")
+
+```
+
+```{r plotly-function, include=FALSE, echo=FALSE}
+# plot expression
+plot_pca_data <- function(dat, pca_max) {
+  if (pca_max > 3 | pca_max < 2) {
+    stop(glue::glue("Number of principle components must be 2 or 3, but is {pca_max}"))
+  }
+  pcs <- c(x = ~PC1, y = ~PC2, z = ~PC3)[1:pca_max]
+  args <-c(pcs, list(
+    data = dat,
+    hoverinfo = "text",
+    marker = list(size = 8),
+    color = cgroups,
+    colors = cpalette,
+    text = ~ paste(
+      "</br><b> Sample: ", Sample,
+      "</br> Flowcell Lanes: ", flowcell_lanes,
+      "</br> medTIN: ", median_tin,
+      "</b></br></br> % Aligned: ", percent_aligned,
+      "</br> % Dup: ", percent_duplication,
+      "</br> % Coding: ", pct_coding_bases,
+      "</br> % UTR: ", pct_utr_bases,
+      "</br> % Intronic: ", pct_intronic_bases,
+      "</br></br> Sequence Range: ", sequence_length,
+      "</br> GC Content: ", gc_content, 
+      "</br> Inner Distance Maxima: ", inner_distance_maxima, 
+      "</br> Insert Size: ", median_insert_size
+    )
+      ))
+  do.call(plot_ly, args) %>%
+    add_markers()%>%
+    layout(scene = axis_list)
+}
+```
+
 ### Expression PCA
 
 ```{r 3d-expression-pca}
-# Principal Components Analysis
-pca = prcomp(t(as.matrix(deg_voom$E)), scale.=T)
+# set pca variables
+pca=prcomp(t(as.matrix(deg_voom$E)), scale. = T)
+define_pcs(pca)
+define_axis()
 
-# Variance explained for PCs: 1, 2, 3
-pc1 = round(pca$sdev[1]^2/sum(pca$sdev^2)*100,2)
-pc2 = round(pca$sdev[2]^2/sum(pca$sdev^2)*100,2)
-pc3 = round(pca$sdev[3]^2/sum(pca$sdev^2)*100,2)
-
-cgroups = as.factor(multiQC$flowcell_lanes)
-cgroups = addNA(cgroups)
-cpalette <- brewer.pal(nlevels(cgroups), "Paired")
-
-p <- plot_ly(shared_metadata, x = ~PC1, y = ~PC2, z = ~PC3, color=cgroups, colors=cpalette, hoverinfo="text", marker=list(size  = 8),
-            text = ~paste('</br><b> Sample: ', Sample, '</br> Flowcell Lanes: ', flowcell_lanes, '</br> medTIN: ', median_tin, '</b></br></br> % Aligned: ', percent_aligned,
-                     '</br> % Dup: ', percent_duplication, '</br> % Coding: ', pct_coding_bases, '</br> % UTR: ', pct_utr_bases,
-                     '</br> % Intronic: ', pct_intronic_bases, '</br></br> Sequence Range: ', sequence_length,
-                     '</br> GC Content: ', gc_content, '</br> Inner Distance Maxima: ', inner_distance_maxima, '</br> Insert Size: ', median_insert_size) ) %>%
-      add_markers() %>%  layout(scene = list(xaxis = list(title = paste0("PC1 (",pc1,"%)")),
-                                              yaxis = list(title = paste0("PC2 (",pc2,"%)")),
-                                              zaxis = list(title = paste0("PC3 (",pc3,"%)"))))
-# Important: disable onclick() events
-plotly::highlight(p, on = NULL) # fixes unexpected behavior when multiple plots via crosstalk
+# plot expression
+plot_pca_data(shared_metadata, pca_max)
 ```
 
 ### TIN PCA
 
 ```{r 3d-tin-pca}
-# Principal Components Analysis
-pca = prcomp(t(as.matrix(tincounts)), scale.=T)
+# set pca variables
+pca=prcomp(t(as.matrix(tincounts)), scale. = T)
+define_pcs(pca)
+define_axis()
 
-# Variance explained for PCs: 1, 2, 3
-pc1 = round(pca$sdev[1]^2/sum(pca$sdev^2)*100,2)
-pc2 = round(pca$sdev[2]^2/sum(pca$sdev^2)*100,2)
-pc3 = round(pca$sdev[3]^2/sum(pca$sdev^2)*100,2)
-
-cgroups = as.factor(multiQC$flowcell_lanes)
-cgroups = addNA(cgroups)
-cpalette <- brewer.pal(nlevels(cgroups), "Paired")
-
-p <- plot_ly(shared_metadata, x = ~PC1_tin, y = ~PC2_tin, z = ~PC3_tin, color=cgroups, colors=cpalette, hoverinfo="text", marker=list(size  = 8),
-            text = ~paste('</br><b> Sample: ', Sample, '</br> Flowcell Lanes: ', flowcell_lanes, '</br> medTIN: ', median_tin, '</b></br></br> % Aligned: ', percent_aligned,
-                     '</br> % Dup: ', percent_duplication, '</br> % Coding: ', pct_coding_bases,
-                     '</br> % Intronic: ', pct_intronic_bases, '</br></br> medTIN: ', median_tin, '</br> Sequence Range: ', sequence_length,
-                     '</br> GC Content: ', gc_content, '</br> Inner Distance Maxima: ', inner_distance_maxima, '</br> Insert Size: ', median_insert_size) ) %>%
-      add_markers() %>%  layout(scene = list(xaxis = list(title = paste0("PC1 (",pc1,"%)")),
-                                              yaxis = list(title = paste0("PC2 (",pc2,"%)")),
-                                              zaxis = list(title = paste0("PC3 (",pc3,"%)"))))
-
-# Important: disable onclick() events
-plotly::highlight(p, on = NULL) # fixes unexpected behavior when multiple plots via crosstalk
+# plot expression
+plot_pca_data(shared_metadata, pca_max)
 ```
 
 Subplots {data-icon="ion-grid"}
@@ -405,20 +424,21 @@ Row
 
 ```{r pca-initialize}
 # Principal Components Analysis
-pca = prcomp(t(as.matrix(deg_voom$E)), scale.=T)
+pca <- prcomp(t(as.matrix(deg_voom$E)), scale. = T)
 
 # Variance explained for PCs: 1, 2, 3
-pc1 = round(pca$sdev[1]^2/sum(pca$sdev^2)*100,2)
-pc2 = round(pca$sdev[2]^2/sum(pca$sdev^2)*100,2)
-
+pc1 <- round(pca$sdev[1]^2 / sum(pca$sdev^2) * 100, 2)
+pc2 <- round(pca$sdev[2]^2 / sum(pca$sdev^2) * 100, 2)
 ```
 
 ### Flowcell Lanes
 
 ```{r colored-by-flowcell-lanes}
 # Gene Expression PCA colored by Flowcell Lanes
-g <- ggplot(multiQC, aes(PC1, PC2, color = flowcell_lanes), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "Flowcell + Lanes", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)"))
+g <- ggplot(multiQC, aes(PC1, PC2, color = flowcell_lanes), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "Flowcell + Lanes", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)"))
 
 g
 ```
@@ -428,9 +448,11 @@ g
 
 ```{r colored-by-dups}
 # Gene Expression PCA colored by % Duplicates
-g <- ggplot(multiQC, aes(PC1, PC2, color = percent_duplication), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "% Dups", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = percent_duplication), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "% Dups", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -439,9 +461,11 @@ g
 
 ```{r colored-by-alignment}
 # Gene Expression PCA colored by % Aligned
-g <- ggplot(multiQC, aes(PC1, PC2, color = percent_aligned), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "% Aligned", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = percent_aligned), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "% Aligned", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -450,9 +474,11 @@ g
 
 ```{r colored-by-utr-bases}
 # Gene Expression PCA colored by % UTR
-g <- ggplot(multiQC, aes(PC1, PC2, color = pct_utr_bases), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "% UTR", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = pct_utr_bases), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "% UTR", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -461,9 +487,11 @@ g
 
 ```{r colored-by-intronic-bases}
 # Gene Expression PCA colored by % Intronic
-g <- ggplot(multiQC, aes(PC1, PC2, color = pct_intronic_bases), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "% Intronic", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = pct_intronic_bases), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "% Intronic", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -476,9 +504,11 @@ Row
 
 ```{r colored-by-inner-distance-maxima}
 # Gene Expression PCA colored by Inner Distance
-g <- ggplot(multiQC, aes(PC1, PC2, color = inner_distance_maxima), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "Inner Distance Maxima", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = inner_distance_maxima), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "Inner Distance Maxima", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -487,9 +517,11 @@ g
 
 ```{r colored-by-cv-coverage}
 # Gene Expression PCA colored by CV Coverage
-g <- ggplot(multiQC, aes(PC1, PC2, color = median_cv_coverage), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "CV Coverage", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-        scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = median_cv_coverage), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "CV Coverage", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -498,9 +530,11 @@ g
 
 ```{r colored-by-3-prime-coverage}
 # Gene Expression PCA colored by 3' Prime Coverage
-g <- ggplot(multiQC, aes(PC1, PC2, color = median_3prime_bias), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "3' Prime Coverage", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = median_3prime_bias), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "3' Prime Coverage", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -509,9 +543,11 @@ g
 
 ```{r colored-by-insert-size}
 # Gene Expression PCA colored by Insert Size
-g <- ggplot(multiQC, aes(PC1, PC2, color = median_insert_size), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "Insert Size", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = median_insert_size), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "Insert Size", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -520,9 +556,11 @@ g
 
 ```{r colored-by-inner-distance}
 # Gene Expression PCA colored by GC Content
-g <- ggplot(multiQC, aes(PC1, PC2, color = gc_content), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "GC Content", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = gc_content), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "GC Content", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -534,9 +572,11 @@ Row
 
 ```{r colored-by-medtin}
 # Gene Expression PCA colored by medTIN
-g <- ggplot(multiQC, aes(PC1, PC2, color = median_tin), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "medTIN", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = median_tin), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "medTIN", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -546,9 +586,11 @@ g
 
 ```{r colored-by-coding}
 # Gene Expression PCA colored by % Coding
-g <- ggplot(multiQC, aes(PC1, PC2, color = pct_coding_bases), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "% Coding", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = pct_coding_bases), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "% Coding", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -557,9 +599,11 @@ g
 
 ```{r colored-by-rrna}
 # Gene Expression PCA colored by % rRNA
-g <- ggplot(multiQC, aes(PC1, PC2, color = rRNA_percent_aligned), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "% rRNA", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = rRNA_percent_aligned), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "% rRNA", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -568,9 +612,11 @@ g
 
 ```{r colored-by-anti-sense}
 # Gene Expression PCA colored by % Anti-sense
-g <- ggplot(multiQC, aes(PC1, PC2, color = percent_antisense_strand), xlab) + geom_point(size = multiQC$flowcell_lanes) + theme_minimal() +
-        labs(color = "% Anti-sense", x = paste0("PC1 (",pc1,"%)"), y = paste0("PC2 (",pc2,"%)")) +
-          scale_colour_gradientn(colours = viridis::viridis(100))
+g <- ggplot(multiQC, aes(PC1, PC2, color = percent_antisense_strand), xlab) +
+  geom_point(size = multiQC$flowcell_lanes) +
+  theme_minimal() +
+  labs(color = "% Anti-sense", x = paste0("PC1 (", pc1, "%)"), y = paste0("PC2 (", pc2, "%)")) +
+  scale_colour_gradientn(colours = viridis::viridis(100))
 
 g
 ```
@@ -584,35 +630,36 @@ Corr plots {data-orientation=columns data-icon="ion-stats-bars"}
 Column {data-width=500}
 -------------------------------------
 
-### Heirarchical clustering of pairwise spearman correlation coefficients
+### Hierarchical clustering of pairwise spearman correlation coefficients
 
-```{r heirarchical-correlation-matrix, dpi=300}
-
+```{r hierarchical-correlation-matrix, dpi=300}
 # Helper Function
-reorder_cormat <- function(cormat){
-  # Use correlation between variables as distance for heirarchincal clustering
-  dd <- as.dist((1-cormat)/2)
+reorder_cormat <- function(cormat) {
+  # Use correlation between variables as distance for hierarchincal clustering
+  dd <- as.dist((1 - cormat) / 2)
   hc <- hclust(dd)
-  cormat <-cormat[hc$order, hc$order]
+  cormat <- cormat[hc$order, hc$order]
 }
 
 # Remove all columns that are categorical
-numericQC = multiQC[,-which(sapply(multiQC, class) == "factor")]
+numericQC <- multiQC[, -which(sapply(multiQC, class) == "factor")]
 
 # Additional columns to remove
-additional_remove <- names(numericQC) %in% c("total_read_pairs", "mean_insert_size", "avg_aligned_read_length", "pct_mrna_bases",
-                                             "pct_intergenic_bases", "median_5prime_to_3prime_bias", "median_5prime_bias",
-                                             "median_3prime_bias", "percent_sense_strand", "mean_mapping_quality",
-                                             "PC1_tin", "PC2_tin", "PC3_tin")
+additional_remove <- names(numericQC) %in% c(
+  "total_read_pairs", "mean_insert_size", "avg_aligned_read_length", "pct_mrna_bases",
+  "pct_intergenic_bases", "median_5prime_to_3prime_bias", "median_5prime_bias",
+  "median_3prime_bias", "percent_sense_strand", "mean_mapping_quality",
+  "PC1_tin", "PC2_tin", "PC3_tin"
+)
 # Cleaned numerical QC dataframe
-numericQC = numericQC[!additional_remove]
+numericQC <- numericQC[!additional_remove]
 
 # Remove zero-variance columns to prevent any hlclust() errors
-#numericQC = numericQC[,-which(apply(numericQC, 2, var) == 0)]
-numericQC = numericQC[, apply(numericQC, 2, var) != 0]
+# numericQC = numericQC[,-which(apply(numericQC, 2, var) == 0)]
+numericQC <- numericQC[, apply(numericQC, 2, var) != 0]
 
 # Pair-wise spearman correlation matrix
-cormatrix = round(cor(numericQC, method = "spearman"),2)
+cormatrix <- round(cor(numericQC, method = "spearman"), 2)
 
 # Reorder the correlation matrix based on hierarchical clustering of the correlation coeff
 cormat <- reorder_cormat(cormatrix)
@@ -620,23 +667,28 @@ cormat <- reorder_cormat(cormatrix)
 # Get upper triangle of the correlation matrix
 cormat[lower.tri(cormat)] <- NA
 
-# Remove lower trinagle and reshape from wide to long format
+# Remove lower triangle and reshape from wide to long format
 cormat <- melt(cormat, na.rm = TRUE)
 
 # Correlation ggheatmap
-ggheatmap <- ggplot(cormat, aes(Var2, Var1, fill = value)) + geom_tile(color = "white") +
-                scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0, limit = c(-1,1), space = "Lab", name="Spearman\nCorrelation") +
-                theme_minimal() + theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 9, hjust = 1)) + coord_fixed() +
-                theme(axis.title.x = element_blank(),
-                      axis.title.y = element_blank(),
-                      panel.grid.major = element_blank(),
-                      panel.border = element_blank(),
-                      panel.background = element_blank(),
-                      axis.ticks = element_blank(),
-                      legend.justification = c(1, 0),
-                      legend.position = c(0.6, 0.7),
-                      legend.direction = "horizontal") +
-                guides(fill = guide_colorbar(barwidth = 8, barheight = 1, title.position = "top", title.hjust = 0.5))
+ggheatmap <- ggplot(cormat, aes(Var2, Var1, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0, limit = c(-1, 1), space = "Lab", name = "Spearman\nCorrelation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, size = 9, hjust = 1)) +
+  coord_fixed() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    legend.justification = c(1, 0),
+    legend.position = c(0.6, 0.7),
+    legend.direction = "horizontal"
+  ) +
+  guides(fill = guide_colorbar(barwidth = 8, barheight = 1, title.position = "top", title.hjust = 0.5))
 
 ggheatmap
 ```
@@ -647,14 +699,12 @@ Column {data-width=500}
 ### Complete linkage clustering of PC loadings with QC annotations
 
 ```{r loadings-heatmap, dpi=300, fig.height=6}
-
 # Principal Components Analysis: 5 PCs as heatmap input
 # Try to use first five Expression PCs
-pca_exp = prcomp(t(as.matrix(deg_voom$E)), scale.=T)
-pca_exp <- tryCatch(pca_exp$x[,1:5], error = function(e){
-         pca_exp$x[,1:3]
-    }
-)
+pca_exp <- prcomp(t(as.matrix(deg_voom$E)), scale. = T)
+pca_exp <- tryCatch(pca_exp$x[, 1:5], error = function(e) {
+  pca_exp$x[, 1:pca_max]
+})
 
 # Input for heatmap
 hm_data <- as.matrix(t(pca_exp))
@@ -663,27 +713,33 @@ hm_data <- as.matrix(t(pca_exp))
 additional_remove <- names(numericQC) %in% c("PC1", "PC2", "PC3")
 
 # Cleaned numerical QC dataframe with matched rownames
-numericQC = numericQC[match(colnames(hm_data), rownames(numericQC), nomatch=0), !additional_remove]
+numericQC <- numericQC[match(colnames(hm_data), rownames(numericQC), nomatch = 0), !additional_remove]
 
-column_annotations = HeatmapAnnotation(df = numericQC)
+column_annotations <- HeatmapAnnotation(df = numericQC)
 
-if (params$annot){
-	cheatmap <- ComplexHeatmap::Heatmap(hm_data,
-                    col=colorRamp2(seq(-max(abs(pca_exp), na.rm = T), max(abs(pca_exp), na.rm = T), length.out = 20),
-                                   rev(colorRampPalette(brewer.pal(9, "PuOr"))(20))),
-                    bottom_annotation = column_annotations,
-                    show_column_names=T,
-                    column_names_rot = 45,
-                    cluster_rows = FALSE,
-                    show_heatmap_legend = F) # Turning off to control the placement
-} else{
-	cheatmap <- ComplexHeatmap::Heatmap(hm_data,
-                    col=colorRamp2(seq(-max(abs(pca_exp), na.rm = T), max(abs(pca_exp), na.rm = T), length.out = 20),
-                                   rev(colorRampPalette(brewer.pal(9, "PuOr"))(20))),
-                    bottom_annotation = column_annotations,
-                    show_column_names=F,
-                    cluster_rows = FALSE,
-                    show_heatmap_legend = F) # Turning off to control the placement
+if (params$annot) {
+  cheatmap <- ComplexHeatmap::Heatmap(hm_data,
+    col = colorRamp2(
+      seq(-max(abs(pca_exp), na.rm = T), max(abs(pca_exp), na.rm = T), length.out = 20),
+      rev(colorRampPalette(brewer.pal(9, "PuOr"))(20))
+    ),
+    bottom_annotation = column_annotations,
+    show_column_names = T,
+    column_names_rot = 45,
+    cluster_rows = FALSE,
+    show_heatmap_legend = F
+  ) # Turning off to control the placement
+} else {
+  cheatmap <- ComplexHeatmap::Heatmap(hm_data,
+    col = colorRamp2(
+      seq(-max(abs(pca_exp), na.rm = T), max(abs(pca_exp), na.rm = T), length.out = 20),
+      rev(colorRampPalette(brewer.pal(9, "PuOr"))(20))
+    ),
+    bottom_annotation = column_annotations,
+    show_column_names = F,
+    cluster_rows = FALSE,
+    show_heatmap_legend = F
+  ) # Turning off to control the placement
 }
 
 draw(cheatmap, show_annotation_legend = FALSE)
@@ -732,25 +788,25 @@ Here is a set of generalized guidelines for different QC metrics. Some of these 
 
 **References**
 
-<sup>**1.**	Daley, T. and A.D. Smith, Predicting the molecular complexity of sequencing libraries. Nat Methods, 2013. 10(4): p. 325-7.</sup>  
-<sup>**2.** Andrews, S. (2010). FastQC: a quality control tool for high throughput sequence data.</sup>  
-<sup>**3.**	Martin, M. (2011). "Cutadapt removes adapter sequences from high-throughput sequencing reads." EMBnet 17(1): 10-12.</sup>  
-<sup>**4.**	Dobin, A., et al., STAR: ultrafast universal RNA-seq aligner. Bioinformatics, 2013. 29(1): p. 15-21.</sup>  
-<sup>**5.**	Li, B. and C.N. Dewey, RSEM: accurate transcript quantification from RNA-Seq data with or without a reference genome. BMC Bioinformatics, 2011. 12: p. 323.</sup>  
-<sup>**6.**	Harrow, J., et al., GENCODE: the reference human genome annotation for The ENCODE Project. Genome Res, 2012. 22(9): p. 1760-74.</sup>  
-<sup>**7.**	Law, C.W., et al., voom: Precision weights unlock linear model analysis tools for RNA-seq read counts. Genome Biol, 2014. 15(2): p. R29.</sup>  
-<sup>**8.**	Smyth, G.K., Linear models and empirical bayes methods for assessing differential expression in microarray experiments. Stat Appl Genet Mol Biol, 2004. 3: p. Article3.</sup>  
-<sup>**9.**    Wang, L., et al. (2012). "RSeQC: quality control of RNA-seq experiments." Bioinformatics 28(16): 2184-2185.</sup>  
-<sup>**10.**    The Picard toolkit. https://broadinstitute.github.io/picard/.</sup>  
-<sup>**11.**    Ewels, P., et al. (2016). "MultiQC: summarize analysis results for multiple tools and samples in a single report." Bioinformatics 32(19): 3047-3048.</sup>  
-<sup>**12.**    R Core Team (2018). R: A Language and Environment for Statistical Computing. Vienna, Austria, R Foundation for Statistical Computing.</sup>  
-<sup>**13.**    Li, H., et al. (2009). "The Sequence Alignment/Map format and SAMtools." Bioinformatics 25(16): 2078-2079.</sup>  
-<sup>**14.**    Wood, D. E. and S. L. Salzberg (2014). "Kraken: ultrafast metagenomic sequence classification using exact alignments." Genome Biol 15(3): R46.</sup>  
-<sup>**15.**    Ondov, B. D., et al. (2011). "Interactive metagenomic visualization in a Web browser." BMC Bioinformatics 12(1): 385.</sup>  
-<sup>**16.**    Okonechnikov, K., et al. (2015). "Qualimap 2: advanced multi-sample quality control for high-throughput sequencing data." Bioinformatics 32(2): 292-294.</sup>  
-<sup>**17.**    Wingett, S. and S. Andrews (2018). "FastQ Screen: A tool for multi-genome mapping and quality control." F1000Research 7(2): 1338.</sup>  
-<sup>**18.**    Robinson, M. D., et al. (2009). "edgeR: a Bioconductor package for differential expression analysis of digital gene expression data." Bioinformatics 26(1): 139-140.</sup>  
-<sup>**9.**    Wang, L., et al. (2012). "RSeQC: quality control of RNA-seq experiments." Bioinformatics 28(16): 2184-2185.</sup>  
+<sup>**1.**	Daley, T. and A.D. Smith, Predicting the molecular complexity of sequencing libraries. Nat Methods, 2013. 10(4): p. 325-7.</sup>
+<sup>**2.** Andrews, S. (2010). FastQC: a quality control tool for high throughput sequence data.</sup>
+<sup>**3.**	Martin, M. (2011). "Cutadapt removes adapter sequences from high-throughput sequencing reads." EMBnet 17(1): 10-12.</sup>
+<sup>**4.**	Dobin, A., et al., STAR: ultrafast universal RNA-seq aligner. Bioinformatics, 2013. 29(1): p. 15-21.</sup>
+<sup>**5.**	Li, B. and C.N. Dewey, RSEM: accurate transcript quantification from RNA-Seq data with or without a reference genome. BMC Bioinformatics, 2011. 12: p. 323.</sup>
+<sup>**6.**	Harrow, J., et al., GENCODE: the reference human genome annotation for The ENCODE Project. Genome Res, 2012. 22(9): p. 1760-74.</sup>
+<sup>**7.**	Law, C.W., et al., voom: Precision weights unlock linear model analysis tools for RNA-seq read counts. Genome Biol, 2014. 15(2): p. R29.</sup>
+<sup>**8.**	Smyth, G.K., Linear models and empirical bayes methods for assessing differential expression in microarray experiments. Stat Appl Genet Mol Biol, 2004. 3: p. Article3.</sup>
+<sup>**9.**    Wang, L., et al. (2012). "RSeQC: quality control of RNA-seq experiments." Bioinformatics 28(16): 2184-2185.</sup>
+<sup>**10.**    The Picard toolkit. https://broadinstitute.github.io/picard/.</sup>
+<sup>**11.**    Ewels, P., et al. (2016). "MultiQC: summarize analysis results for multiple tools and samples in a single report." Bioinformatics 32(19): 3047-3048.</sup>
+<sup>**12.**    R Core Team (2018). R: A Language and Environment for Statistical Computing. Vienna, Austria, R Foundation for Statistical Computing.</sup>
+<sup>**13.**    Li, H., et al. (2009). "The Sequence Alignment/Map format and SAMtools." Bioinformatics 25(16): 2078-2079.</sup>
+<sup>**14.**    Wood, D. E. and S. L. Salzberg (2014). "Kraken: ultrafast metagenomic sequence classification using exact alignments." Genome Biol 15(3): R46.</sup>
+<sup>**15.**    Ondov, B. D., et al. (2011). "Interactive metagenomic visualization in a Web browser." BMC Bioinformatics 12(1): 385.</sup>
+<sup>**16.**    Okonechnikov, K., et al. (2015). "Qualimap 2: advanced multi-sample quality control for high-throughput sequencing data." Bioinformatics 32(2): 292-294.</sup>
+<sup>**17.**    Wingett, S. and S. Andrews (2018). "FastQ Screen: A tool for multi-genome mapping and quality control." F1000Research 7(2): 1338.</sup>
+<sup>**18.**    Robinson, M. D., et al. (2009). "edgeR: a Bioconductor package for differential expression analysis of digital gene expression data." Bioinformatics 26(1): 139-140.</sup>
+<sup>**9.**    Wang, L., et al. (2012). "RSeQC: quality control of RNA-seq experiments." Bioinformatics 28(16): 2184-2185.</sup>
 
 Column {data-width=400}
 -------------------------------------
