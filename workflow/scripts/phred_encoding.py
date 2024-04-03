@@ -22,12 +22,12 @@ import sys, gzip
 # AAAFFJJFJJJJJJFJJJJJJJJJJFJAJJJJJFJJJJJFFJJAJJJJ7JJ <- Determine if Phred-33 encoding or Phred-64
 
 
-def usage(message = '', exitcode = 0):
+def usage(message="", exitcode=0):
     """Displays help and usage information. If provided invalid usage
     returns non-zero exit-code. Additional message can be displayed with
     the 'message' parameter.
     """
-    print('Usage: python {} sampleName.R1.fastq.gz'.format(sys.argv[0]))
+    print("Usage: python {} sampleName.R1.fastq.gz".format(sys.argv[0]))
     if message:
         print(message)
     sys.exit(exitcode)
@@ -38,7 +38,7 @@ def reader(fname):
     or non-gzipped FastQ files based on the file extension. Assumes
     gzipped files endwith the '.gz' extension.
     """
-    if fname.endswith('.gz'):
+    if fname.endswith(".gz"):
         # Opens up file with gzip handler
         return gzip.open
     else:
@@ -50,23 +50,73 @@ def decoded(qscore):
     """Returns Phred ASCII encoding type of FastQ quality scores.
     Older FastQ files may use Phred 64 encoding.
     """
-    encoding = ''
+    encoding = ""
     # Unique set of characters across both Phred encoding types
-    encodings = { # Pred-33 Encoding characters
-                '!': '33', '#': '33', '"': '33', '%': '33', '$': '33', "'": '33',
-                '&': '33', ')': '33', '(': '33', '+': '33', '*': '33', '-': '33',
-                ',': '33', '/': '33', '.': '33', '1': '33', '0': '33', '3': '33',
-                '2': '33', '5': '33', '4': '33', '7': '33', '6': '33', '9': '33',
-                '8': '33', ';': '33', ':': '33', '=': '33', '<': '33', '?': '33',
-                '>': '33',
-                 # Pred-64 Encoding characters
-                'K': '64', 'M': '64', 'L': '64', 'O': '64', 'N': '64', 'Q': '64',
-                'P': '64', 'S': '64', 'R': '64', 'U': '64', 'T': '64', 'W': '64',
-                'V': '64', 'Y': '64', 'X': '64', '[': '64', 'Z': '64', ']': '64',
-                '\\': '64', '_': '64', '^': '64', 'a': '64', '`': '64', 'c': '64',
-                'b': '64', 'e': '64', 'd': '64', 'g': '64', 'f': '64', 'i': '64',
-                'h': '64'
-                }
+    encodings = {  # Pred-33 Encoding characters
+        "!": "33",
+        "#": "33",
+        '"': "33",
+        "%": "33",
+        "$": "33",
+        "'": "33",
+        "&": "33",
+        ")": "33",
+        "(": "33",
+        "+": "33",
+        "*": "33",
+        "-": "33",
+        ",": "33",
+        "/": "33",
+        ".": "33",
+        "1": "33",
+        "0": "33",
+        "3": "33",
+        "2": "33",
+        "5": "33",
+        "4": "33",
+        "7": "33",
+        "6": "33",
+        "9": "33",
+        "8": "33",
+        ";": "33",
+        ":": "33",
+        "=": "33",
+        "<": "33",
+        "?": "33",
+        ">": "33",
+        # Pred-64 Encoding characters
+        "K": "64",
+        "M": "64",
+        "L": "64",
+        "O": "64",
+        "N": "64",
+        "Q": "64",
+        "P": "64",
+        "S": "64",
+        "R": "64",
+        "U": "64",
+        "T": "64",
+        "W": "64",
+        "V": "64",
+        "Y": "64",
+        "X": "64",
+        "[": "64",
+        "Z": "64",
+        "]": "64",
+        "\\": "64",
+        "_": "64",
+        "^": "64",
+        "a": "64",
+        "`": "64",
+        "c": "64",
+        "b": "64",
+        "e": "64",
+        "d": "64",
+        "g": "64",
+        "f": "64",
+        "i": "64",
+        "h": "64",
+    }
 
     for char in qscore:
         try:
@@ -78,14 +128,15 @@ def decoded(qscore):
     return encoding
 
 
-
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     # Check Arguments
-    if '-h' in sys.argv or '--help' in sys.argv or '-help' in sys.argv:
-        usage(exitcode = 0)
+    if "-h" in sys.argv or "--help" in sys.argv or "-help" in sys.argv:
+        usage(exitcode=0)
     elif len(sys.argv) != 2:
-        usage(message = 'Error: failed to provide all required positional arguments!', exitcode = 1)
+        usage(
+            message="Error: failed to provide all required positional arguments!",
+            exitcode=1,
+        )
 
     # Get file name
     filename = sys.argv[1]
@@ -93,21 +144,21 @@ if __name__ == '__main__':
     # Set handler for gzipped or uncompressed file
     handle = reader(filename)
     # Default encoding if not found
-    encoding = '33'
+    encoding = "33"
 
     # Open in 'rt' mode to maintain compatibility across python2 and python3
     # python3 default mode is 'rb' and will return a byte string representation
-    with handle(filename, 'rt') as fastq:
+    with handle(filename, "rt") as fastq:
         i = 0
         for line in fastq:
             line = line.strip()
-            if i%4 == 3: # Quality scores
+            if i % 4 == 3:  # Quality scores
                 encoded = decoded(line)
                 if encoded:
                     # Found Phred ASCII encoding type (33 vs. 64)
                     encoding = encoded
-                    break # Stop Iteration
-            i+=1
+                    break  # Stop Iteration
+            i += 1
 
     # Print encoding to standard output
     print(encoding)

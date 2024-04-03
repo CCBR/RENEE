@@ -41,7 +41,7 @@ Each of the following arguments are required. Failure to provide a required argu
 > **Genomic FASTA file of the reference genome.**  
 > _type: file_
 >
-> This file represents the genome sequence of the reference assembly in FASTA format. If you are downloading this from GENCODE, you should select the _PRI_ genomic FASTA file. This file will contain the primary genomic assembly (contains chromosomes and scaffolds). This input file should not be compressed. Sequence identifers in this file must match with sequence identifers in the GTF file provided to `--ref-gtf`.
+> This file represents the genome sequence of the reference assembly in FASTA format. If you are downloading this from GENCODE, you should select the _PRI_ genomic FASTA file. This file will contain the primary genomic assembly (contains chromosomes and scaffolds). This input file should not be compressed. Sequence identifiers in this file must match with sequence identifiers in the GTF file provided to `--ref-gtf`.
 >
 > **_Example:_** > `--ref-fa GRCh38.primary_assembly.genome.fa`
 
@@ -63,7 +63,7 @@ Each of the following arguments are required. Failure to provide a required argu
 > **Gene annotation or GTF file for the reference genome.**  
 > _type: file_
 >
-> This file represents the reference genome's gene annotation in GTF format. If you are downloading this from GENCODE, you should select the 'PRI' GTF file. This file contains gene annotations for the primary assembly (contains chromosomes and scaffolds). This input file should not be compressed. Sequence identifers (column 1) in this file must match with sequence identifers in the FASTA file provided to `--ref-fa`.  
+> This file represents the reference genome's gene annotation in GTF format. If you are downloading this from GENCODE, you should select the 'PRI' GTF file. This file contains gene annotations for the primary assembly (contains chromosomes and scaffolds). This input file should not be compressed. Sequence identifiers (column 1) in this file must match with sequence identifiers in the FASTA file provided to `--ref-fa`.  
 > **_Example:_** `--ref-gtf gencode.v36.primary_assembly.annotation.gtf`
 
 ---
@@ -95,7 +95,7 @@ Each of the following arguments are optional and do not need to be provided. If 
 > **Local path to shared resources.**  
 > _type: path_
 >
-> The pipeline uses a set of shared reference files that can be re-used across reference genomes. These currently include reference files for kraken and FQScreen. These reference files can be downloaded with the build sub command's `--shared-resources` option. With that being said, these files only need to be downloaded once. We recommend storing this files in a shared location on the filesystem that other people can access. If you are running the pipeline on Biowulf, you do NOT need to download these reference files! They already exist on the filesystem in a location that anyone can acceess; however, if you are running the pipeline on another cluster or target system, you will need to download the shared resources with the build sub command, and you will need to provide this option every time you run the pipeline. Please provide the same path that was provided to the build sub command's --shared-resources option. Again, if you are running the pipeline on Biowulf, you do NOT need to provide this option. For more information about how to download shared resources, please reference the build sub command's `--shared-resources` option.
+> The pipeline uses a set of shared reference files that can be re-used across reference genomes. These currently include reference files for kraken and FQScreen. These reference files can be downloaded with the build sub command's `--shared-resources` option. With that being said, these files only need to be downloaded once. We recommend storing this files in a shared location on the filesystem that other people can access. If you are running the pipeline on Biowulf, you do NOT need to download these reference files! They already exist on the filesystem in a location that anyone can access; however, if you are running the pipeline on another cluster or target system, you will need to download the shared resources with the build sub command, and you will need to provide this option every time you run the pipeline. Please provide the same path that was provided to the build sub command's --shared-resources option. Again, if you are running the pipeline on Biowulf, you do NOT need to provide this option. For more information about how to download shared resources, please reference the build sub command's `--shared-resources` option.
 >
 > **_Example:_** `--shared-resources /data/shared/renee`
 
@@ -106,7 +106,7 @@ Each of the following arguments are optional and do not need to be provided. If 
 > **Builds a small genome index.**  
 > _type: boolean_
 >
-> For small genomes, it is recommeded running STAR with a scaled down `--genomeSAindexNbases` value. This option runs the build pipeline in a mode where it dynamically finds the optimal value for this option using the following formula: `min(14, log2(GenomeSize)/2 - 1)`. Generally speaking, this option is not really applicable for most mammalian reference genomes, i.e. human and mouse; however, researcher working with very small reference genomes, like S. cerevisiae ~ 12Mb, should provide this option.
+> For small genomes, it is recommended running STAR with a scaled down `--genomeSAindexNbases` value. This option runs the build pipeline in a mode where it dynamically finds the optimal value for this option using the following formula: `min(14, log2(GenomeSize)/2 - 1)`. Generally speaking, this option is not really applicable for most mammalian reference genomes, i.e. human and mouse; however, researcher working with very small reference genomes, like S. cerevisiae ~ 12Mb, should provide this option.
 >
 > When in doubt feel free to provide this option, as the optimal value will be found based on your input.
 >
@@ -175,13 +175,13 @@ Each of the following arguments are optional and do not need to be provided.
 
 If you have two GTF files, e.g. hybrid genomes (host + virus), then you need to create one genomic FASTA file and one GTF file for the hybrid genome prior to running the <code>renee <b>build</b></code> command.
 
-We recommend creating an artifical chromosome for the non-host sequence. The sequence identifer in the FASTA file must match the sequence identifer in the GTF file (column 1). Generally speaking, since the host annotation is usually downloaded from Ensembl or GENCODE, it will be correctly formatted; however, that may not be the case for the non-host sequence!
+We recommend creating an artificial chromosome for the non-host sequence. The sequence identifier in the FASTA file must match the sequence identifier in the GTF file (column 1). Generally speaking, since the host annotation is usually downloaded from Ensembl or GENCODE, it will be correctly formatted; however, that may not be the case for the non-host sequence!
 
 Please ensure the non-host annotation contains the following features and/or constraints:
 
 - for a given `gene` feature
   - each `gene` entry has at least one `transcript` feature
-  - and each `transcript` entry has atleast one `exon` feature
+  - and each `transcript` entry has at least one `exon` feature
   - `gene_id`, `gene_name` and `gene_biotype` are required
 - for a given `transcipt` feature
   - along with `gene_id`, `gene_name` and `gene_biotype` ... `transcript_id` is also required
@@ -214,7 +214,7 @@ It is worth noting that RENEE comes bundled with a script to convert GFF3 files 
 
 Please note that this script has only been tested with GFF3 files downloaded from NCBI, and _it is **not** recommended to use with GFF3 files originating from other sources like Ensembl or GENCODE_. If you are selecting an annotation from Ensembl or GENCODE, please download the GTF file option.
 
-The only dependecy of the script is the python package argparse, which comes bundled with the following python2/3 distributions: `python>=2.7.18` or `python>=3.2`. If argparse is not installed, it can be downloaded with pip by running the following command:
+The only dependency of the script is the python package argparse, which comes bundled with the following python2/3 distributions: `python>=2.7.18` or `python>=3.2`. If argparse is not installed, it can be downloaded with pip by running the following command:
 
 ```bash
 pip install --upgrade pip
@@ -276,7 +276,7 @@ module purge
 # snakemake, and
 # singularity
 # before running renee
-# Also, ensure that the `renee` execulable is in PATH
+# Also, ensure that the `renee` executable is in PATH
 
 # Step 1.) Dry run the Build pipeline
 renee build --ref-fa GRCm39.primary_assembly.genome.fa \
