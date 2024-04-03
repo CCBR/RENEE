@@ -15,15 +15,48 @@ def idsContainGiven(givenId, transcriptIds):
 
     return False
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     descriptionText = "The script extracts features from a GTF file and a FASTA file into Qualimap annotation format. Note: exons have to be sorted according to exon number! This important for correct reverse transcribed cDNA sequences extraction."
-    parser = argparse.ArgumentParser(description = descriptionText,formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("-g", action="store", required="true", dest="gtfFile", help="Input file with list of genes in GTF format")
-    parser.add_argument("-f", action="store", required="true", dest="fastaFile", help="Input genome sequence. ")
-    parser.add_argument("-o", action="store", dest="outFile", default="annotations.txt", help="Output file. Default is annotations.txt")
-    parser.add_argument("--filter", action="store", dest="filterStr", default="", help="Comma-separted list of entries to filter from GTF file based on given attribute id")
-    parser.add_argument("--ignore-strange-chrom", action="store_true", default=False, dest="ignoreStrangeChromosomes", help="All chromosomes except numbered and X,Y,MT are ignored ")
+    parser = argparse.ArgumentParser(
+        description=descriptionText,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "-g",
+        action="store",
+        required="true",
+        dest="gtfFile",
+        help="Input file with list of genes in GTF format",
+    )
+    parser.add_argument(
+        "-f",
+        action="store",
+        required="true",
+        dest="fastaFile",
+        help="Input genome sequence. ",
+    )
+    parser.add_argument(
+        "-o",
+        action="store",
+        dest="outFile",
+        default="annotations.txt",
+        help="Output file. Default is annotations.txt",
+    )
+    parser.add_argument(
+        "--filter",
+        action="store",
+        dest="filterStr",
+        default="",
+        help="Comma-separted list of entries to filter from GTF file based on given attribute id",
+    )
+    parser.add_argument(
+        "--ignore-strange-chrom",
+        action="store_true",
+        default=False,
+        dest="ignoreStrangeChromosomes",
+        help="All chromosomes except numbered and X,Y,MT are ignored ",
+    )
     args = parser.parse_args()
     print(args)
 
@@ -41,7 +74,7 @@ if __name__ == "__main__":
         print("Filtering for: ", filtered_transcripts)
 
     for feature in gtf_file:
-        if feature.type == 'exon':
+        if feature.type == "exon":
             geneName = feature.attr[attr_id]
             if geneName in features:
                 features[geneName].append(feature)
@@ -52,9 +85,8 @@ if __name__ == "__main__":
     seqData = SeqIO.to_dict(SeqIO.parse(fastaFileName, "fasta"))
     outFile = open(outFileName, "w")
 
-    header = "\"%s\"\t\"%s\"\t\"%s\"\n" % ("biotypes","length","gc")
+    header = '"%s"\t"%s"\t"%s"\n' % ("biotypes", "length", "gc")
     outFile.write(header)
-
 
     for geneId in features:
         exons = features[geneId]
@@ -76,25 +108,29 @@ if __name__ == "__main__":
             iv = exon.iv
             seqName = iv.chrom
             if seqName in seqData:
-                buf = seqData[ iv.chrom ].seq[ iv.start  : iv.end ]
-                if iv.strand == '-':
+                buf = seqData[iv.chrom].seq[iv.start : iv.end]
+                if iv.strand == "-":
                     buf = buf.reverse_complement()
                 tSeq += buf
             else:
-                print("Can not locate sequence {} in {}, skipping region...".format(seqName, fastaFileName))
+                print(
+                    "Can not locate sequence {} in {}, skipping region...".format(
+                        seqName, fastaFileName
+                    )
+                )
             transcripts[transcriptId] = tSeq
 
         gc_array = []
         lengths = []
 
         for tSeq in transcripts.values():
-            lengths.append( len(tSeq) )
-            gc_array.append ( SeqUtils.GC(tSeq) )
+            lengths.append(len(tSeq))
+            gc_array.append(SeqUtils.GC(tSeq))
 
         gene_length = np.mean(lengths)
         gene_gc = np.mean(gc_array)
 
-        line = "\"%s\"\t\"%s\"\t%d\t%.2f\n" % (geneId, biotype, gene_length, gene_gc)
-        outFile.write ( line )
+        line = '"%s"\t"%s"\t%d\t%.2f\n' % (geneId, biotype, gene_length, gene_gc)
+        outFile.write(line)
 
     outFile.close()

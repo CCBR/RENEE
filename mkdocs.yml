@@ -3,7 +3,7 @@ site_name: RENEE Documentation
 site_author: CCBR
 site_description: >-
   RENEE is an open-source, reproducible, and scalable best
-  practices pipeline for analyzing RNA-sequencing data. 
+  practices pipeline for analyzing RNA-sequencing data.
 
 # Repository
 repo_name: CCBR/RENEE
@@ -19,7 +19,7 @@ theme:
   features:
     - navigation.tabs
     - navigation.top
-    - toc.integrate 
+    - toc.integrate
   palette:
     - scheme: default
       primary: indigo
@@ -43,7 +43,6 @@ plugins:
   - minify:
       minify_html: true
 
-
 # Customization
 extra:
   social:
@@ -55,7 +54,6 @@ extra:
       link: https://hub.docker.com/orgs/nciccbr/repositories
   version:
     provider: mike
-
 
 # Extensions
 markdown_extensions:
@@ -98,13 +96,13 @@ nav:
   - About: index.md
   - Theory: RNA-seq/Theory.md
   - Getting started: RNA-seq/TLDR-RNA-seq.md
-  - Usage: 
-    - run: RNA-seq/run.md
-    - build: RNA-seq/build.md
-    - cache: RNA-seq/cache.md
-    - unlock: RNA-seq/unlock.md
+  - Usage:
+      - run: RNA-seq/run.md
+      - build: RNA-seq/build.md
+      - cache: RNA-seq/cache.md
+      - unlock: RNA-seq/unlock.md
   - Resources: RNA-seq/Resources.md
   - FAQ:
-    - General Questions: general-questions.md 
-    - Troubleshooting: troubleshooting.md
+      - General Questions: general-questions.md
+      - Troubleshooting: troubleshooting.md
   - License: license.md

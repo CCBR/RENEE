@@ -115,7 +115,12 @@ jobs:
           citation._implementation.cffobj['version'] = "${{ env.NEXT_VERSION }}"
           citation._implementation.cffobj['date-released'] = "${{ env.DATE }}"
           with open('CITATION.cff', 'w') as outfile:
-            outfile.write(yaml.dump(citation._implementation.cffobj, sort_keys=False))
+            outfile.write(yaml.dump(citation._implementation.cffobj, sort_keys=False, indent=2))
+
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: --files CITATION.cff CHANGELOG.md VERSION
+        continue-on-error: true
 
       - name: Commit & push to branch
         run: |

@@ -1,27 +1,32 @@
 from __future__ import print_function
 import sys, os, zipfile, glob
 
+
 def get_max_read_length(f):
-	returnvalues = []
-	zipf = zipfile.ZipFile(f)
-	foldername = os.path.splitext(os.path.basename(f))[0]
-	fastqc_data = zipf.open(foldername+"/fastqc_data.txt")
-	line = list(filter(lambda x:x.startswith(b'Sequence length'),list(map(lambda x:x.strip(),fastqc_data.readlines()))))[0]
+    returnvalues = []
+    zipf = zipfile.ZipFile(f)
+    foldername = os.path.splitext(os.path.basename(f))[0]
+    fastqc_data = zipf.open(foldername + "/fastqc_data.txt")
+    line = list(
+        filter(
+            lambda x: x.startswith(b"Sequence length"),
+            list(map(lambda x: x.strip(), fastqc_data.readlines())),
+        )
+    )[0]
 
-	if b'-' in line:
-		returnvalues.append(int(line.split(b'\t')[1].split(b'-')[1]))
-	else:
-		returnvalues.append(int(line.split(b'\t')[1]))
+    if b"-" in line:
+        returnvalues.append(int(line.split(b"\t")[1].split(b"-")[1]))
+    else:
+        returnvalues.append(int(line.split(b"\t")[1]))
 
-	return max(returnvalues)
+    return max(returnvalues)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    basefolder = sys.argv[1]  # QC or rawQC folder
+    fastqs = glob.glob(basefolder + "/*fastqc.zip")
+    read_lengths = []
+    for f in fastqs:
+        read_lengths.append(get_max_read_length(f))
 
-	basefolder = sys.argv[1] # QC or rawQC folder
-	fastqs = glob.glob(basefolder+"/*fastqc.zip")
-	read_lengths = []
-	for f in fastqs:
-    		read_lengths.append(get_max_read_length(f))
-
-	print(max(read_lengths))
+    print(max(read_lengths))

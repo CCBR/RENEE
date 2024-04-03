@@ -47,7 +47,6 @@ Here are a few suggestions:
 
         Each job that RNA-seek submits to the cluster starts with the `pl:` prefix.
 
-
 **Q. How do I identify failed jobs?**
 
 **A.** If there are errors, you'll need to identify which jobs failed and check its corresponding SLURM output file.
@@ -67,13 +66,11 @@ The SLURM output file may contain a clue as to why the job failed.
 
         [Bash script]( https://github.com/CCBR/Tools/blob/master/Biowulf/get_slurm_file_with_error.sh) identify the SLURM ID of the first failed job and check if the output file exists.
 
-
 Many failures are caused by filesystem or network issues on Biowulf, and in such cases, simply re-starting the Pipeline should resolve the issue. Snakemake will dynamically determine which steps have been completed, and which steps still need to be run. If you are still running into problems after re-running the pipeline, there may be another issue. If that is the case, please feel free to [contact us](https://github.com/skchronicles/RNA-seek/issues).
-
 
 **Q. How do I cancel ongoing RNA-seek jobs?**
 
-**A.** Sometimes, you might need to manually stop a RNA-seek run prematurely, perhaps because the run was configured incorrectly or if a job is stalled.  Although the walltime limits will eventually stop the workflow, this can take up to 5 or 10 days depending on the pipeline.
+**A.** Sometimes, you might need to manually stop a RNA-seek run prematurely, perhaps because the run was configured incorrectly or if a job is stalled. Although the walltime limits will eventually stop the workflow, this can take up to 5 or 10 days depending on the pipeline.
 
 To stop RNA-seek jobs that are currently running, you can follow these options.
 
@@ -113,14 +110,13 @@ Once you've ensured that all running jobs have been stopped, you need to unlock 
 
 **A.** Are you running the `rna-seek` on `helix.nih.gov` by mistake. [Helix](https://hpc.nih.gov/systems/) does not have a job scheduler. One may be able to fire up the singularity module, initial working directory and perform dry-run on `helix`. But to submit jobs, you need to log into `biowulf` using `ssh -Y username@biowulf.nih.gov`.
 
-
 **Q. Why am I getting a message saying `Error: Directory cannot be locked. ...` when I do the dry-run?**
 
 **A.** This is caused when a run is stopped prematurely, either accidentally or on purpose, or the pipeline is still running in your working directory. Snakemake will lock a working directory to prevent two concurrent pipelines from writing to the same location. This can be remedied easily by running `rna-seek unlock` sub command. Please check to see if the pipeline is still running prior to running the commands below. If you would like to cancel a submitted or running pipeline, please reference the instructions above.
 
 ```bash
 # Load Dependencies
-modue load ccbrpipeliner
+module load ccbrpipeliner
 
 # Unlock the working directory
 rna-seek unlock --output /path/to/working/dir
@@ -128,7 +124,7 @@ rna-seek unlock --output /path/to/working/dir
 
 **Q. Why am I getting a message saying `MissingInputException in line ...` when I do the dry-run?**
 
-**A.** This error usually occurs when snakemake is terminated ungracefully. Did you forcefully cancel a running pipeline? Or did one of your running pipelines abruptly end? Either way, the solution is straight-forward. Please go to your pipeline's output directory, and rename or delete the following hidden directory: `.snakemake/`. This directory contains metadata pertaining any snakemake runs inside that working directory. Sometimes when a pipeline is pre-maturely or forcefully terminated, a few files related to tracking temp() files are not deleted and snakemake raises a MissingInputException.  
+**A.** This error usually occurs when snakemake is terminated ungracefully. Did you forcefully cancel a running pipeline? Or did one of your running pipelines abruptly end? Either way, the solution is straight-forward. Please go to your pipeline's output directory, and rename or delete the following hidden directory: `.snakemake/`. This directory contains metadata pertaining any snakemake runs inside that working directory. Sometimes when a pipeline is pre-maturely or forcefully terminated, a few files related to tracking temp() files are not deleted and snakemake raises a MissingInputException.
 
 ```bash
 # Navigate to working directory
@@ -138,4 +134,3 @@ cd /path/to/working/dir
 # And try re-dry running the pipeline
 mv .snakemake .old_snakemake
 ```
-

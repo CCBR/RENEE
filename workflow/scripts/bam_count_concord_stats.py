@@ -10,12 +10,12 @@ for DNAread in infile.fetch():
     if DNAread.is_proper_pair:
         isproper_count += 1
     if DNAread.has_tag("NH"):
-        tag_value=DNAread.get_tag("NH")
+        tag_value = DNAread.get_tag("NH")
         if tag_value != 1:
             keep = False
 
     if keep:
-        count+=1
+        count += 1
 
     keep = True
 
