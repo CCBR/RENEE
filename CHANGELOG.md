@@ -1,15 +1,16 @@
-
 ## RENEE development version
 
 - Minor documentation improvements. (#100, @kelly-sovacool)
 - Fix RNA report bug, caused by hard-coding of PC1-3, when only PC1-2 were generated. (#104, @slsevilla)
 - Allow printing the version or help message even if singularity is not in the path. (#110, @kelly-sovacool)
-- Set RSeQC envmodule version to 4.0.0, which synchronizes it with the version in the docker container used by singularity. (#122, @kelly-sovacool)
+- Fix RSeQC environments:
+  - Set RSeQC envmodule version to 4.0.0, which synchronizes it with the version in the docker container used by singularity. (#122, @kelly-sovacool)
+  - Update docker with RSeQC's tools properly added to the path. (#123, @kelly-sovacool)
 
 ## RENEE 2.5.11
 
 - Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
-- Fix: set HPC-specific fastq screen config and kraken DB paths for Biowulf and FRCE. (#78, @kelly-sovacool)
+- Set HPC-specific fastq screen config and kraken DB paths for Biowulf and FRCE. (#78, @kelly-sovacool)
   - Previously, FRCE users were required to set `--shared-resources`,
     which were kept in a location on FRCE not under version control.
     This change brings the paths under version control so they're easier to recover if deleted.
