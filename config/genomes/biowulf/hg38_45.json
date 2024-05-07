@@ -1,0 +1,25 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/GRCh38.primary_assembly.genome.fa",
+            "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/GRCh38.primary_assembly.genome.fa",
+            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/gencode.v45.primary_assembly.annotation.gtf",
+            "GENOME_STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/STAR/2.7.6a/genome",
+            "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/annotate.isoforms.txt",
+            "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/refFlat.txt",
+            "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/genes.ref.bed",
+            "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/geneinfo.bed",
+            "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/qualimap_info.txt",
+            "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/karyobeds/",
+            "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/rsemref/hg38_45",
+            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/hg38_45.rRNA_interval_list",
+            "ORGANISM": "hg38",
+            "TINREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/transcripts.protein_coding_only.bed12",
+            "FUSIONBLACKLIST": "s3://nciccbr/Resources/RNA-seq/arriba/blacklist_hg38_GRCh38_v2.0.0.tsv.gz",
+            "FUSIONCYTOBAND": "s3://nciccbr/Resources/RNA-seq/arriba/cytobands_hg38_GRCh38_v2.0.0.tsv",
+            "FUSIONPROTDOMAIN": "s3://nciccbr/Resources/RNA-seq/arriba/protein_domains_hg38_GRCh38_v2.0.0.gff3"
+        }
+    }
+}
