@@ -1,8 +1,8 @@
 {
     "references": {
         "rnaseq": {
-            "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/GRCh38.primary_assembly.genome.fa",
-            "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/GRCh38.primary_assembly.genome.fa",
+            "GENOMEFILE": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/fastas/GRCh38.primary_assembly.genome.fa",
+            "GENOME": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/fastas/GRCh38.primary_assembly.genome.fa",
             "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/gencode.v45.primary_assembly.annotation.gtf",
             "GENOME_STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/STAR/2.7.6a/genome",
             "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_45/annotate.genes.txt",
