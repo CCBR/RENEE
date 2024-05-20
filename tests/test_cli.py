@@ -30,3 +30,18 @@ def test_run_error():
             f"{renee_run}", capture_output=True, shell=True, text=True
         ).stderr
     )
+
+
+def test_subcommands_help():
+    assert all(
+        [
+            f"renee {cmd } [--help]"
+            in subprocess.run(
+                f"src/renee/__main__.py {cmd} --help",
+                capture_output=True,
+                shell=True,
+                text=True,
+            ).stdout
+            for cmd in ["run", "build", "cache", "unlock"]
+        ]
+    )

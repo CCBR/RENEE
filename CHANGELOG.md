@@ -4,7 +4,9 @@
 
 - Minor documentation improvements. (#100, @kelly-sovacool)
 - Fix RNA report bug, caused by hard-coding of PC1-3, when only PC1-2 were generated. (#104, @slsevilla)
-- Allow printing the version or help message even if singularity is not in the path. (#110, @kelly-sovacool)
+- Improvements to the CLI:
+  - Allow printing the version or help message even if singularity is not in the path. (#110, @kelly-sovacool)
+  - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
 - Fix RSeQC environments:
   - Set RSeQC envmodule version to 4.0.0, which synchronizes it with the version in the docker container used by singularity. (#122, @kelly-sovacool)
   - Update docker with RSeQC's tools properly added to the path. (#123, @kelly-sovacool)
