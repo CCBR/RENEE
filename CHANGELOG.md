@@ -1,5 +1,6 @@
 ## RENEE development version
 
+- Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
 
 ## RENEE 2.5.12
