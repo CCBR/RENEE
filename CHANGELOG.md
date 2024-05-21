@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
+
 ## RENEE 2.5.12
 
 - Minor documentation improvements. (#100, @kelly-sovacool)

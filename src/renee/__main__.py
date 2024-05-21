@@ -1187,10 +1187,12 @@ def run(sub_args):
     # pipeline that ran in local mode
     if sub_args.mode == "local":
         if int(masterjob.returncode) == 0:
-            print("{} pipeline has successfully completed".format(_name))
+            print("{} pipeline has successfully completed".format("RENEE"))
         else:
             fatal(
-                "{} pipeline failed. Please see standard output for more information."
+                "{} pipeline failed. Please see standard output for more information.".format(
+                    "RENEE"
+                )
             )
     elif sub_args.mode == "slurm":
         jobid = (
@@ -1435,10 +1437,12 @@ def build(sub_args):
     sub_args.mode = "slurm"
     if sub_args.mode == "local":
         if int(masterjob.returncode) == 0:
-            print("{} pipeline has successfully completed".format(_name))
+            print("{} pipeline has successfully completed".format("RENEE"))
         else:
             fatal(
-                "{} pipeline failed. Please see standard output for more information."
+                "{} pipeline failed. Please see standard output for more information.".format(
+                    "RENEE"
+                )
             )
     elif sub_args.mode == "slurm":
         jobid = (
@@ -1779,7 +1783,7 @@ def parsed_arguments(name, description):
           -h, --help            Show usage information, help message, and exit.
                                   Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -1815,7 +1819,7 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
+            "renee", __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
         )
     )
 
@@ -2126,7 +2130,7 @@ def parsed_arguments(name, description):
           -h, --help          Show usage information, help message, and exit.
                                 Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -2162,7 +2166,7 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
+            "renee", __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
         )
     )
 
@@ -2326,7 +2330,7 @@ def parsed_arguments(name, description):
           -h, --help            Show usage information and exit.
                                   Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -2347,7 +2351,7 @@ def parsed_arguments(name, description):
         {2}{3}Version:{4}
           {1}
         """.format(
-            name, __version__, c.bold, c.url, c.end
+            "renee", __version__, c.bold, c.url, c.end
         )
     )
 
@@ -2382,7 +2386,7 @@ def parsed_arguments(name, description):
         {1}{0} {3}cache{4}: {1}Cache software containers locally.{4}
 
         {1}{2}Synopsis:{4}
-          $ {0} cache [-h] [--dry-run] \\
+          $ {0} cache [--help] [--dry-run] \\
                   --sif-cache SIF_CACHE
 
         {1}{2}Description:{4}
@@ -2420,7 +2424,7 @@ def parsed_arguments(name, description):
           -h, --help            Show usage information and exits.
                                   Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -2447,7 +2451,7 @@ def parsed_arguments(name, description):
         {2}Version:{3}
           {1}
         """.format(
-            name, __version__, c.bold, c.end
+            "renee", __version__, c.bold, c.end
         )
     )
 
@@ -2500,7 +2504,7 @@ def main():
     # Sanity check for usage
     if len(sys.argv) == 1:
         # Nothing was provided
-        fatal("Invalid usage: {} [-h] [--version] ...".format(_name))
+        fatal("Invalid usage: {} [-h] [--version] ...".format("renee"))
 
     # Collect args for sub-command
     args = parsed_arguments(name=_name, description=_description)
