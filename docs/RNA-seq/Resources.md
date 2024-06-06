@@ -19,6 +19,8 @@ Bundled Biowulf Reference Genomes
 | mm10_M23   | Mus musculus (mouse) | [Gencode Release M23](https://www.gencodegenes.org/mouse/release_M23.html) | [GRCm38](https://www.gencodegenes.org/mouse/release_M23.html), Annotation Release date: 09/2019 |
 | mm10_M25   | Mus musculus (mouse) | [Gencode Release M25](https://www.gencodegenes.org/mouse/release_M25.html) | [GRCm38](https://www.gencodegenes.org/mouse/release_M25.html), Annotation Release date: 04/2020 |
 
+> **Note:** Newer annotations versions may be added upon request and may be already available. Please contact [Vishal Koparde](mailto:vishal.koparde@nih.gov) for details.
+
 However, building new reference genomes is easy!
 
 If you do not have access to Biowulf or you are looking for a reference genome and/or annotation **_that is currently not available_**, it can be built with RENEE's build sub-command. Given a genomic FASTA file (ref.fa) and a GTF file (genes.gtf), `renee build` will create all of the required reference files to run the RENEE pipeline. Once the build pipeline completes, you can supply the newly generated reference.json to the `--genome` of `renee run`. For more information, please see the help page for the run and build sub commands.
