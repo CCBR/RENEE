@@ -121,9 +121,15 @@ renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg
 
 # @slurm: uses slurm and singularity execution method
 # The slurm MODE will submit jobs to the cluster.
+# The --sif-cache flag will re-use singularity containers from a shared location.
 # It is recommended running RENEE in this mode.
 module load ccbrpipeliner
-renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode slurm
+renee run \
+  --input .tests/*.R?.fastq.gz \
+  --output /data/$USER/RNA_hg38 \
+  --genome hg38_30 \
+  --mode slurm \
+  --sif-cache /data/CCBR_Pipeliner/SIFS
 ```
 
 #### 3.2 FRCE
@@ -137,6 +143,19 @@ srun --export all --pty --x11 bash
 
 # run renee
 renee --help
+```
+
+When running renee on FRCE, we recommend setting `--tmp-dir` and `--sif-cache`
+with the following values:
+
+```sh
+renee run \
+  --input .tests/*.R?.fastq.gz \
+  --output /scratch/cluster_scratch/$USER/RNA_hg38 \
+  --genome hg38_30 \
+  --mode slurm \
+  --tmp-dir /scratch/cluster_scratch/$USER \
+  --sif-cache /mnt/projects/CCBR-Pipelines/SIFs
 ```
 
 <hr>
