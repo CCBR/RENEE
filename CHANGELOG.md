@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Minor documentation improvements. (#132, @kelly-sovacool)
+
 ## RENEE 2.5.12
 
 - Minor documentation improvements. (#100, @kelly-sovacool)
