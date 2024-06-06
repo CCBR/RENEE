@@ -64,21 +64,12 @@ The accuracy of the downstream interpretations made from transcriptomic data are
 
 #### 2.2 Reference Genomes
 
-Reference files are pulled from an S3 bucket to the compute instance or local filesystem prior to execution.  
-RENEE comes bundled with pre-built reference files for the following genomes:
-| Name | Species | Genome | Annotation |
-| -------- | ------- | ------------------ | -------- |
-| hg38_30 | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 30](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30/gencode.v30.annotation.gtf.gz) |
-| hg38_34 | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 34](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.annotation.gtf.gz) |
-| hg38_38 | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 38](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/gencode.v38.annotation.gtf.gz) |
-| hg38_41 | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 41](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_41/gencode.v41.annotation.gtf.gz) |
-| mm10_M21 | Mus musculus (mouse) | [GRCm38 or mm10](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release M21](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21/gencode.vM21.annotation.gtf.gz) |
-| mm10_M23 | Mus musculus (mouse) | [GRCm38 or mm10](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release M23](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M23/gencode.vM23.annotation.gtf.gz) |
-| mm10_M25 | Mus musculus (mouse) | [GRCm38 or mm10](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release M25](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz) |
+Pre-built reference genomes are provided on Biowulf and FRCE for a number of different annotation versions, view the list here:
+<https://ccbr.github.io/RENEE/RNA-seq/Resources/#1-reference-genomes>
 
-> **Warning:** This section contains FTP links for downloading each reference file. Open the link in a new tab to start a download. DO NOT download if you are running on Biowulf or FRCE. Pre-built indices are already available for these genome+annotation combinations. This can be done by using the values under the _Name_ column above as the `--genome` renee argument.
-
-> **Note:** These were the only annotation versions available at the time of writing this documentation. Newer annotations versions may be added upon request and may be already available. Please contact [Vishal Koparde](mailto:vishal.koparde@nih.gov) for details.
+If you would like to use a custom reference that is not already listed above,
+you can prepare it with the `renee build` command. See docs here:
+<https://ccbr.github.io/RENEE/RNA-seq/build/>
 
 #### 2.3 Dependencies
 
