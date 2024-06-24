@@ -2,11 +2,9 @@
 
 On [Biowulf](https://hpc.nih.gov/), RENEE comes bundled with the following pre-built [GENCODE](https://www.gencodegenes.org/)<sup>1</sup> reference genomes:
 
-<!---
-Bundled Biowulf Reference Genomes
-**Human** `hg38_30`
-**Mouse** `mm10_M21`
---->
+As of RENEE v2.6.0, all hg38 indices were built using the
+[NCI Genomic Data Commons reference fasta](https://gdc.cancer.gov/about-data/gdc-data-processing/gdc-reference-files),
+which includes virus and decoy sequences.
 
 | **Genome** | **Species**          | **Annotation Version**                                                     | **Notes**                                                                                       |
 | ---------- | -------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -18,6 +16,8 @@ Bundled Biowulf Reference Genomes
 | mm10_M21   | Mus musculus (mouse) | [Gencode Release M21](https://www.gencodegenes.org/mouse/release_M21.html) | [GRCm38](https://www.gencodegenes.org/mouse/release_M21.html), Annotation Release date: 04/2019 |
 | mm10_M23   | Mus musculus (mouse) | [Gencode Release M23](https://www.gencodegenes.org/mouse/release_M23.html) | [GRCm38](https://www.gencodegenes.org/mouse/release_M23.html), Annotation Release date: 09/2019 |
 | mm10_M25   | Mus musculus (mouse) | [Gencode Release M25](https://www.gencodegenes.org/mouse/release_M25.html) | [GRCm38](https://www.gencodegenes.org/mouse/release_M25.html), Annotation Release date: 04/2020 |
+
+You can run `renee run --help` to view the most up-to-date list of genome annotations available in your installation of RENEE.
 
 > **Note:** Newer annotations versions may be added upon request and may be already available. Please contact [Vishal Koparde](mailto:vishal.koparde@nih.gov) for details.
 
