@@ -5,6 +5,7 @@
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
 - Improve README with links to documentation website. (#135, @kelly-sovacool)
 - hg38 genome index files now include decoy & virus sequences. (#136, @kelly-sovacool)
+  - Additionally, `--genome` is no longer required and is set to `hg38_36` by default.
 
 ## RENEE 2.5.12
 
