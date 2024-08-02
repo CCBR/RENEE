@@ -56,8 +56,11 @@ renee = "src.renee.__main__:main"
 [project.urls]
 Repository = "https://github.com/CCBR/RENEE"
 
+[tool.setuptools.package-dir]
+renee = "."
+
 [tool.setuptools.package-data]
-"*" = ["VERSION"]
+"*" = ["CITATION.cff", "LICENSE", "VERSION", "docker/**", "resources/**", "bin/**", "config/**", "resources/**", "workflow/**", "tests/**", ".tests/**"]
 
 [tool.setuptools.dynamic]
 version = {file = "VERSION"}
