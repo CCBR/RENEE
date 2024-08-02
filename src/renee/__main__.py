@@ -284,22 +284,32 @@ def check_cache(parser, cache, *args, **kwargs):
     return cache
 
 
-def _cp_r_safe_(source, target, resources=[]):
+def _cp_r_safe_(
+    source, target, resources=["workflow", "resources", "config"], safe_mode=True
+):
     """Private function: Given a list paths it will recursively copy each to the
-    target location. If a target path already exists, it will NOT over-write the
-    existing paths data.
+    target location. If a target path already exists, it will not over-write the
+    existing paths data when `safe_mode` is on.
     @param resources <list[str]>:
-        List of paths to copy over to target location
+        List of paths to copy over to target location.
+        Default: ["workflow", "resources", "config"]
     @params source <str>:
         Add a prefix PATH to each resource
     @param target <str>:
-        Target path to copy templates and required resources
+        Target path to copy templates and required resources (aka destination)
+    @param safe_mode <bool>:
+        Only copy the resources to the target path
+        if they do not exist in the target path (default: True)
     """
     for resource in resources:
         destination = os.path.join(target, resource)
-        if not exists(destination):
-            # Required resources do not exist
-            copytree(os.path.join(source, resource), destination)
+        if os.path.exists(destination) and safe_mode:
+            print(f"🚫 path exists and `safe_mode` is ON, not copying: {destination}")
+        else:
+            # Required resources do not exist, or safe mode is off
+            copytree(
+                os.path.join(source, resource), destination, dirs_exist_ok=not safe_mode
+            )
 
 
 def rename(filename):
@@ -427,8 +437,11 @@ def initialize(sub_args, repo_path, output_path):
         )
 
     # Copy over templates are other required resources
-    required_resources = ["workflow", "resources", "config"]
-    _cp_r_safe_(source=repo_path, target=output_path, resources=required_resources)
+    _cp_r_safe_(
+        source=repo_path,
+        target=output_path,
+        resources=["workflow", "resources", "config"],
+    )
 
     # Create renamed symlinks to rawdata
     inputs = _sym_safe_(input_data=sub_args.input, target=output_path)
@@ -1347,9 +1360,13 @@ def configure_build(sub_args, git_repo, output_path):
             )
         )
 
-    # Copy over templates are other required resources
-    required_resources = ["workflow", "resources", "config"]
-    _cp_r_safe_(source=git_repo, target=output_path, resources=required_resources)
+    # Copy over templates are other required resources, overwriting if they exist
+    _cp_r_safe_(
+        source=git_repo,
+        target=output_path,
+        resources=["workflow", "resources", "config"],
+        safe_mode=False,
+    )
     _reset_write_permission(target=output_path)
     _configure(
         sub_args=sub_args,
