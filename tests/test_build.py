@@ -4,7 +4,7 @@ import os
 import pathlib
 import tempfile
 
-from renee.__main__ import _cp_r_safe_
+from renee.src.renee.__main__ import _cp_r_safe_
 
 renee_build = (
     "src/renee/__main__.py build "

@@ -51,7 +51,7 @@ test = [
 ]
 
 [project.scripts]
-renee = "src.renee.__main__:main"
+renee = "renee.src.renee.__main__:main"
 
 [project.urls]
 Repository = "https://github.com/CCBR/RENEE"
