@@ -7,7 +7,7 @@ import tempfile
 from renee.src.renee.__main__ import build
 
 renee_build = (
-    "src/renee/__main__.py build "
+    "./bin/renee build "
     "--dry-run "
     "--ref-name test "
     "--ref-fa .tests/KO_S3.R1.fastq.gz "

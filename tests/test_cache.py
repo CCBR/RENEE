@@ -4,7 +4,7 @@ import os.path
 import subprocess
 
 renee_run = (
-    "src/renee/__main__.py run "
+    "./bin/renee run "
     "--mode local --runmode init --dry-run "
     "--input .tests/*.fastq.gz "
     "--genome config/genomes/biowulf/hg38_30.json "
