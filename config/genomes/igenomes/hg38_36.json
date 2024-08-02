@@ -1,0 +1,25 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "s3://ngi-igenomes/igenomes/Homo_sapiens/NCBI/GRCh38/Sequence/WholeGenomeFasta/genome.fa",
+            "GENOME": "s3://ngi-igenomes/igenomes/Homo_sapiens/NCBI/GRCh38/Sequence/WholeGenomeFasta/genome.fa",
+            "GTFFILE": "s3://ngi-igenomes/igenomes/Homo_sapiens/NCBI/GRCh38/Annotation/Genes/genes.gtf",
+            "GENOME_STARDIR": "TODO",
+            "ANNOTATE": "TODO",
+            "ANNOTATEISOFORMS": "TODO",
+            "REFFLAT": "TODO",
+            "BEDREF": "TODO",
+            "GENEINFO": "TODO",
+            "QUALIMAP_INFO": "TODO",
+            "KARYOBEDS": "TODO",
+            "KARYOPLOTER": "TODO",
+            "RSEMREF": "TODO",
+            "RRNALIST": "TODO",
+            "ORGANISM": "hg38",
+            "TINREF": "TODO",
+            "FUSIONBLACKLIST": "s3://nciccbr/Resources/RNA-seq/arriba/blacklist_hg38_GRCh38_v2.0.0.tsv.gz",
+            "FUSIONCYTOBAND": "s3://nciccbr/Resources/RNA-seq/arriba/cytobands_hg38_GRCh38_v2.0.0.tsv",
+            "FUSIONPROTDOMAIN": "s3://nciccbr/Resources/RNA-seq/arriba/protein_domains_hg38_GRCh38_v2.0.0.gff3"
+        }
+    }
+}
