@@ -80,7 +80,7 @@ renee --version
 To run the RENEE pipeline from the GUI, simply enter:
 
 ```bash
-renee_gui
+renee gui
 ```
 
 and it will launch the RENEE window.
@@ -137,6 +137,6 @@ and start an interactive session (with `--tunnel` flag).
 
 ![gui_nx_config2](images/gui_nx_config2.png)
 
-Similar to the instructions above, load `ccbrpipeliner` module and enter `renee_gui` to launch the RENEE gui.
+Similar to the instructions above, load the `ccbrpipeliner` module and enter `renee gui` to launch the RENEE gui.
 
 ![gui_nx_renee](images/gui_nx_renee.png)
