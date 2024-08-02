@@ -1,130 +1,45 @@
 #!/usr/bin/env python3
-
-
-global DEBUG
-
-DEBUG = True
-
+import argparse
+import contextlib
 import glob
+import io
 import os
 import PySimpleGUI as sg
 import sys
-import stat
-import subprocess
 from tkinter import Tk
-import uuid
 
+from renee.src.renee.util import (
+    get_genomes_dict,
+    get_tmp_dir,
+    get_shared_resources_dir,
+    renee_base,
+)
+from renee.src.renee.run import run
 
-# getting the name of the directory
-# where the this file is present.
-current = os.path.dirname(os.path.realpath(__file__))
+# TODO: get rid of  all the global variables, get values from CLI flags instead
+global DEBUG
+DEBUG = True
 
-# Getting the parent directory name
-# where the current directory is present.
-parent = os.path.dirname(current)
-
-# adding the parent directory to
-# the sys.path.
-sys.path.append(parent)
-imgdir = os.path.join(parent, "resources", "images")
-
+# TODO: let's use a tmp dir and put these files there instead. see for inspiration:https://github.com/CCBR/RENEE/blob/16d13dca1d5f0f43c7dfda379efb882a67635d17/tests/test_cache.py#L14-L28
+global FILES_TO_DELETE
 global RENEEDIR
 global SIFCACHE
 global RENEE
 global RENEEVER
-global RANDOMSTR
-global FILES2DELETE
 global HOSTNAME
 
 RENEEDIR = os.getenv("RENEEDIR")
 SIFCACHE = os.getenv("SIFCACHE")
 RENEEVER = os.getenv("RENEEVER")
 HOSTNAME = os.getenv("HOSTNAME")
-RENNE = os.path.join(RENEEDIR, RENEEVER, "bin", "renee")
-RANDOMSTR = str(uuid.uuid4())
-FILES2DELETE = list()
+RENNE = renee_base(os.path.join("bin", "renee"))
 
-# sg.SetOptions(button_color=sg.COLOR_SYSTEM_DEFAULT)
-
-
-def version_check():
-    # version check
-    # glob.iglob requires 3.11 for using "include_hidden=True"
-    MIN_PYTHON = (3, 11)
-    try:
-        assert sys.version_info >= MIN_PYTHON
-        print(
-            "Python version: {0}.{1}.{2}".format(
-                sys.version_info.major, sys.version_info.minor, sys.version_info.micro
-            )
-        )
-    except AssertionError:
-        exit(
-            f"{sys.argv[0]} requires Python {'.'.join([str(n) for n in MIN_PYTHON])} or newer"
-        )
-
-
-def copy_to_clipboard(string):
-    r = Tk()
-    r.withdraw()
-    r.clipboard_clear()
-    r.clipboard_append(string)
-    r.update()
-    r.destroy()
-
-
-def get_combos():
-    resource_dir = os.path.join(RENEEDIR, "resources")
-    if not os.path.exists(resource_dir):
-        sys.exit("ERROR: Folder does not exist : {}".format(resource_dir))
-    searchterm = resource_dir + "/**/**/*json"
-    jsonfiles = glob.glob(searchterm)
-    if len(jsonfiles) == 0:
-        sys.exit("ERROR: No Genome+Annotation JSONs found in : {}".format(resource_dir))
-    jsons = dict()
-    for j in jsonfiles:
-        k = os.path.basename(j)
-        k = k.replace(".json", "")
-        jsons[k] = j
-    return jsons
-
-
-def fixpath(p):
-    return os.path.abspath(os.path.expanduser(p))
-
-
-def get_fastqs(inputdir):
-    inputdir = fixpath(inputdir)
-    inputfastqs = glob.glob(inputdir + os.sep + "*.fastq.gz")
-    inputfqs = glob.glob(inputdir + os.sep + "*.fq.gz")
-    inputfastqs.extend(inputfqs)
-    return inputfastqs
-
-
-def deletefiles():
-    for f in FILES2DELETE:
-        if os.path.exists(f):
-            os.remove(f)
-
-
-def run(cmd, dry=False):
-    if dry:
-        cmd += " --dry-run "
-    runner_file = os.path.join(os.getenv("HOME"), RANDOMSTR + ".renee.runner")
-    FILES2DELETE.append(runner_file)
-    with open(runner_file, "w") as runner:
-        runner.write(cmd)
-    st = os.stat(runner_file)
-    os.chmod(runner_file, st.st_mode | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-    x = subprocess.run(runner_file, capture_output=True, shell=True, text=True)
-    run_stdout = x.stdout.encode().decode("utf-8")
-    run_stderr = x.stderr.encode().decode("utf-8")
-    return run_stdout, run_stderr
+FILES_TO_DELETE = list()
 
 
 def launch_gui(sub_args):
     # get drop down genome+annotation options
-    jsons = get_combos()
+    jsons = get_genomes_dict()
     genome_annotation_combinations = list(jsons.keys())
     genome_annotation_combinations.sort()
     if DEBUG:
@@ -132,7 +47,7 @@ def launch_gui(sub_args):
     if DEBUG:
         print(genome_annotation_combinations)
 
-    logo = sg.Image(os.path.join(imgdir, "CCBRlogo.png"))
+    logo = sg.Image(renee_base(os.path.join("resources", "CCBRlogo.png")))
     # create layout
     layout = [
         [sg.Column([[logo]], justification="center")],
@@ -264,22 +179,19 @@ def launch_gui(sub_args):
                     continue
                 # sg.Popup("Output folder exists... this is probably a re-run ... is it?",location=(0,500))
             genome = jsons[values["--ANNOTATION--"]]
-            renee_cmd = RENNE + " run "
-            renee_cmd += " --input " + " ".join(inputfastqs)
-            renee_cmd += " --output " + values["--OUTDIR--"]
-            renee_cmd += " --genome " + genome
-            renee_cmd += " --sif-cache " + SIFCACHE
-            renee_cmd += " --mode slurm "
-            # if HOSTNAME != "biowulf.nih.gov":
-            if HOSTNAME == "fsitgl-head01p.ncifcrf.gov":
-                renee_cmd += " --tmp-dir /scratch/cluster_scratch/$USER "
-                renee_cmd += " --shared-resources /mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/shared_resources "
-            run_stdout, run_stderr = run(renee_cmd, dry=True)
-            if DEBUG:
-                print(run_stdout)
-            if DEBUG:
-                print(run_stderr)
-            allout = "{}\n{}".format(run_stdout, run_stderr)
+            # create sub args for renee run
+            run_args = argparse.Namespace(
+                input=" ".join(inputfastqs),
+                output=values["--OUTDIR--"],
+                genome=genome,
+                sif_cache=SIFCACHE,
+                mode="slurm",
+                tmp_dir=get_tmp_dir(),
+                shared_resources=get_shared_resources_dir(),
+                dry_run=True,
+            )
+            # execute dry run and capture stdout/stderr
+            allout = run_in_context(run_args)
             sg.popup_scrolled(
                 allout,
                 title="Dryrun:STDOUT/STDERR",
@@ -287,6 +199,7 @@ def launch_gui(sub_args):
                 location=(0, 500),
                 size=(80, 30),
             )
+            # TODO use a regex to simplify this line
             if "error" in allout or "Error" in allout or "ERROR" in allout:
                 continue
             ch = sg.popup_yes_no(
@@ -296,12 +209,16 @@ def launch_gui(sub_args):
                 font=("Arial", 12, "bold"),
             )
             if ch == "Yes":
-                run_stdout, run_stderr = run(renee_cmd, dry=False)
-                if DEBUG:
-                    print(run_stdout)
-                if DEBUG:
-                    print(run_stderr)
-                allout = "{}\n{}".format(run_stdout, run_stderr)
+                run_args.dry_run = False
+                # execute live run
+                allout = run_in_context(run_args)
+                sg.popup_scrolled(
+                    allout,
+                    title="Dryrun:STDOUT/STDERR",
+                    font=("Monaco", 10),
+                    location=(0, 500),
+                    size=(80, 30),
+                )
                 sg.popup_scrolled(
                     allout,
                     title="Slurmrun:STDOUT/STDERR",
@@ -323,17 +240,46 @@ def launch_gui(sub_args):
                 continue
 
     window.close()
-    if len(FILES2DELETE) != 0:
-        deletefiles()
+    if len(FILES_TO_DELETE) != 0:
+        delete_files(FILES_TO_DELETE)
 
 
-# ./renee run \
-#   --input ../.tests/*.R?.fastq.gz \
-#   --output /data/${USER}/RENEE_testing_230703/RNA_hg38 \
-#   --genome /data/CCBR_Pipeliner/Pipelines/RENEE/resources/hg38/30/hg38_30.json \
-#   --sif-cache /data/CCBR_Pipeliner/SIFS/ \
-#   --mode slurm
+def run_in_context(args):
+    """Execute the run function in a context manager to capture stdout/stderr"""
+    with contextlib.redirect_stdout(io.StringIO()) as out_f, contextlib.redirect_stderr(
+        io.StringIO()
+    ) as err_f:
+        run(args)
+        allout = out_f.getvalue() + "\n" + err_f.getvalue()
+    return allout
+
+
+def copy_to_clipboard(string):
+    r = Tk()
+    r.withdraw()
+    r.clipboard_clear()
+    r.clipboard_append(string)
+    r.update()
+    r.destroy()
+
+
+def fixpath(p):
+    return os.path.abspath(os.path.expanduser(p))
+
+
+def get_fastqs(inputdir):
+    inputdir = fixpath(inputdir)
+    inputfastqs = glob.glob(inputdir + os.sep + "*.fastq.gz")
+    inputfqs = glob.glob(inputdir + os.sep + "*.fq.gz")
+    inputfastqs.extend(inputfqs)
+    return inputfastqs
+
+
+def delete_files(files):
+    for f in files:
+        if os.path.exists(f):
+            os.remove(f)
+
 
 if __name__ == "__main__":
-    version_check()
     launch_gui()
