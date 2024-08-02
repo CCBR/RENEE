@@ -4,6 +4,9 @@
 - Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
 - Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
+- Set default shared singularity SIF directory for biowulf and frce. (#94, @kelly-sovacool)
+- Add `renee gui` subcommand to launch the graphical user interface. (#94, @kelly-sovacool)
+  - Previously, `renee_gui` (with an underscore) was a command in the `ccbrpipeliner` module.
 
 ## RENEE 2.5.12
 
@@ -13,7 +16,6 @@
 - Fix RSeQC environments:
   - Set RSeQC envmodule version to 4.0.0, which synchronizes it with the version in the docker container used by singularity. (#122, @kelly-sovacool)
   - Update docker with RSeQC's tools properly added to the path. (#123, @kelly-sovacool)
-- Set default shared singularity SIF directory for biowulf and frce. (#94, @kelly-sovacool)
 
 ## RENEE 2.5.11
 
