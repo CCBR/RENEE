@@ -122,7 +122,7 @@ def run(cmd, dry=False):
     return run_stdout, run_stderr
 
 
-def main():
+def launch_gui(sub_args):
     # get drop down genome+annotation options
     jsons = get_combos()
     genome_annotation_combinations = list(jsons.keys())
@@ -336,4 +336,4 @@ def main():
 
 if __name__ == "__main__":
     version_check()
-    main()
+    launch_gui()

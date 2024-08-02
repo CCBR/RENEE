@@ -23,7 +23,8 @@ import warnings
 import argparse  # potential python3 3rd party package, added in python/3.5
 
 # local import
-import renee.src.renee.gui
+from .gui import launch_gui
+
 
 # Pipeline Metadata and globals
 def renee_base(rel_path):
@@ -1551,10 +1552,6 @@ def cache(sub_args):
             )
 
 
-def gui(sub_args):
-    renee.src.renee.gui.main()
-
-
 def genome_options(parser, user_option, prebuilt):
     """Dynamically checks if --genome option is a valid choice. Compares against a
     list of prebuilt or bundled genome reference genomes and accepts a custom reference
@@ -2528,7 +2525,7 @@ def parsed_arguments(name, description):
     subparser_unlock.set_defaults(func=unlock)
     subparser_build.set_defaults(func=build)
     subparser_cache.set_defaults(func=cache)
-    subparser_gui.set_defaults(func=gui)
+    subparser_gui.set_defaults(func=launch_gui)
 
     # Parse command-line args
     args = parser.parse_args()
