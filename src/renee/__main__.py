@@ -24,15 +24,20 @@ import argparse  # potential python3 3rd party package, added in python/3.5
 
 
 # Pipeline Metadata and globals
-# __version__ = "v2.5.2"
+def renee_base(rel_path):
+    basedir = os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    )
+    return os.path.join(basedir, rel_path)
+
+
 RENEE_PATH = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
 
-vfile = open(os.path.join(RENEE_PATH, "VERSION"), "r")
-__version__ = "v" + vfile.read()
-__version__ = __version__.strip()
-vfile.close()
+with open(renee_base("VERSION"), "r") as vfile:
+    __version__ = f"v{vfile.read().strip()}"
+
 __home__ = os.path.dirname(os.path.abspath(__file__))
 _name = os.path.basename(sys.argv[0])
 _description = "a highly-reproducible RNA-seq pipeline"
