@@ -2,7 +2,7 @@ import os
 import re
 import sys
 
-from renee.src.renee.util import (
+from .util import (
     _cp_r_safe_,
 )
 

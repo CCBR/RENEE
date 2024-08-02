@@ -8,13 +8,13 @@ import PySimpleGUI as sg
 import sys
 from tkinter import Tk
 
-from renee.src.renee.util import (
+from .util import (
     get_genomes_dict,
     get_tmp_dir,
     get_shared_resources_dir,
     renee_base,
 )
-from renee.src.renee.run import run
+from .run import run
 
 # TODO: get rid of  all the global variables, get values from CLI flags instead
 global DEBUG

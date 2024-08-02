@@ -3,11 +3,11 @@ import os
 import pathlib
 import sys
 
-from renee.src.renee.util import renee_base, get_hpcname, get_tmp_dir, orchestrate
-from renee.src.renee.conditions import fatal
-from renee.src.renee.initialize import initialize
-from renee.src.renee.setup import setup
-from renee.src.renee.dryrun import dryrun
+from .util import renee_base, get_hpcname, get_tmp_dir, orchestrate
+from .conditions import fatal
+from .initialize import initialize
+from .setup import setup
+from .dryrun import dryrun
 
 
 def run(sub_args):

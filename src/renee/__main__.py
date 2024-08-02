@@ -24,11 +24,11 @@ import textwrap
 import argparse
 
 # local imports
-from renee.src.renee.run import run
-from renee.src.renee.dryrun import dryrun
-from renee.src.renee.gui import launch_gui
-from renee.src.renee.conditions import fatal
-from renee.src.renee.util import (
+from .run import run
+from .dryrun import dryrun
+from .gui import launch_gui
+from .conditions import fatal
+from .util import (
     get_hpcname,
     get_tmp_dir,
     get_genomes_list,

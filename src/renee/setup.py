@@ -4,12 +4,12 @@ import re
 import subprocess
 import sys
 
-from renee.src.renee.util import (
+from .util import (
     get_hpcname,
     get_version,
     get_tmp_dir,
 )
-from renee.src.renee.cache import image_cache
+from .cache import image_cache
 
 
 def setup(sub_args, ifiles, repo_path, output_path):
