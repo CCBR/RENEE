@@ -2,6 +2,17 @@ import json
 import os
 import sys
 
+from .util import get_hpcname
+
+
+def get_sif_cache_dir(hpc=get_hpcname()):
+    sif_dir = None
+    if hpc == "biowulf":
+        sif_dir = "/data/CCBR_Pipeliner/SIFS"
+    elif hpc == "frce":
+        sif_dir = "/mnt/projects/CCBR-Pipelines/SIFs"
+    return sif_dir
+
 
 def image_cache(sub_args, config):
     """Adds Docker Image URIs, or SIF paths to config if singularity cache option is provided.

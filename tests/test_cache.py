@@ -3,6 +3,8 @@ import json
 import os.path
 import subprocess
 
+from src.renee.cache import get_sif_cache_dir
+
 renee_run = (
     "./bin/renee run "
     "--mode local --runmode init --dry-run "
@@ -42,7 +44,15 @@ def test_cache_sif():
 def test_cache_nosif():
     output, config = run_in_temp(f"{renee_run}")
     assertions = [
-        config["images"]["arriba"] == "docker://nciccbr/ccbr_arriba_2.0.0:v0.0.1",
-        "The singularity command has to be available" in output.stderr,
+        config["images"]["arriba"] == "docker://nciccbr/ccbr_arriba_2.0.0:v0.0.1"
     ]
     assert all(assertions)
+
+
+def test_get_sif_cache_dir():
+    assertions = [
+        "'CCBR_Pipeliner/SIFS' in get_sif_cache_dir('biowulf')",
+        "'CCBR-Pipelines/SIFs' in get_sif_cache_dir('frce')",
+    ]
+    errors = [assertion for assertion in assertions if not eval(assertion)]
+    assert not errors, "errors occurred:\n{}".format("\n".join(errors))

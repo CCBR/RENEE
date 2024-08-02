@@ -24,6 +24,7 @@ import textwrap
 import argparse
 
 # local imports
+from .cache import get_sif_cache_dir
 from .run import run
 from .dryrun import dryrun
 from .gui import launch_gui
@@ -907,6 +908,7 @@ def parsed_arguments(name, description):
         type=lambda option: os.path.abspath(os.path.expanduser(option)),
         required=False,
         help=argparse.SUPPRESS,
+        default=get_sif_cache_dir(),
     )
 
     # Create NIDAP output folder

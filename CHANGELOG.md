@@ -13,6 +13,7 @@
 - Fix RSeQC environments:
   - Set RSeQC envmodule version to 4.0.0, which synchronizes it with the version in the docker container used by singularity. (#122, @kelly-sovacool)
   - Update docker with RSeQC's tools properly added to the path. (#123, @kelly-sovacool)
+- Set default shared singularity SIF directory for biowulf and frce. (#94, @kelly-sovacool)
 
 ## RENEE 2.5.11
 
