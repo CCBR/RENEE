@@ -1,8 +1,17 @@
-name: docs
+name: mkdocs
 on:
+  workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
-      - 'docs/**'
+      - "docs/**"
+      - "**.md"
+      - .github/workflows/docs.yml
+      - mkdocs.yml
+
+env:
+  actor: "41898282+github-actions[bot]"
 
 jobs:
   deploy:
@@ -12,6 +21,10 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: 3.9
+      - name: git config
+        run: |
+          git config --local user.email "${actor}@users.noreply.github.com"
+          git config --local user.name "$actor"
       - run: pip install --upgrade pip
       - run: pip install -r docs/requirements.txt
       - run: mkdocs gh-deploy --force

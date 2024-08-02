@@ -223,7 +223,7 @@ def main():
                 if DEBUG:
                     print(fixpath(values["--INDIR--"]))
                 sg.PopupError(
-                    "Input folder doesnt exist!!",
+                    "Input folder doesn't exist!!",
                     location=(0, 500),
                     title="ERROR!",
                     font=("Arial", 12, "bold"),

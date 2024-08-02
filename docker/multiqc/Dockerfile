@@ -13,19 +13,19 @@ LABEL maintainer=kuhnsa@nih.gov
 #    - matplotlib     (pypi)
 #    - XlsxWriter     (pypi)
 
-# Create Container filesystem specific 
+# Create Container filesystem specific
 # working directory and opt directories
-# to avoid collisions with host filesyetem 
+# to avoid collisions with host filesyetem
 RUN mkdir -p /opt2 && mkdir -p /data2
-WORKDIR /opt2 
+WORKDIR /opt2
 
-# Set time zone to US east coast 
+# Set time zone to US east coast
 ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone
 
-# This section installs system packages 
-# required for your project. If you need 
+# This section installs system packages
+# required for your project. If you need
 # extra system packages add them here.
 # Installs python/3.8.10
 RUN apt-get update \
@@ -55,6 +55,6 @@ RUN pip3 install --upgrade pip \
 
 # Add Dockerfile and export env variables
 ADD Dockerfile /opt2/Dockerfile
-RUN chmod -R a+rX /opt2 
+RUN chmod -R a+rX /opt2
 ENV PATH="/opt2:$PATH"
 WORKDIR /data2

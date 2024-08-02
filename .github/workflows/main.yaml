@@ -5,26 +5,73 @@ on:
     branches:
       - master
       - main
+      - develop
   pull_request:
-    branches_ignore: []
 
 jobs:
   Dryrun_Lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: docker://snakemake/snakemake:v5.24.2
       - name: Dry-run pipeline
         run: |
-          docker run -v $PWD:/opt2 snakemake/snakemake:v5.24.2 \
-          python /opt2/rna-seek run \
-            --input /opt2/.tests/*.fastq.gz \
-            --output /opt2/output \
-            --genome /opt2/config/genomes/biowulf/hg38_30.json \
-            --mode local \
-            --dry-run
+          docker run -v $PWD:/opt2 -w /opt2 snakemake/snakemake:v5.24.2 \
+            python src/renee/__main__.py run \
+              --input .tests/KO_S3.R1.fastq.gz .tests/KO_S3.R2.fastq.gz .tests/KO_S4.R1.fastq.gz .tests/KO_S4.R2.fastq.gz .tests/WT_S1.R1.fastq.gz .tests/WT_S1.R2.fastq.gz .tests/WT_S2.R1.fastq.gz .tests/WT_S2.R2.fastq.gz \
+              --output output \
+              --genome config/genomes/biowulf/hg38_30.json \
+              --shared-resources .tests/shared_resources/ \
+              --mode local \
+              --dry-run
       - name: Lint workflow
         continue-on-error: true
         run: |
           docker run -v $PWD:/opt2 snakemake/snakemake:v5.24.2 snakemake --lint -s /opt2/output/workflow/Snakefile -d /opt2/output || \
           echo 'There may have been a few warnings or errors. Please read through the log to determine if its harmless.'
+
+  Test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        snakemake-version: ["7.32.3"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-name: test
+          cache-environment: true
+          condarc: |
+            channels:
+              - conda-forge
+              - bioconda
+          create-args: >-
+            python=${{ matrix.python-version }}
+            snakemake=${{ matrix.snakemake-version }}
+            setuptools
+            pip
+            pytest
+      - name: check CLI basics
+        run: |
+          ./bin/renee --help
+          ./bin/renee --version
+        shell: micromamba-shell {0}
+      - name: Test
+        run: |
+          python -m pytest
+        env:
+          TMPDIR: ${{ runner.temp }}
+        shell: micromamba-shell {0}
+
+  build-status: # https://github.com/orgs/community/discussions/4324#discussioncomment-3477871
+    runs-on: ubuntu-latest
+    needs: [Dryrun_Lint, Test]
+    if: always()
+    steps:
+      - name: Successful build
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Failing build
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1

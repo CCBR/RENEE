@@ -22,10 +22,15 @@ import warnings
 # 3rd party imports from pypi
 import argparse  # potential python3 3rd party package, added in python/3.5
 
+# local import
+import renee.src.renee.gui
 
 # Pipeline Metadata and globals
 # __version__ = "v2.5.2"
-RENEE_PATH = os.path.dirname(os.path.abspath(__file__))
+RENEE_PATH = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
+
 vfile = open(os.path.join(RENEE_PATH, "VERSION"), "r")
 __version__ = "v" + vfile.read()
 __version__ = __version__.strip()
@@ -69,6 +74,19 @@ def get_hpcname():
     if hpc == "fnlcr":
         hpc = "frce"
     return hpc
+
+
+def get_tmp_dir(tmp_dir, outdir):
+    """Get default temporary directory for biowulf and frce. Allow user override."""
+    hpc = get_hpcname()
+    if not tmp_dir:
+        if hpc == "biowulf":
+            tmp_dir = "/lscratch/$SLURM_JOBID"
+        elif hpc == "frce":
+            tmp_dir = outdir
+        else:
+            tmp_dir = None
+    return tmp_dir
 
 
 def get_genomes_list(renee_path, hpcname=get_hpcname()):
@@ -758,7 +776,7 @@ def setup(sub_args, ifiles, repo_path, output_path):
     config["options"] = {}
     config["options"]["star_2_pass_basic"] = sub_args.star_2_pass_basic
     config["options"]["small_rna"] = sub_args.small_rna
-    config["options"]["tmp_dir"] = sub_args.tmp_dir
+    config["options"]["tmp_dir"] = get_tmp_dir(sub_args.tmp_dir, output_path)
     config["options"]["shared_resources"] = sub_args.shared_resources
     if sub_args.wait:
         config["options"]["wait"] = "True"
@@ -796,7 +814,6 @@ def setup(sub_args, ifiles, repo_path, output_path):
         ),
         end="",
     )
-    # print(json.dumps(config, indent = 4, sort_keys=True))
     with open(os.path.join(output_path, "config.json"), "w") as fh:
         json.dump(config, fh, indent=4, sort_keys=True)
     print("Done!")
@@ -870,7 +887,7 @@ def orchestrate(
     threads=2,
     submission_script="runner",
     masterjob="pl:renee",
-    tmp_dir="/lscratch/$SLURM_JOBID/",
+    tmp_dir=None,
     wait="",
     hpcname="",
 ):
@@ -913,6 +930,8 @@ def orchestrate(
     # the container's filesystem, like
     # tmp directories, /lscratch
     addpaths = []
+    # set tmp_dir depending on hpc
+    tmp_dir = get_tmp_dir(tmp_dir, outdir)
     temp = os.path.dirname(tmp_dir.rstrip("/"))
     if temp == os.sep:
         temp = tmp_dir.rstrip("/")
@@ -1086,7 +1105,6 @@ def run(sub_args):
         Parsed arguments for run sub-command
     """
     # Get PATH to RENEE git repository for copying over pipeline resources
-    git_repo = os.path.dirname(os.path.abspath(__file__))
 
     # hpcname is either biowulf, frce, or blank
     hpcname = get_hpcname()
@@ -1095,14 +1113,14 @@ def run(sub_args):
     ):
         # Initialize working directory, copy over required pipeline resources
         input_files = initialize(
-            sub_args, repo_path=git_repo, output_path=sub_args.output
+            sub_args, repo_path=RENEE_PATH, output_path=sub_args.output
         )
 
         # Step pipeline for execution, create config.json config file from templates
         config = setup(
             sub_args,
             ifiles=input_files,
-            repo_path=git_repo,
+            repo_path=RENEE_PATH,
             output_path=sub_args.output,
         )
     # load config from existing file
@@ -1157,7 +1175,7 @@ def run(sub_args):
         additional_bind_paths=all_bind_paths,
         alt_cache=sub_args.singularity_cache,
         threads=sub_args.threads,
-        tmp_dir=sub_args.tmp_dir,
+        tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
         wait=wait,
         hpcname=hpcname,
     )
@@ -1171,10 +1189,12 @@ def run(sub_args):
     # pipeline that ran in local mode
     if sub_args.mode == "local":
         if int(masterjob.returncode) == 0:
-            print("{} pipeline has successfully completed".format(_name))
+            print("{} pipeline has successfully completed".format("RENEE"))
         else:
             fatal(
-                "{} pipeline failed. Please see standard output for more information."
+                "{} pipeline failed. Please see standard output for more information.".format(
+                    "RENEE"
+                )
             )
     elif sub_args.mode == "slurm":
         jobid = (
@@ -1355,7 +1375,6 @@ def build(sub_args):
     """
     # Get PATH to RENEE git repository
     # for copying over pipeline resources
-    git_repo = os.path.dirname(os.path.abspath(__file__))
 
     # Build Output directory
     output_path = os.path.abspath(sub_args.output)
@@ -1364,7 +1383,7 @@ def build(sub_args):
     # initialize, copy resources, and
     # generate config file
     additional_bind_paths = configure_build(
-        sub_args=sub_args, git_repo=git_repo, output_path=output_path
+        sub_args=sub_args, git_repo=RENEE_PATH, output_path=output_path
     )
 
     # Add any additional bindpaths
@@ -1407,7 +1426,7 @@ def build(sub_args):
         alt_cache=sub_args.singularity_cache,
         submission_script="builder",
         masterjob="pl:build",
-        tmp_dir=sub_args.tmp_dir,
+        tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
         wait=wait,
         hpcname=hpcname,
     )
@@ -1420,10 +1439,12 @@ def build(sub_args):
     sub_args.mode = "slurm"
     if sub_args.mode == "local":
         if int(masterjob.returncode) == 0:
-            print("{} pipeline has successfully completed".format(_name))
+            print("{} pipeline has successfully completed".format("RENEE"))
         else:
             fatal(
-                "{} pipeline failed. Please see standard output for more information."
+                "{} pipeline failed. Please see standard output for more information.".format(
+                    "RENEE"
+                )
             )
     elif sub_args.mode == "slurm":
         jobid = (
@@ -1509,8 +1530,7 @@ def cache(sub_args):
 
 
 def gui(sub_args):
-    gui_job = subprocess.Popen(os.path.join(RENEE_PATH, "resources", "gui.py"))
-    gui_job.wait()
+    renee.src.renee.gui.main()
 
 
 def genome_options(parser, user_option, prebuilt):
@@ -1578,7 +1598,7 @@ def parsed_arguments(name, description):
 
     # Adding Version information
     parser.add_argument(
-        "--version", action="version", version="%(prog)s {}".format(__version__)
+        "--version", action="version", version="renee {}".format(__version__)
     )
 
     # Create sub-command parser
@@ -1748,12 +1768,13 @@ def parsed_arguments(name, description):
           --tmp-dir TMP_DIR
                                 Path on the file system for writing temporary output
                                 files. By default, the temporary directory is set to
-                                '/lscratch/$SLURM_JOBID' for backwards compatibility
-                                with the NIH's Biowulf cluster; however, if you are
-                                running the pipeline on another cluster, this option
-                                will need to be specified. Ideally, this path should
-                                point to a dedicated location on the filesystem for
-                                writing tmp files. On many systems, this location is
+                                '/lscratch/$SLURM_JOBID' on NIH's Biowulf cluster and
+                                'OUTPUT' on the FRCE cluster.
+                                However, if you are running the pipeline on another cluster,
+                                this option will need to be specified.
+                                Ideally, this path should point to a dedicated location on
+                                the filesystem for writing tmp files.
+                                On many systems, this location is
                                 set to somewhere in /scratch. If you need to inject a
                                 variable into this string that should NOT be expanded,
                                 please quote this options value in single quotes.
@@ -1768,7 +1789,7 @@ def parsed_arguments(name, description):
           -h, --help            Show usage information, help message, and exit.
                                   Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -1804,7 +1825,7 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
+            "renee", __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
         )
     )
 
@@ -1967,7 +1988,7 @@ def parsed_arguments(name, description):
         "--tmp-dir",
         type=str,
         required=False,
-        default="/lscratch/$SLURM_JOBID/",
+        default="",
         help=argparse.SUPPRESS,
     )
 
@@ -2091,17 +2112,18 @@ def parsed_arguments(name, description):
                                 Example: --sif-cache /data/$USER/sifs/
 
           --tmp-dir TMP_DIR
-                              Path on the file system for writing temporary output
-                              files. By default, the temporary directory is set to
-                              '/lscratch/$SLURM_JOBID' for backwards compatibility
-                              with the NIH's Biowulf cluster; however, if you are
-                              running the pipeline on another cluster, this option
-                              will need to be specified. Ideally, this path should
-                              point to a dedicated location on the filesystem for
-                              writing tmp files. On many systems, this location is
-                              set to somewhere in /scratch. If you need to inject a
-                              variable into this string that should NOT be expanded,
-                              please quote this options value in single quotes.
+                            Path on the file system for writing temporary output
+                            files. By default, the temporary directory is set to
+                            '/lscratch/$SLURM_JOBID' on NIH's Biowulf cluster and
+                            'outdir' on the FRCE cluster.
+                            However, if you are running the pipeline on another cluster,
+                            this option will need to be specified.
+                            Ideally, this path should point to a dedicated location on
+                            the filesystem for writing tmp files.
+                            On many systems, this location is
+                            set to somewhere in /scratch. If you need to inject a
+                            variable into this string that should NOT be expanded,
+                            please quote this options value in single quotes.
                                 Example: --tmp-dir '/cluster_scratch/$USER/'
 
           --wait
@@ -2114,7 +2136,7 @@ def parsed_arguments(name, description):
           -h, --help          Show usage information, help message, and exit.
                                 Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -2150,7 +2172,7 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
+            "renee", __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
         )
     )
 
@@ -2314,7 +2336,7 @@ def parsed_arguments(name, description):
           -h, --help            Show usage information and exit.
                                   Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -2335,7 +2357,7 @@ def parsed_arguments(name, description):
         {2}{3}Version:{4}
           {1}
         """.format(
-            name, __version__, c.bold, c.url, c.end
+            "renee", __version__, c.bold, c.url, c.end
         )
     )
 
@@ -2370,7 +2392,7 @@ def parsed_arguments(name, description):
         {1}{0} {3}cache{4}: {1}Cache software containers locally.{4}
 
         {1}{2}Synopsis:{4}
-          $ {0} cache [-h] [--dry-run] \\
+          $ {0} cache [--help] [--dry-run] \\
                   --sif-cache SIF_CACHE
 
         {1}{2}Description:{4}
@@ -2408,7 +2430,7 @@ def parsed_arguments(name, description):
           -h, --help            Show usage information and exits.
                                   Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -2435,7 +2457,7 @@ def parsed_arguments(name, description):
         {2}Version:{3}
           {1}
         """.format(
-            name, __version__, c.bold, c.end
+            "renee", __version__, c.bold, c.end
         )
     )
 
@@ -2495,7 +2517,7 @@ def main():
     # Sanity check for usage
     if len(sys.argv) == 1:
         # Nothing was provided
-        fatal("Invalid usage: {} [-h] [--version] ...".format(_name))
+        fatal("Invalid usage: {} [-h] [--version] ...".format("renee"))
 
     # Collect args for sub-command
     args = parsed_arguments(name=_name, description=_description)

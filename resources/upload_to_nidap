@@ -17,29 +17,29 @@ Usage:
 Synopsis:
   This script provides a high level wrapper to the NIDAP API.
 Given a list of local file paths, a NIDAP API token, and a NIDAP
-dataset identifer, it will upload those files to a dataset on NIDAP. 
+dataset identifier, it will upload those files to a dataset on NIDAP.
 
 Required Arguments:
-  -f, --files  FILE   [Type: Str]  Files to upload to NIDAP. 
+  -f, --files  FILE   [Type: Str]  Files to upload to NIDAP.
                                      One or more local file paths can
-                                     be provided. Multiple files can 
+                                     be provided. Multiple files can
                                      be uploaded at once by providing
-                                     a quoted space separated list of 
+                                     a quoted space separated list of
                                      local files.
-  -d, --dataid DATAID [Type: Path] Dataset Identifer for NIDAP upload.
-                                     Identifer to a dataset on NIDAP 
+  -d, --dataid DATAID [Type: Path] Dataset identifier for NIDAP upload.
+                                     identifier to a dataset on NIDAP
                                      where file(s) will be uploaded.
-  -r, --rid    RID    [Type: Str]  Request Identifer. This transaction
-                                     identifer is used to help track a 
-                                     given request. This identifer is 
-                                     also appended to any log files. 
-  -t, --token  TOKEN  [Type: Str]  API token for NIDAP. A text file 
+  -r, --rid    RID    [Type: Str]  Request identifier. This transaction
+                                     identifier is used to help track a
+                                     given request. This identifier is
+                                     also appended to any log files.
+  -t, --token  TOKEN  [Type: Str]  API token for NIDAP. A text file
                                      containing an API token for NIDAP
-                                     can be provided, or the API token 
+                                     can be provided, or the API token
                                      can be provided as a string.
 Options:
-  -p, --proxy PROXY   [Type: Str]  HTTPS Proxy. This option can be used 
-                                     to set or override the following 
+  -p, --proxy PROXY   [Type: Str]  HTTPS Proxy. This option can be used
+                                     to set or override the following
                                      environment variable: https_proxy.
                                      By default, a https proxy will not
                                      be utilized unless it is inherited
@@ -81,9 +81,9 @@ function parser() {
       -v  | --version) version && exit 0;;
       -f  | --files)  provided "$key" "${2:-}"; Arguments["f"]="$2"; shift; shift;;
       -d  | --dataid) provided "$key" "${2:-}"; Arguments["d"]="$2"; shift; shift;;
-      -r  | --rid)    provided "$key" "${2:-}"; Arguments["r"]="$2"; shift; shift;;  
+      -r  | --rid)    provided "$key" "${2:-}"; Arguments["r"]="$2"; shift; shift;;
       -t  | --token)  provided "$key" "${2:-}"; Arguments["t"]="$2"; shift; shift;;
-      -p  | --proxy)  provided "$key" "${2:-}"; Arguments["p"]="$2"; shift; shift;; 
+      -p  | --proxy)  provided "$key" "${2:-}"; Arguments["p"]="$2"; shift; shift;;
       -*  | --*) err "Error: Failed to parse unsupported argument: '${key}'."; usage && exit 1;;
       *) err "Error: Failed to parse unrecognized argument: '${key}'. Do any of your inputs have spaces?"; usage && exit 1;;
     esac
@@ -123,11 +123,11 @@ function check(){
 
 
 function retry() {
-  # Tries to run a cmd 5 times before failing 
+  # Tries to run a cmd 5 times before failing
   # If a command is successful, it will break out of attempt loop
-  # Failed attempts are padding with the following exponential 
+  # Failed attempts are padding with the following exponential
   # back-off strategy {4, 16, 64, 256, 1024} in seconds
-  # @INPUTS "$@"" = cmd to run 
+  # @INPUTS "$@"" = cmd to run
   # @CALLS timestamp() to log time of encountered error
   # @CALLS err() to redirect logging information to stderr
   # @CALLS fatal() if command cannot be run in 5 attempts
@@ -136,9 +136,9 @@ function retry() {
   local max=5
   local attempt=true # flag for while loop
   while $attempt; do
-    # Attempt command and break if successful 
+    # Attempt command and break if successful
     "$@" && attempt=false || {
-      # Try again up to 5 times 
+      # Try again up to 5 times
       if [[ $n -le $max ]]; then
         err "[$(timestamp)] Command failed: $@"
         delay=$(( 4**$n ))
@@ -155,15 +155,15 @@ function retry() {
 
 function require(){
   # Requires an executable is in $PATH
-  # as a last resort it will attempt to load 
+  # as a last resort it will attempt to load
   # the executable as a module. If an exe is
   # not in $PATH raises fatal().
   # INPUT $1 = executable to check
 
   # Check if $1 in $PATH
   # If not, try to module load $1 as a last resort
-  command -V "$1" &> /dev/null || { 
-    command -V module &> /dev/null && 
+  command -V "$1" &> /dev/null || {
+    command -V module &> /dev/null &&
     module purge && module load "$1"
   } || fatal "Error: failed to find or load '$1', not installed on target system."
 
@@ -173,9 +173,9 @@ function require(){
 function grab(){
   # Grabs the contents of a file
   # else returns input that was provided
-  # to allow for flexiable API token input 
-  # so a user can directly provide a token 
-  # as a string or point to a file containing 
+  # to allow for flexiable API token input
+  # so a user can directly provide a token
+  # as a string or point to a file containing
   # the token
   # INPUT $1 = token file or string
 
@@ -193,16 +193,16 @@ function grab(){
 
 
 function _commit(){
-  # Closes an open upload API transaction on NIDAP 
+  # Closes an open upload API transaction on NIDAP
   # and commits uploaded the files to the NIDAP dataset
-  # An open transaction must be closed or the uploaded 
+  # An open transaction must be closed or the uploaded
   # files will remain in an un-usable/un-findable state.
   # https://nidap.nih.gov/workspace/documentation/developer/api/general/api-overview
   # INPUT $1 = NIDAP dataset rid
   # INPUT $2 = NIDAP API token
   # INPUT $3 = NIDAP Request or transaction ID
   # @CALLS timestamp() to log time of file uploads
-  # @CALLS fatal() if curl returns a non-200 http response 
+  # @CALLS fatal() if curl returns a non-200 http response
 
   echo "[$(timestamp) @ ${3}] Committing upload transaction '$3' to NIDAP dataset '$1'"
 
@@ -216,28 +216,28 @@ function _commit(){
                 -f \
                 -s \
                 -w "%{http_code}" \
-                "https://nidap.nih.gov/foundry-catalog/api/catalog/datasets/${1}/transactions/${3}/commit" 
+                "https://nidap.nih.gov/foundry-catalog/api/catalog/datasets/${1}/transactions/${3}/commit"
     )
-   
-    # Check http response code for any failures 
-    if [[ $response != 2?? ]]; then 
+
+    # Check http response code for any failures
+    if [[ $response != 2?? ]]; then
       fatal "Error: commit request for transaction '${3}' failed with http response of '$response'!"
-    fi 
+    fi
 
 }
 
 
 function _upload(){
-  # Uploads a file to NIDAP dataset 
+  # Uploads a file to NIDAP dataset
   # https://nidap.nih.gov/workspace/documentation/developer/api/general/api-overview
   # INPUT $1 = File(s) to upload
   # INPUT $2 = NIDAP dataset rid
   # INPUT $3 = NIDAP API token
   # INPUT $4 = NIDAP Request or transaction ID
   # INPUT $5 = HTTPS Proxy, defaults to no proxy set
-  # @CALLS require() to enfore cURL installation
+  # @CALLS require() to enforce cURL installation
   # @CALLS timestamp() to log time of file uploads
-  # @CALLS fatal() if curl returns a non-200 http response 
+  # @CALLS fatal() if curl returns a non-200 http response
   # @CALLS _commit() to close an open upload transaction and commit the files to dataset
 
   # Require curl is installed
@@ -245,9 +245,9 @@ function _upload(){
 
   # Check if a proxy needs to be set
   if [[ ! -z "${5:-}" ]]; then export https_proxy="${5}"; fi
-  
+
   # Try to upload each file from NIDAP with 5 max attempts
-  for file in ${1// /$'\t'}; do 
+  for file in ${1// /$'\t'}; do
     local fname="$(basename <<< clean "$file")"
     echo "[$(timestamp) @ ${4}] Uploading '${file}' to NIDAP dataset '$2' as ${fname}"
     response=$(retry \
@@ -260,15 +260,15 @@ function _upload(){
                   -F file=@"${file}" \
                   "https://nidap.nih.gov/foundry-data-proxy/api/dataproxy/datasets/${2}/transactions/${4}" \
     )
-   
-    # Check http response code for any failures 
-    if [[ $response != 2?? ]]; then 
+
+    # Check http response code for any failures
+    if [[ $response != 2?? ]]; then
       fatal "Error: upload request for '$file' failed with http response of '$response'!"
-    fi 
+    fi
 
   done
-  
-  # Close open upload transaction and commit files to dataset 
+
+  # Close open upload transaction and commit files to dataset
   _commit "${2}" "${3}" "${4}"
 }
 
@@ -284,14 +284,14 @@ function main(){
   declare -Ag Arguments
 
   # Parses user provided command-line arguments
-  parser "${@}" 
+  parser "${@}"
   local_files="${Arguments[f]}"
   upload_nidap_dataset="${Arguments[d]}"
   token=$(grab "${Arguments[t]}") # grab contents if file provided
   requestid="${Arguments[r]}"
   proxy="${Arguments[p]:-}"
 
-  # Upload local files to NIDAP Dataset 
+  # Upload local files to NIDAP Dataset
   # INPUT $1 = File(s) to upload
   # INPUT $2 = NIDAP dataset rid
   # INPUT $3 = NIDAP API token
