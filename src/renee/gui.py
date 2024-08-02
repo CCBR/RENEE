@@ -13,38 +13,25 @@ from .util import (
     get_tmp_dir,
     get_shared_resources_dir,
     renee_base,
+    get_version,
 )
+from .cache import get_sif_cache_dir
 from .run import run
 
-# TODO: get rid of  all the global variables, get values from CLI flags instead
-global DEBUG
-DEBUG = True
-
+# TODO: get rid of  all the global variables
 # TODO: let's use a tmp dir and put these files there instead. see for inspiration:https://github.com/CCBR/RENEE/blob/16d13dca1d5f0f43c7dfda379efb882a67635d17/tests/test_cache.py#L14-L28
 global FILES_TO_DELETE
-global RENEEDIR
-global SIFCACHE
-global RENEE
-global RENEEVER
-global HOSTNAME
-
-RENEEDIR = os.getenv("RENEEDIR")
-SIFCACHE = os.getenv("SIFCACHE")
-RENEEVER = os.getenv("RENEEVER")
-HOSTNAME = os.getenv("HOSTNAME")
-RENNE = renee_base(os.path.join("bin", "renee"))
-
 FILES_TO_DELETE = list()
 
 
-def launch_gui(sub_args):
+def launch_gui(sub_args, debug=True):
     # get drop down genome+annotation options
     jsons = get_genomes_dict()
     genome_annotation_combinations = list(jsons.keys())
     genome_annotation_combinations.sort()
-    if DEBUG:
+    if debug:
         print(jsons)
-    if DEBUG:
+    if debug:
         print(genome_annotation_combinations)
 
     logo = sg.Image(renee_base(os.path.join("resources", "CCBRlogo.png")))
@@ -85,16 +72,18 @@ def launch_gui(sub_args):
             sg.Button(button_text="Help", key="--HELP--", font=("Helvetica", 12)),
         ],
     ]
-    if DEBUG:
+    if debug:
         print("layout is ready!")
 
-    window = sg.Window("RENEE " + RENEEVER, layout, location=(0, 500), finalize=True)
-    if DEBUG:
+    window = sg.Window(
+        f"RENEE {get_version()}", layout, location=(0, 500), finalize=True
+    )
+    if debug:
         print("window created!")
 
     while True:
         event, values = window.read()
-        if DEBUG:
+        if debug:
             print(event, values)
         # if any((event != 'Submit')):
         if event == "--CANCEL--" or event == sg.WIN_CLOSED:
@@ -133,9 +122,9 @@ def launch_gui(sub_args):
             elif not os.path.exists(values["--INDIR--"]) and not os.path.exists(
                 fixpath(values["--INDIR--"])
             ):
-                if DEBUG:
+                if debug:
                     print(values["--INDIR--"])
-                if DEBUG:
+                if debug:
                     print(fixpath(values["--INDIR--"]))
                 sg.PopupError(
                     "Input folder doesn't exist!!",
@@ -146,7 +135,7 @@ def launch_gui(sub_args):
                 continue
             else:
                 inputfastqs = get_fastqs(values["--INDIR--"])
-                if DEBUG:
+                if debug:
                     print(inputfastqs)
                 if len(inputfastqs) == 0:
                     sg.PopupError(
@@ -184,7 +173,7 @@ def launch_gui(sub_args):
                 input=" ".join(inputfastqs),
                 output=values["--OUTDIR--"],
                 genome=genome,
-                sif_cache=SIFCACHE,
+                sif_cache=get_sif_cache_dir(),
                 mode="slurm",
                 tmp_dir=get_tmp_dir(),
                 shared_resources=get_shared_resources_dir(),
