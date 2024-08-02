@@ -1,11 +1,12 @@
 ## RENEE development version
 
-- Minor documentation improvements. (#132, @kelly-sovacool)
+- Minor documentation improvements. (#132, #135, @kelly-sovacool)
 - Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
-- Improve README with links to documentation website. (#135, @kelly-sovacool)
 - hg38 genome index files now include decoy & virus sequences. (#136, @kelly-sovacool)
   - Additionally, `--genome` is no longer required and is set to `hg38_36` by default.
+- Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
+
 
 ## RENEE 2.5.12
 
