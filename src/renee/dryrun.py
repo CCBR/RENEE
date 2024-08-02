@@ -63,7 +63,7 @@ def dryrun(
 
 
 def _now():
-    ct = datetime.now()
+    ct = datetime.datetime.now()
     now = ct.strftime("%y%m%d%H%M%S")
     return now
 
