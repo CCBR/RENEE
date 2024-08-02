@@ -3,6 +3,7 @@
 - Minor documentation improvements. (#132, #135, @kelly-sovacool)
 - Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
+- Add GUI instructions to the documentation website. (#38, @samarth8392)
 - Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
 - Set default shared singularity SIF directory for biowulf and frce. (#94, @kelly-sovacool)
 - Add `renee gui` subcommand to launch the graphical user interface. (#94, @kelly-sovacool)
