@@ -4,21 +4,21 @@ On [Biowulf](https://hpc.nih.gov/), RENEE comes bundled with the following pre-b
 
 As of RENEE v2.6.0, all hg19 and hg38 indices were built using the
 [NCI Genomic Data Commons reference fasta](https://gdc.cancer.gov/about-data/gdc-data-processing/gdc-reference-files),
-which includes virus and decoy sequences.
+which contains the primary genome from Encode plus virus and decoy sequences.
 
-| **Genome**    | **Species**          | **Annotation Version**                                                                   | **Notes**                                                                                       |
-| ------------- | -------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| hg19_19       | Homo sapiens (human) | [Gencode Release 19](https://www.gencodegenes.org/human/release_19.html)                 | [GRCh37](https://www.gencodegenes.org/human/release_19.html), Annotation Release date: 07/2013  |
-| hg19_36lift37 | Homo sapiens (human) | [Gencode Release v36 (GRCh37)](https://www.gencodegenes.org/human/release_36lift37.html) | [GRCh37](https://www.gencodegenes.org/human/release_36lift37.html)                              |
-| hg38_30       | Homo sapiens (human) | [Gencode Release v30](https://www.gencodegenes.org/human/release_30.html)                | [GRCh38](https://www.gencodegenes.org/human/release_30.html), Annotation Release date: 11/2018  |
-| hg38_34       | Homo sapiens (human) | [Gencode Release v34](https://www.gencodegenes.org/human/release_34.html)                | [GRCh38](https://www.gencodegenes.org/human/release_34.html), Annotation Release date: 04/2020  |
-| hg38_36       | Homo sapiens (human) | [Gencode Release v36](https://www.gencodegenes.org/human/release_36.html)                | [GRCh38](https://www.gencodegenes.org/human/release_36.html), Annotation Release date: 05/2020  |
-| hg38_38       | Homo sapiens (human) | [Gencode Release v38](https://www.gencodegenes.org/human/release_38.html)                | [GRCh38](https://www.gencodegenes.org/human/release_38.html), Annotation Release date: 05/2021  |
-| hg38_41       | Homo sapiens (human) | [Gencode Release v41](https://www.gencodegenes.org/human/release_41.html)                | [GRCh38](https://www.gencodegenes.org/human/release_41.html), Annotation Release date: 07/2022  |
-| hg38_45       | Homo sapiens (human) | [Gencode Release v45](https://www.gencodegenes.org/human/release_45.html)                | [GRCh38](https://www.gencodegenes.org/human/release_45.html), Annotation Release date: 03/2023  |
-| mm10_M21      | Mus musculus (mouse) | [Gencode Release M21](https://www.gencodegenes.org/mouse/release_M21.html)               | [GRCm38](https://www.gencodegenes.org/mouse/release_M21.html), Annotation Release date: 04/2019 |
-| mm10_M23      | Mus musculus (mouse) | [Gencode Release M23](https://www.gencodegenes.org/mouse/release_M23.html)               | [GRCm38](https://www.gencodegenes.org/mouse/release_M23.html), Annotation Release date: 09/2019 |
-| mm10_M25      | Mus musculus (mouse) | [Gencode Release M25](https://www.gencodegenes.org/mouse/release_M25.html)               | [GRCm38](https://www.gencodegenes.org/mouse/release_M25.html), Annotation Release date: 04/2020 |
+| **Genome** | **Species**          | **Annotation Version**                                                                 | **Notes**                                                                                       |
+| ---------- | -------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| hg19_19    | Homo sapiens (human) | [Gencode Release 19](https://www.gencodegenes.org/human/release_19.html)               | [GRCh37](https://www.gencodegenes.org/human/release_19.html), Annotation Release date: 07/2013  |
+| hg19_36    | Homo sapiens (human) | [Gencode Release 36-lift-37](https://www.gencodegenes.org/human/release_36lift37.html) | [GRCh37](https://www.gencodegenes.org/human/release_36lift37.html)                              |
+| hg38_30    | Homo sapiens (human) | [Gencode Release 30](https://www.gencodegenes.org/human/release_30.html)               | [GRCh38](https://www.gencodegenes.org/human/release_30.html), Annotation Release date: 11/2018  |
+| hg38_34    | Homo sapiens (human) | [Gencode Release 34](https://www.gencodegenes.org/human/release_34.html)               | [GRCh38](https://www.gencodegenes.org/human/release_34.html), Annotation Release date: 04/2020  |
+| hg38_36    | Homo sapiens (human) | [Gencode Release 36](https://www.gencodegenes.org/human/release_36.html)               | [GRCh38](https://www.gencodegenes.org/human/release_36.html), Annotation Release date: 05/2020  |
+| hg38_38    | Homo sapiens (human) | [Gencode Release 38](https://www.gencodegenes.org/human/release_38.html)               | [GRCh38](https://www.gencodegenes.org/human/release_38.html), Annotation Release date: 05/2021  |
+| hg38_41    | Homo sapiens (human) | [Gencode Release 41](https://www.gencodegenes.org/human/release_41.html)               | [GRCh38](https://www.gencodegenes.org/human/release_41.html), Annotation Release date: 07/2022  |
+| hg38_45    | Homo sapiens (human) | [Gencode Release 45](https://www.gencodegenes.org/human/release_45.html)               | [GRCh38](https://www.gencodegenes.org/human/release_45.html), Annotation Release date: 03/2023  |
+| mm10_M21   | Mus musculus (mouse) | [Gencode Release M21](https://www.gencodegenes.org/mouse/release_M21.html)             | [GRCm38](https://www.gencodegenes.org/mouse/release_M21.html), Annotation Release date: 04/2019 |
+| mm10_M23   | Mus musculus (mouse) | [Gencode Release M23](https://www.gencodegenes.org/mouse/release_M23.html)             | [GRCm38](https://www.gencodegenes.org/mouse/release_M23.html), Annotation Release date: 09/2019 |
+| mm10_M25   | Mus musculus (mouse) | [Gencode Release M25](https://www.gencodegenes.org/mouse/release_M25.html)             | [GRCm38](https://www.gencodegenes.org/mouse/release_M25.html), Annotation Release date: 04/2020 |
 
 You can run `renee run --help` to view the most up-to-date list of genome annotations available in your installation of RENEE.
 
