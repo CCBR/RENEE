@@ -539,9 +539,7 @@ def parsed_arguments(name, description):
     description = "{0}{1}{2}".format(c.bold, description, c.end)
 
     # Create a top-level parser
-    parser = argparse.ArgumentParser(
-        description="{}: {}".format(styled_name, description)
-    )
+    parser = argparse.ArgumentParser(prog="renee", description=description)
 
     # Adding Version information
     parser.add_argument(
