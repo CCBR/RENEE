@@ -2,6 +2,7 @@ import json
 import os.path
 import subprocess
 import tempfile
+from renee.src.renee.__main__ import main
 
 renee_run = (
     "src/renee/__main__.py run "
