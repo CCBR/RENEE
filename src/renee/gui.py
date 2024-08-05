@@ -171,15 +171,21 @@ def launch_gui(sub_args, debug=True):
             output_dir = values["--OUTDIR--"]
             # create sub args for renee run
             run_args = argparse.Namespace(
-                input=" ".join(inputfastqs),
+                input=inputfastqs,
                 output=output_dir,
                 genome=genome,
-                sif_cache=get_sif_cache_dir(),
                 mode="slurm",
                 runmode="run",
+                dry_run=True,
+                sif_cache=get_sif_cache_dir(),
+                singularity_cache=os.environ["SINGULARITY_CACHEDIR"],
                 tmp_dir=get_tmp_dir("", output_dir),
                 shared_resources=get_shared_resources_dir("", output_dir),
-                dry_run=True,
+                star_2_pass_basic=False,
+                small_rna=False,
+                create_nidap_folder=False,
+                wait=False,
+                threads=2,
             )
             # execute dry run and capture stdout/stderr
             allout = run_in_context(run_args)
