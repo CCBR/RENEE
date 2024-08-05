@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """RENEE: Rna sEquencing aNalysis pipElinE:
-An highly reproducible and portable RNA-seq data analysises pipeline
+An highly reproducible and portable RNA-seq data analysis pipeline
 About:
     This is the main entry for the RENEE pipeline.
 USAGE:
@@ -35,6 +35,8 @@ from .util import (
     get_genomes_list,
     get_version,
     check_python_version,
+    _cp_r_safe_,
+    orchestrate,
 )
 
 # Pipeline Metadata and globals
@@ -171,7 +173,9 @@ def unlock(sub_args):
             cwd=outdir,
             stderr=subprocess.STDOUT,
         )
-    except subprocess.CalledProcessError as e:
+    except (
+        subprocess.CalledProcessError
+    ) as e:  # TODO: why capture this exception at all?
         # Unlocking process returned a non-zero exit code
         sys.exit("{}\n{}".format(e, e.output))
 
