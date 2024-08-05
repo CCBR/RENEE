@@ -5,6 +5,7 @@ On [Biowulf](https://hpc.nih.gov/), RENEE comes bundled with the following pre-b
 As of RENEE v2.6.0, all hg19 and hg38 indices were built using the
 [NCI Genomic Data Commons reference fasta](https://gdc.cancer.gov/about-data/gdc-data-processing/gdc-reference-files),
 which contains the primary genome from Encode plus virus and decoy sequences.
+See details here: <https://github.com/CCBR/build-renee-refs>
 
 | **Genome** | **Species**          | **Annotation Version**                                                                 | **Notes**                                                                                       |
 | ---------- | -------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
