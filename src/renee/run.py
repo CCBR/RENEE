@@ -1,3 +1,5 @@
+import contextlib
+import io
 import json
 import os
 import pathlib
@@ -80,49 +82,51 @@ def run(sub_args):
 
     if sub_args.dry_run:  # print singularity bind baths and exit
         print("\nSingularity Bind Paths:{}".format(all_bind_paths))
-        sys.exit(0)
-
-    # Run pipeline
-    masterjob = orchestrate(
-        mode=sub_args.mode,
-        outdir=sub_args.output,
-        additional_bind_paths=all_bind_paths,
-        alt_cache=sub_args.singularity_cache,
-        threads=sub_args.threads,
-        tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
-        wait=wait,
-        hpcname=hpcname,
-    )
-
-    # Wait for subprocess to complete,
-    # this is blocking
-    masterjob.wait()
-
-    # Relay information about submission
-    # of the master job or the exit code of the
-    # pipeline that ran in local mode
-    if sub_args.mode == "local":
-        if int(masterjob.returncode) == 0:
-            print("{} pipeline has successfully completed".format("RENEE"))
-        else:
-            fatal(
-                "{} pipeline failed. Please see standard output for more information.".format(
-                    "RENEE"
-                )
-            )
-    elif sub_args.mode == "slurm":
-        jobid = (
-            open(os.path.join(sub_args.output, "logfiles", "mjobid.log")).read().strip()
+        # end at dry run
+    else:  # continue with real run
+        # Run pipeline
+        masterjob = orchestrate(
+            mode=sub_args.mode,
+            outdir=sub_args.output,
+            additional_bind_paths=all_bind_paths,
+            alt_cache=sub_args.singularity_cache,
+            threads=sub_args.threads,
+            tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
+            wait=wait,
+            hpcname=hpcname,
         )
-        if int(masterjob.returncode) == 0:
-            print("Successfully submitted master job: ", end="")
-        else:
-            fatal(
-                "Error occurred when submitting the master job. Error code = {}".format(
-                    masterjob.returncode
+
+        # Wait for subprocess to complete,
+        # this is blocking
+        masterjob.wait()
+
+        # Relay information about submission
+        # of the master job or the exit code of the
+        # pipeline that ran in local mode
+        if sub_args.mode == "local":
+            if int(masterjob.returncode) == 0:
+                print("{} pipeline has successfully completed".format("RENEE"))
+            else:
+                fatal(
+                    "{} pipeline failed. Please see standard output for more information.".format(
+                        "RENEE"
+                    )
                 )
+        elif sub_args.mode == "slurm":
+            jobid = (
+                open(os.path.join(sub_args.output, "logfiles", "mjobid.log"))
+                .read()
+                .strip()
             )
-        print(jobid)
+            if int(masterjob.returncode) == 0:
+                print("Successfully submitted master job: ", end="")
+            else:
+                fatal(
+                    "Error occurred when submitting the master job. Error code = {}".format(
+                        masterjob.returncode
+                    )
+                )
+            print(jobid)
 
 
 def resolve_additional_bind_paths(search_paths):
@@ -200,3 +204,13 @@ def get_fastq_screen_paths(fastq_screen_confs, match="DATABASE", file_index=-1):
                     db_path = line.strip().split()[file_index]
                     databases.append(db_path)
     return databases
+
+
+def run_in_context(args):
+    """Execute the run function in a context manager to capture stdout/stderr"""
+    with contextlib.redirect_stdout(io.StringIO()) as out_f, contextlib.redirect_stderr(
+        io.StringIO()
+    ) as err_f:
+        run(args)
+        allout = out_f.getvalue() + "\n" + err_f.getvalue()
+    return allout

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import contextlib
 import glob
 import io
 import os
@@ -16,7 +15,7 @@ from .util import (
     get_version,
 )
 from .cache import get_sif_cache_dir
-from .run import run
+from .run import run_in_context
 
 # TODO: get rid of  all the global variables
 # TODO: let's use a tmp dir and put these files there instead. see for inspiration:https://github.com/CCBR/RENEE/blob/16d13dca1d5f0f43c7dfda379efb882a67635d17/tests/test_cache.py#L14-L28
@@ -239,16 +238,6 @@ def launch_gui(sub_args, debug=True):
     window.close()
     if len(FILES_TO_DELETE) != 0:
         delete_files(FILES_TO_DELETE)
-
-
-def run_in_context(args):
-    """Execute the run function in a context manager to capture stdout/stderr"""
-    with contextlib.redirect_stdout(io.StringIO()) as out_f, contextlib.redirect_stderr(
-        io.StringIO()
-    ) as err_f:
-        run(args)
-        allout = out_f.getvalue() + "\n" + err_f.getvalue()
-    return allout
 
 
 def copy_to_clipboard(string):
