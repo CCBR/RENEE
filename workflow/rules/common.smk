@@ -184,7 +184,7 @@ rule stats:
     """
 
 
-rule rsem_merge:
+rule rsem_merge: # TODO is this redundant with `rsem-generate-data-matrix`? see https://github.com/CCBR/RENEE/issues/137
     """Data processing step to merge the gene and isoform counts for each sample
     into count matrices.
     @Input:
