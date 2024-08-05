@@ -66,8 +66,3 @@ renee = "."
 [tool.setuptools.dynamic]
 version = {file = "VERSION"}
 readme = {file = "README.md"}
-
-[tool.pytest.ini_options]
-pythonpath = [
-  "src"
-]
