@@ -1,5 +1,6 @@
 import pytest
 import subprocess
+from renee.src.renee.__main__ import main
 
 renee_run = (
     "./bin/renee run "
