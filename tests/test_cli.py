@@ -1,8 +1,7 @@
-import pytest
-import subprocess
-import tempfile
 import json
 import os.path
+import subprocess
+import tempfile
 
 renee_run = (
     "src/renee/__main__.py run "
@@ -46,7 +45,10 @@ def test_run_error():
     assert (
         "the following arguments are required: --output"
         in subprocess.run(
-            f"{renee_run}", capture_output=True, shell=True, text=True
+            f"{renee_run} --genome config/genomes/biowulf/hg38_36.json",
+            capture_output=True,
+            shell=True,
+            text=True,
         ).stderr
     )
 
@@ -68,19 +70,11 @@ def test_subcommands_help():
 
 def test_default_genome():
     output, config = run_in_temp(renee_run)
-    checks = [
-        "Genome config file does not exist" in output.stderr,
-        "The singularity command has to be available" in output.stderr,
-    ]
-    errors = [check for check in checks if eval(check, locals())]
-    assert not errors, "errors occurred:\n{}".format("\n".join(errors))
+    assert "No Genome Annotation JSONs found" in output.stderr
 
 
 def test_genome_param():
-    output, config = run_in_temp(f"{renee_run} --genome hg19_19")
-    checks = [
-        '"hg19" not in config["references"]["rnaseq"]["FUSIONBLACKLIST"]',
-        '"The singularity command has to be available" not in output.stderr',
-    ]
-    errors = [check for check in checks if eval(check, locals())]
-    assert not errors, "errors occurred:\n{}".format("\n".join(errors))
+    output, config = run_in_temp(
+        f"{renee_run} --genome config/genomes/biowulf/hg19_19.json"
+    )
+    assert "hg19" in config["references"]["rnaseq"]["FUSIONBLACKLIST"]
