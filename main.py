@@ -2,12 +2,12 @@
 import os
 import re
 import sys
+from src.renee.__main__ import main
 
 # add script directory to the path to allow champagne CLI to work out-of-the-box
 # without the need to install it via pip first
 SCRIPT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src", "renee")
 sys.path.append(SCRIPT_DIR)
-from src.renee.__main__ import main
 
 if (
     __name__ == "__main__"
