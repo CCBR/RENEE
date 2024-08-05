@@ -5,6 +5,7 @@
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
 - Add GUI instructions to the documentation website. (#38, @samarth8392)
 - Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
+- Run `rsem-generate-data-matrix` to create gene and isoform matrix files. (#149, @kelly-sovacool)
 
 ## RENEE 2.5.12
 
