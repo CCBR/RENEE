@@ -184,7 +184,7 @@ rule stats:
     """
 
 
-rule rsem_merge: # TODO is this redundant with `rsem-generate-data-matrix`? see https://github.com/CCBR/RENEE/issues/137
+rule rsem_merge:
     """Data processing step to merge the gene and isoform counts for each sample
     into count matrices.
     @Input:
@@ -212,6 +212,25 @@ rule rsem_merge: # TODO is this redundant with `rsem-generate-data-matrix`? see 
     sed 's/\\t/|/1' {output.gene_counts_matrix} | \
         sed '1 s/^gene_id|GeneName/symbol/' > {output.reformatted}
     """
+
+rule rsem_data_matrix:
+    input:
+        genes=expand(join(workpath,degall_dir,"{name}.RSEM.genes.results"), name=samples),
+        isoforms=expand(join(workpath,degall_dir,"{name}.RSEM.isoforms.results"), name=samples),
+    output:
+        genes=join(workpath, degall_dir, "RSEM.genes.expected_counts.all_samples.matrix"),
+        isoforms=join(workpath, degall_dir, "RSEM.isoforms.expected_counts.all_samples.matrix")
+    params:
+        rname='pl:rsem_data_matrix',
+    envmodules:
+        config['bin'][pfamily]['tool_versions']['RSEMVER'],
+        config['bin'][pfamily]['tool_versions']['PYTHONVER'],
+    container: config['images']['rsem']
+    shell:
+        """
+        rsem-generate-data-matrix {input.genes} > {output.genes}
+        rsem-generate-data-matrix {input.isoforms} > {output.isoforms}
+        """
 
 
 rule rseqc:

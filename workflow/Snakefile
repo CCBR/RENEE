@@ -139,12 +139,8 @@ if paired_end:
             expand(join(workpath,degall_dir,"{name}.RSEM.isoforms.results"),name=samples),
             join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
             join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-            #join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
-            #join(workpath,star_dir,"sampletable.txt"),
-
-            # PCA Reports
-            # expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
-
+            join(workpath, degall_dir, "RSEM.genes.expected_counts.all_samples.matrix"),
+            join(workpath, degall_dir, "RSEM.isoforms.expected_counts.all_samples.matrix"),
             # MultiQC
             join(workpath,"Reports","multiqc_report.html"),
 
@@ -202,11 +198,8 @@ elif not paired_end:
             expand(join(workpath,degall_dir,"{name}.RSEM.isoforms.results"),name=samples),
             join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
             join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-            #join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
-            #join(workpath,star_dir,"sampletable.txt"),
-
-            # PCA Report
-            # expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
+            join(workpath, degall_dir, "RSEM.genes.expected_counts.all_samples.matrix"),
+            join(workpath, degall_dir, "RSEM.isoforms.expected_counts.all_samples.matrix"),
 
             # MultiQC
             join(workpath,"Reports","multiqc_report.html"),
