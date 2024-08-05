@@ -77,41 +77,39 @@ def get_shared_resources_dir(shared_dir, outdir, hpc=get_hpcname()):
     return shared_dir
 
 
-def get_genomes_list(
-    hpcname=get_hpcname(),
-):  # TODO call get_genomes_dict and extract list; only warn if no genomes found
+def get_genomes_list(hpcname=get_hpcname(), error_on_warnings=False):
     """Get list of genome annotations available for the current platform
     @return genomes_list <list>
     """
-    genome_config_dir = renee_base(os.path.join("config", "genomes", hpcname))
-    json_files = glob.glob(genome_config_dir + "/*.json")
-    if not json_files:
-        warnings.warn(
-            f"WARNING: No Genome Annotation JSONs found in {genome_config_dir}. Please specify a custom genome json file with `--genome`"
+    return sorted(
+        list(
+            get_genomes_dict(
+                hpcname=hpcname, error_on_warnings=error_on_warnings
+            ).keys()
         )
-    genomes = [os.path.basename(file).replace(".json", "") for file in json_files]
-    return sorted(genomes)
+    )
 
 
-def get_genomes_dict(
-    hpcname=get_hpcname(),
-):  # TODO option to either warn or error if genomes not found
+def get_genomes_dict(hpcname=get_hpcname(), error_on_warnings=False):
     """Get dictionary of genome annotation versions and the paths to the corresponding JSON files
     @return genomes_dict <dict> { genome_name: json_file_path }
     """
+    if error_on_warnings:
+        warnings.filterwarnings("error")
     genomes_dir = renee_base(os.path.join("config", "genomes", hpcname))
     if not os.path.exists(genomes_dir):
-        raise FileNotFoundError(f"ERROR: Folder does not exist : {genomes_dir}")
+        warnings.warn(f"Folder does not exist: {genomes_dir}")
     search_term = genomes_dir + "/*.json"
     json_files = glob.glob(search_term)
     if len(json_files) == 0:
-        raise FileNotFoundError(
-            f"ERROR: No Genome+Annotation JSONs found in : {genomes_dir}"
+        warnings.warn(
+            f"No Genome+Annotation JSONs found in {genomes_dir}. Please specify a custom genome json file with `--genome`"
         )
     genomes_dict = {
         os.path.basename(json_file).replace(".json", ""): json_file
         for json_file in json_files
     }
+    warnings.resetwarnings()
     return genomes_dict
 
 

@@ -26,7 +26,7 @@ FILES_TO_DELETE = list()
 
 def launch_gui(sub_args, debug=True):
     # get drop down genome+annotation options
-    jsons = get_genomes_dict()
+    jsons = get_genomes_dict(error_on_warnings=True)
     genome_annotation_combinations = list(jsons.keys())
     genome_annotation_combinations.sort()
     if debug:

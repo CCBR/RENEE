@@ -2,11 +2,15 @@ import contextlib
 import io
 import os
 import pathlib
+import pytest
 import tempfile
+import warnings
 
 from renee.src.renee.util import (
     renee_base,
     _cp_r_safe_,
+    get_genomes_dict,
+    get_genomes_list,
 )
 
 
@@ -44,3 +48,30 @@ def test_cp_unsafe():
                 safe_mode=False,
             )
         assert not stdout.getvalue() and "config.yaml" in os.listdir(configdir)
+
+
+def test_get_genomes_warnings():
+    with warnings.catch_warnings(record=True) as raised_warnings:
+        genomes = get_genomes_list(hpcname="notAnOption")
+        assertions = [
+            "len(genomes) == 0",
+            "len(raised_warnings) == 2",
+            "raised_warnings[0].category is UserWarning",
+            "raised_warnings[1].category is UserWarning",
+            '"Folder does not exist" in str(raised_warnings[0].message)',
+            '"No Genome+Annotation JSONs found" in str(raised_warnings[1].message)',
+        ]
+        scope = locals()  # make local variables available to eval()
+        errors = [assertion for assertion in assertions if not eval(assertion, scope)]
+    assert not errors, "errors occurred:\n{}".format("\n".join(errors))
+
+
+def test_get_genomes_error():
+    with pytest.raises(UserWarning) as exception_info:
+        get_genomes_list(hpcname="notAnOption", error_on_warnings=True)
+        assert "Folder does not exist" in str(exception_info.value)
+
+
+def test_get_genomes_biowulf():
+    genomes_dict = get_genomes_dict(hpcname="biowulf")
+    assert len(genomes_dict) > 10
