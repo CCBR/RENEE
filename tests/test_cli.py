@@ -68,27 +68,19 @@ def test_subcommands_help():
 
 def test_default_genome():
     output, config = run_in_temp(renee_run)
-    errors = list()
-    if "hg38" not in config["references"]["rnaseq"]["FUSIONBLACKLIST"]:
-        errors.append(
-            f'hg38 not in {config["references"]["rnaseq"]["FUSIONBLACKLIST"]}'
-        )
-    if "The singularity command has to be available" not in output.stderr:
-        errors.append(output.stderr)
+    checks = [
+        "Genome config file does not exist" in output.stderr,
+        "The singularity command has to be available" in output.stderr,
+    ]
+    errors = [check for check in checks if eval(check, locals())]
     assert not errors, "errors occurred:\n{}".format("\n".join(errors))
 
 
 def test_genome_param():
     output, config = run_in_temp(f"{renee_run} --genome hg19_19")
-    errors = list()
     checks = [
         '"hg19" not in config["references"]["rnaseq"]["FUSIONBLACKLIST"]',
         '"The singularity command has to be available" not in output.stderr',
     ]
-    for check in checks:
-        if eval(check):
-            errors.append(check)
+    errors = [check for check in checks if eval(check, locals())]
     assert not errors, "errors occurred:\n{}".format("\n".join(errors))
-
-
-test_genome_param()
