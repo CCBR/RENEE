@@ -31,7 +31,7 @@ jobs:
             snakemake --lint -s /opt2/output/workflow/Snakefile -d /opt2/output || \
           echo 'There may have been a few warnings or errors. Please read through the log to determine if its harmless.'
 
-  Test:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -71,7 +71,7 @@ jobs:
 
   build-status: # https://github.com/orgs/community/discussions/4324#discussioncomment-3477871
     runs-on: ubuntu-latest
-    needs: [Dryrun_Lint, Test]
+    needs: [dryrun-lint, test]
     if: always()
     steps:
       - name: Successful build
