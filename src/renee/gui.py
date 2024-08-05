@@ -176,8 +176,9 @@ def launch_gui(sub_args, debug=True):
                 genome=genome,
                 sif_cache=get_sif_cache_dir(),
                 mode="slurm",
+                runmode="run",
                 tmp_dir=get_tmp_dir("", output_dir),
-                shared_resources=get_shared_resources_dir(),
+                shared_resources=get_shared_resources_dir("", output_dir),
                 dry_run=True,
             )
             # execute dry run and capture stdout/stderr
