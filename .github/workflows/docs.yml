@@ -12,14 +12,6 @@ on:
       - "**.md"
       - .github/workflows/docs.yml
       - mkdocs.yml
-  pull_request:
-    branches:
-      - main
-    paths:
-      - "docs/**"
-      - "**.md"
-      - .github/workflows/docs.yml
-      - mkdocs.yml
 
 env:
   actor: "41898282+github-actions[bot]"
