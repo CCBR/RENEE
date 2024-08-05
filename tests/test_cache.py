@@ -3,7 +3,7 @@ import json
 import os.path
 import subprocess
 
-from src.renee.cache import get_sif_cache_dir
+from renee.src.renee.cache import get_sif_cache_dir
 
 renee_run = (
     "./bin/renee run "
