@@ -168,14 +168,15 @@ def launch_gui(sub_args, debug=True):
                     continue
                 # sg.Popup("Output folder exists... this is probably a re-run ... is it?",location=(0,500))
             genome = jsons[values["--ANNOTATION--"]]
+            output_dir = values["--OUTDIR--"]
             # create sub args for renee run
             run_args = argparse.Namespace(
                 input=" ".join(inputfastqs),
-                output=values["--OUTDIR--"],
+                output=output_dir,
                 genome=genome,
                 sif_cache=get_sif_cache_dir(),
                 mode="slurm",
-                tmp_dir=get_tmp_dir(),
+                tmp_dir=get_tmp_dir("", output_dir),
                 shared_resources=get_shared_resources_dir(),
                 dry_run=True,
             )
