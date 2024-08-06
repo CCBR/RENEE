@@ -5,6 +5,7 @@ import subprocess
 import shutil
 import sys
 import warnings
+from .cache import get_singularity_cachedir
 
 
 def renee_base(rel_path=""):
@@ -224,13 +225,9 @@ def orchestrate(
     # to output directory
     my_env = {}
     my_env.update(os.environ)
-    cache = os.path.join(outdir, ".singularity")
-    my_env["SINGULARITY_CACHEDIR"] = cache
 
-    if alt_cache:
-        # Override the pipeline's default cache location
-        my_env["SINGULARITY_CACHEDIR"] = alt_cache
-        cache = alt_cache
+    cache = get_singularity_cachedir(output_dir=outdir, cache_dir=alt_cache)
+    my_env["SINGULARITY_CACHEDIR"] = cache
 
     if additional_bind_paths:
         # Add Bind PATHs for outdir and tmp dir

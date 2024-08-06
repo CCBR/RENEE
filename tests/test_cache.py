@@ -3,7 +3,7 @@ import json
 import os.path
 import subprocess
 
-from renee.src.renee.cache import get_sif_cache_dir
+from renee.src.renee.cache import get_sif_cache_dir, get_singularity_cachedir
 
 renee_run = (
     "./bin/renee run "
@@ -53,6 +53,15 @@ def test_get_sif_cache_dir():
     assertions = [
         "'CCBR_Pipeliner/SIFS' in get_sif_cache_dir('biowulf')",
         "'CCBR-Pipelines/SIFs' in get_sif_cache_dir('frce')",
+    ]
+    errors = [assertion for assertion in assertions if not eval(assertion)]
+    assert not errors, "errors occurred:\n{}".format("\n".join(errors))
+
+
+def test_get_singularity_cachedir():
+    assertions = [
+        "get_singularity_cachedir('outdir') == 'outdir/.singularity'",
+        "get_singularity_cachedir('outdir', 'cache') == 'cache'",
     ]
     errors = [assertion for assertion in assertions if not eval(assertion)]
     assert not errors, "errors occurred:\n{}".format("\n".join(errors))

@@ -2,10 +2,18 @@ import json
 import os
 import sys
 
-from .util import get_hpcname
+
+def get_singularity_cachedir(output_dir, cache_dir=None):
+    """Returns the singularity cache directory.
+    If no user-provided cache directory is provided,
+    the default singularity cache is in the output directory.
+    """
+    if not cache_dir:
+        cache_dir = os.path.join(output_dir, ".singularity")
+    return cache_dir
 
 
-def get_sif_cache_dir(hpc=get_hpcname()):
+def get_sif_cache_dir(hpc=None):
     sif_dir = None
     if hpc == "biowulf":
         sif_dir = "/data/CCBR_Pipeliner/SIFS"

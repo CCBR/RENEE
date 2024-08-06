@@ -910,7 +910,7 @@ def parsed_arguments(name, description):
         type=lambda option: os.path.abspath(os.path.expanduser(option)),
         required=False,
         help=argparse.SUPPRESS,
-        default=get_sif_cache_dir(),
+        default=get_sif_cache_dir(hpc=get_hpcname()),
     )
 
     # Create NIDAP output folder

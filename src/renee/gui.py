@@ -13,6 +13,8 @@ from .util import (
     get_shared_resources_dir,
     renee_base,
     get_version,
+    get_singularity_cachedir,
+    get_hpcname,
 )
 from .cache import get_sif_cache_dir
 from .run import run_in_context
@@ -176,8 +178,10 @@ def launch_gui(sub_args, debug=True):
                 mode="slurm",
                 runmode="run",
                 dry_run=True,
-                sif_cache=get_sif_cache_dir(),
-                singularity_cache=os.environ["SINGULARITY_CACHEDIR"],
+                sif_cache=get_sif_cache_dir(hpc=get_hpcname()),
+                singularity_cache=get_singularity_cachedir(
+                    output_dir, os.environ.get("SINGULARITY_CACHEDIR", None)
+                ),
                 tmp_dir=get_tmp_dir(None, output_dir),
                 shared_resources=get_shared_resources_dir(None, output_dir),
                 star_2_pass_basic=False,
