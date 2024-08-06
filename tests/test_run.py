@@ -9,7 +9,7 @@ from renee.src.renee.util import (
     renee_base,
 )
 from renee.src.renee.cache import get_sif_cache_dir
-from renee.src.renee.run import run_in_context
+from renee.src.renee.run import run, run_in_context
 from renee.src.renee.util import get_hpcname
 
 
@@ -28,7 +28,7 @@ def test_dryrun():
                 sif_cache=get_sif_cache_dir(),
                 singularity_cache=os.environ["SINGULARITY_CACHEDIR"],
                 tmp_dir=tmp_dir,
-                shared_resources=None,
+                shared_resources=get_shared_resources_dir(None),
                 star_2_pass_basic=False,
                 small_rna=False,
                 create_nidap_folder=False,

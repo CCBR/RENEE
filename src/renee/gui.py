@@ -183,7 +183,7 @@ def launch_gui(sub_args, debug=True):
                     output_dir, os.environ.get("SINGULARITY_CACHEDIR", None)
                 ),
                 tmp_dir=get_tmp_dir(None, output_dir),
-                shared_resources=get_shared_resources_dir(None, output_dir),
+                shared_resources=get_shared_resources_dir(None),
                 star_2_pass_basic=False,
                 small_rna=False,
                 create_nidap_folder=False,

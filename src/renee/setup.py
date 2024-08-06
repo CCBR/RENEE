@@ -110,11 +110,6 @@ def setup(sub_args, ifiles, repo_path, output_path):
         ] = os.path.join(
             sub_args.shared_resources, "fastq_screen_db", "fastq_screen.conf"
         )
-        config["bin"]["rnaseq"]["tool_parameters"][
-            "FASTQ_SCREEN_CONFIG2"
-        ] = os.path.join(
-            sub_args.shared_resources, "fastq_screen_db", "fastq_screen_2.conf"
-        )
         config["bin"]["rnaseq"]["tool_parameters"]["KRAKENBACDB"] = os.path.join(
             sub_args.shared_resources, "20180907_standard_kraken2"
         )

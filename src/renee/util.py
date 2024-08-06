@@ -66,7 +66,7 @@ def get_tmp_dir(tmp_dir, outdir, hpc=get_hpcname()):
     return tmp_dir
 
 
-def get_shared_resources_dir(shared_dir, outdir, hpc=get_hpcname()):
+def get_shared_resources_dir(shared_dir, hpc=get_hpcname()):
     """Get default shared resources directory for biowulf and frce. Allow user override."""
     if not shared_dir:
         if hpc == "biowulf":
