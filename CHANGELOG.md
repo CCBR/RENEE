@@ -1,11 +1,22 @@
 ## RENEE development version
 
-- Minor documentation improvements. (#132, #135, @kelly-sovacool)
+### New features
+
 - Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
-- Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
-- Add GUI instructions to the documentation website. (#38, @samarth8392)
+- Set default shared singularity SIF directory for biowulf and frce. (#94, @kelly-sovacool)
+- Add `renee gui` subcommand to launch the graphical user interface. (#94, @kelly-sovacool)
+  - Previously, `renee_gui` (with an underscore) was a command in the `ccbrpipeliner` module.
+
+### Bug fixes
+
 - Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
+
+### Documentation updates
+
+- Minor documentation improvements. (#132, #135, @kelly-sovacool)
+- Add GUI instructions to the documentation website. (#38, @samarth8392)
 - The docs website now has a dropdown menu to select which version to view. The latest release is shown by default. (#150, @kelly-sovacool)
+- Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
 
 ## RENEE 2.5.12
 

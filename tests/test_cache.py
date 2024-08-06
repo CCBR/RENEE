@@ -3,8 +3,10 @@ import json
 import os.path
 import subprocess
 
+from renee.src.renee.cache import get_sif_cache_dir, get_singularity_cachedir
+
 renee_run = (
-    "src/renee/__main__.py run "
+    "./bin/renee run "
     "--mode local --runmode init --dry-run "
     "--input .tests/*.fastq.gz "
     "--genome config/genomes/biowulf/hg38_30.json "
@@ -42,7 +44,24 @@ def test_cache_sif():
 def test_cache_nosif():
     output, config = run_in_temp(f"{renee_run}")
     assertions = [
-        config["images"]["arriba"] == "docker://nciccbr/ccbr_arriba_2.0.0:v0.0.1",
-        "The singularity command has to be available" in output.stderr,
+        config["images"]["arriba"] == "docker://nciccbr/ccbr_arriba_2.0.0:v0.0.1"
     ]
     assert all(assertions)
+
+
+def test_get_sif_cache_dir():
+    assertions = [
+        "'CCBR_Pipeliner/SIFS' in get_sif_cache_dir('biowulf')",
+        "'CCBR-Pipelines/SIFs' in get_sif_cache_dir('frce')",
+    ]
+    errors = [assertion for assertion in assertions if not eval(assertion)]
+    assert not errors, "errors occurred:\n{}".format("\n".join(errors))
+
+
+def test_get_singularity_cachedir():
+    assertions = [
+        "get_singularity_cachedir('outdir') == 'outdir/.singularity'",
+        "get_singularity_cachedir('outdir', 'cache') == 'cache'",
+    ]
+    errors = [assertion for assertion in assertions if not eval(assertion)]
+    assert not errors, "errors occurred:\n{}".format("\n".join(errors))
