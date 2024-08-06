@@ -5,6 +5,7 @@
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
 - Add GUI instructions to the documentation website. (#38, @samarth8392)
 - Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
+- The docs website now has a dropdown menu to select which version to view. The latest release is shown by default. (#150, @kelly-sovacool)
 
 ## RENEE 2.5.12
 
