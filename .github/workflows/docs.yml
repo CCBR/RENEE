@@ -56,7 +56,10 @@ jobs:
 
           if current_version == release_tag:
             docs_alias = 'latest'
-            docs_version = release_tag
+            # set version to just major and minor
+            semver_pattern = '(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?'
+            release_semver = re.match(semver_pattern, release_tag)
+            docs_version = f"{release_semver.group('major')}.{release_semver.group('minor')}"
           else:
             semver_pattern = '(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?'
             release_semver = re.match(semver_pattern, release_tag)
@@ -68,6 +71,7 @@ jobs:
               docs_version = 'dev'
             else:
               raise ValueError(f"current version {current_version} is not greater than latest release {release_tag}")
+
 
           with open(os.getenv("GITHUB_ENV"), 'a') as out_env:
             out_env.write(f"VERSION={docs_version}\n")
