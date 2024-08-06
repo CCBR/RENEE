@@ -3,6 +3,8 @@
 - Minor documentation improvements. (#132, #135, @kelly-sovacool)
 - Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
+- hg38 genome index files now include decoy & virus sequences. (#136, @kelly-sovacool)
+  - Additionally, `--genome` is no longer required and is set to `hg38_36` by default.
 - Add GUI instructions to the documentation website. (#38, @samarth8392)
 - Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
 - The docs website now has a dropdown menu to select which version to view. The latest release is shown by default. (#150, @kelly-sovacool)
