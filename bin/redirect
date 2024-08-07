@@ -67,4 +67,4 @@ elif [[ $ISFRCE == true ]];then
 	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
 fi
 
-${TOOLDIR}/src/renee/__main__.py "$@" || true
+${TOOLDIR}/main.py "$@" || true
