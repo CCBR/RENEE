@@ -3,7 +3,7 @@
 An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
 
 [![Tests](https://github.com/CCBR/RENEE/actions/workflows/main.yaml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/main.yaml)
-[![mkdocs](https://github.com/CCBR/RENEE/actions/workflows/docs.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/docs.yml)
+[![mkdocs](https://github.com/CCBR/RENEE/actions/workflows/docs.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml)
 [![DOI](https://zenodo.org/badge/447297455.svg)](https://zenodo.org/doi/10.5281/zenodo.10553198)
 
 ### Table of Contents
