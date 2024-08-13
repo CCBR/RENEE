@@ -5,7 +5,7 @@ import tempfile
 from renee.src.renee.__main__ import main
 
 renee_run = (
-    "./bin/renee run "
+    "./main.py run "
     "--mode local --runmode init --dry-run "
     "--input .tests/*.fastq.gz "
 )
