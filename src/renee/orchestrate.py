@@ -2,8 +2,8 @@ import os
 from ccbr_tools.pipeline.util import (
     get_hpcname,
     get_tmp_dir,
-    get_singularity_cachedir,
 )
+from ccbr_tools.pipeline.cache import get_singularity_cachedir
 
 
 def orchestrate(

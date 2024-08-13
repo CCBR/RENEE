@@ -5,7 +5,6 @@ import tempfile
 
 from ccbr_tools.pipeline.util import (
     get_tmp_dir,
-    renee_base,
     get_hpcname,
 )
 from ccbr_tools.pipeline.cache import get_sif_cache_dir
