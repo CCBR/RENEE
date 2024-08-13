@@ -18,7 +18,7 @@ def test_dryrun():
     if get_hpcname() == "biowulf":
         with tempfile.TemporaryDirectory() as tmp_dir:
             run_args = argparse.Namespace(
-                input=list(glob.glob(renee_base(".tests", "*.fastq.gz"))),
+                input=list(glob.glob(f"{renee_base('.tests')}/*.fastq.gz")),
                 output=tmp_dir,
                 genome=renee_base("config", "genomes", "biowulf", "hg38_36.json"),
                 mode="slurm",

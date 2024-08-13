@@ -7,7 +7,7 @@ def renee_base(*paths):
     @return abs_path <str>
     """
     basedir = pathlib.Path(__file__).absolute().parent.parent.parent
-    return basedir.joinpath(*paths)
+    return str(basedir.joinpath(*paths))
 
 
 def get_version():

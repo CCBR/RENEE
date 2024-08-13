@@ -38,7 +38,7 @@ def test_cache_sif():
 
 
 def test_cache_nosif():
-    output, config = run_in_temp(f"{renee_run}")
+    output, config = run_in_temp(f"{renee_run} --sif-cache not/a/path")
     assertions = [
         config["images"]["arriba"] == "docker://nciccbr/ccbr_arriba_2.0.0:v0.0.1"
     ]
