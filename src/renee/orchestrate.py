@@ -1,4 +1,6 @@
 import os
+import subprocess
+
 from ccbr_tools.pipeline.util import (
     get_hpcname,
     get_tmp_dir,
@@ -16,7 +18,7 @@ def orchestrate(
     masterjob="pl:renee",
     tmp_dir=None,
     wait="",
-    hpcname="",
+    hpcname=get_hpcname(),
 ):
     """Runs RENEE pipeline via selected executor: local or slurm.
     If 'local' is selected, the pipeline is executed locally on a compute node/instance.
