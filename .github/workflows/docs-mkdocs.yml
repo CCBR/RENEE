@@ -1,0 +1,25 @@
+name: docs
+on:
+  workflow_dispatch:
+  release:
+    types:
+      - published
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+      - "**.md"
+      - .github/workflows/docs-mkdocs.yml
+      - mkdocs.yml
+
+jobs:
+  mkdocs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: CCBR/actions/mkdocs-mike@main
+        with:
+          github-token: ${{ github.token }}
