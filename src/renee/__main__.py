@@ -12,7 +12,6 @@ Example:
 """
 
 # Python standard library
-from __future__ import print_function
 from shutil import copy
 import json
 import os
