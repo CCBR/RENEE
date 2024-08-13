@@ -17,7 +17,7 @@ from renee.src.renee.util import renee_base
 
 def test_renee_base():
     renee_bin = renee_base(os.path.join("bin", "renee"))
-    assert renee_bin.endswith("/bin/renee") and os.path.exists(renee_bin)
+    assert str(renee_bin).endswith("/bin/renee") and renee_bin.exists()
 
 
 def test_cp_safe():
