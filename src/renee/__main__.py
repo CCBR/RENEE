@@ -397,9 +397,11 @@ def build(sub_args):
                 )
             )
     elif sub_args.mode == "slurm":
-        jobid = (
-            open(os.path.join(sub_args.output, "logfiles", "bjobid.log")).read().strip()
-        )
+        with open(
+            os.path.join(sub_args.output, "logfiles", "bjobid.log"), "r"
+        ) as infile:
+            jobid = infile.read().strip()
+
         if int(masterjob.returncode) == 0:
             print("Successfully submitted master job: ", end="")
         else:

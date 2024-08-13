@@ -163,5 +163,5 @@ def orchestrate(
         masterjob = subprocess.Popen(
             cmdlist, cwd=outdir, stderr=subprocess.STDOUT, stdout=logfh, env=my_env
         )
-
+    logfh.close()
     return masterjob
