@@ -4,12 +4,14 @@ import json
 import os
 import pathlib
 import sys
+from ccbr_tools.pipeline.util import get_hpcname, get_tmp_dir
 
-from .util import renee_base, get_hpcname, get_tmp_dir, orchestrate
+from .util import renee_base
 from .conditions import fatal
 from .initialize import initialize
 from .setup import setup
 from .dryrun import dryrun
+from .orchestrate import orchestrate
 
 
 def run(sub_args):
@@ -204,13 +206,3 @@ def get_fastq_screen_paths(fastq_screen_confs, match="DATABASE", file_index=-1):
                     db_path = line.strip().split()[file_index]
                     databases.append(db_path)
     return databases
-
-
-def run_in_context(args):
-    """Execute the run function in a context manager to capture stdout/stderr"""
-    with contextlib.redirect_stdout(io.StringIO()) as out_f, contextlib.redirect_stderr(
-        io.StringIO()
-    ) as err_f:
-        run(args)
-        allout = out_f.getvalue() + "\n" + err_f.getvalue()
-    return allout

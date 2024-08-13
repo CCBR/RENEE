@@ -4,12 +4,13 @@ import re
 import subprocess
 import sys
 
-from .util import (
+from ccbr_tools.pipeline.util import (
     get_hpcname,
-    get_version,
     get_tmp_dir,
 )
-from .cache import image_cache
+from ccbr_tools.pipeline.cache import image_cache
+
+from .util import get_version
 
 
 def setup(sub_args, ifiles, repo_path, output_path):

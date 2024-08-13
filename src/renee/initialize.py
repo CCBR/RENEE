@@ -2,9 +2,7 @@ import os
 import re
 import sys
 
-from .util import (
-    _cp_r_safe_,
-)
+from ccbr_tools.pipeline.util import _cp_r_safe_, _sym_safe_
 
 
 def initialize(sub_args, repo_path, output_path):
@@ -51,31 +49,6 @@ def initialize(sub_args, repo_path, output_path):
     inputs = _sym_safe_(input_data=sub_args.input, target=output_path)
 
     return inputs
-
-
-def _sym_safe_(input_data, target):
-    """Creates re-named symlinks for each FastQ file provided
-    as input. If a symlink already exists, it will not try to create a new symlink.
-    If relative source PATH is provided, it will be converted to an absolute PATH.
-    @param input_data <list[<str>]>:
-        List of input files to symlink to target location
-    @param target <str>:
-        Target path to copy templates and required resources
-    @return input_fastqs list[<str>]:
-        List of renamed input FastQs
-    """
-    input_fastqs = []  # store renamed fastq file names
-    for file in input_data:
-        filename = os.path.basename(file)
-        renamed = os.path.join(target, rename(filename))
-        input_fastqs.append(renamed)
-
-        if not os.path.exists(renamed):
-            # Create a symlink if it does not already exist
-            # Follow source symlinks to resolve any binding issues
-            os.symlink(os.path.abspath(os.path.realpath(file)), renamed)
-
-    return input_fastqs
 
 
 def rename(filename):
