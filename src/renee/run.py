@@ -115,11 +115,11 @@ def run(sub_args):
                     )
                 )
         elif sub_args.mode == "slurm":
-            jobid = (
-                open(os.path.join(sub_args.output, "logfiles", "mjobid.log"))
-                .read()
-                .strip()
-            )
+            with open(
+                os.path.join(sub_args.output, "logfiles", "mjobid.log"), "r"
+            ) as file:
+                jobid = file.read().strip()
+
             if int(masterjob.returncode) == 0:
                 print("Successfully submitted master job: ", end="")
             else:
