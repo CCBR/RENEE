@@ -42,6 +42,10 @@ plugins:
   - git-revision-date
   - minify:
       minify_html: true
+  - mike:
+      alias_type: symlink
+      canonical_version: latest
+      version_selector: true
 
 # Customization
 extra:
