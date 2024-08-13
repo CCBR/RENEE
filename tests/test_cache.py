@@ -4,6 +4,7 @@ import os.path
 import subprocess
 
 from ccbr_tools.pipeline.cache import get_sif_cache_dir, get_singularity_cachedir
+from ccbr_tools.shell import shell_run
 
 renee_run = (
     "./bin/renee run "
@@ -16,12 +17,7 @@ renee_run = (
 def run_in_temp(command_str):
     with tempfile.TemporaryDirectory() as tmp_dir:
         outdir = os.path.join(tmp_dir, "testout")
-        output = subprocess.run(
-            f"{command_str} --output {outdir}",
-            capture_output=True,
-            shell=True,
-            text=True,
-        )
+        output = shell_run(f"{command_str} --output {outdir}")
         if os.path.exists(os.path.join(outdir, "config.json")):
             with open(os.path.join(outdir, "config.json"), "r") as infile:
                 config = json.load(infile)
@@ -36,7 +32,7 @@ def test_cache_sif():
         config["images"]["arriba"].endswith(
             "tests/data/sifs/ccbr_arriba_2.0.0_v0.0.1.sif"
         ),
-        "does not exist in singularity cache" in output.stderr,
+        "does not exist in singularity cache" in output,
     ]
     assert all(assertions)
 
