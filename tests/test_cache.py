@@ -3,7 +3,7 @@ import json
 import os.path
 import subprocess
 
-from renee.src.renee.cache import get_sif_cache_dir, get_singularity_cachedir
+from ccbr_tools.pipeline.cache import get_sif_cache_dir, get_singularity_cachedir
 
 renee_run = (
     "./bin/renee run "

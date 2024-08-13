@@ -3,25 +3,26 @@ import glob
 import os
 import tempfile
 
-from renee.src.renee.util import (
+from ccbr_tools.pipeline.util import (
     get_tmp_dir,
     get_shared_resources_dir,
     renee_base,
+    get_hpcname,
 )
-from renee.src.renee.cache import get_sif_cache_dir
-from renee.src.renee.run import run, run_in_context
-from renee.src.renee.util import get_hpcname
+from ccbr_tools.pipeline.cache import get_sif_cache_dir
+from ccbr_tools.shell import exec_in_context
+
+from renee.src.renee.util import renee_base
+from renee.src.renee.run import run
 
 
 def test_dryrun():
     if get_hpcname() == "biowulf":
         with tempfile.TemporaryDirectory() as tmp_dir:
             run_args = argparse.Namespace(
-                input=list(glob.glob(os.path.join(renee_base(".tests"), "*.fastq.gz"))),
+                input=list(glob.glob(renee_base(".tests", "*.fastq.gz"))),
                 output=tmp_dir,
-                genome=os.path.join(
-                    renee_base("config"), "genomes", "biowulf", "hg38_36.json"
-                ),
+                genome=renee_base("config", "genomes", "biowulf", "hg38_36.json"),
                 mode="slurm",
                 runmode="run",
                 dry_run=True,
@@ -36,7 +37,7 @@ def test_dryrun():
                 threads=2,
             )
             # execute dry run and capture stdout/stderr
-            allout = run_in_context(run_args)
+            allout = exec_in_context(run, run_args)
         assert (
             "This was a dry-run (flag -n). The order of jobs does not reflect the order of execution."
             in allout

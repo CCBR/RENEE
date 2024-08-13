@@ -6,12 +6,13 @@ import pytest
 import tempfile
 import warnings
 
-from renee.src.renee.util import (
-    renee_base,
+from ccbr_tools.pipeline.util import (
     _cp_r_safe_,
     get_genomes_dict,
     get_genomes_list,
 )
+
+from renee.src.renee.util import renee_base
 
 
 def test_renee_base():
@@ -52,7 +53,7 @@ def test_cp_unsafe():
 
 def test_get_genomes_warnings():
     with warnings.catch_warnings(record=True) as raised_warnings:
-        genomes = get_genomes_list(hpcname="notAnOption")
+        genomes = get_genomes_list(repo_base=renee_base, hpcname="notAnOption")
         assertions = [
             "len(genomes) == 0",
             "len(raised_warnings) == 2",
@@ -68,10 +69,12 @@ def test_get_genomes_warnings():
 
 def test_get_genomes_error():
     with pytest.raises(UserWarning) as exception_info:
-        get_genomes_list(hpcname="notAnOption", error_on_warnings=True)
+        get_genomes_list(
+            repo_base=renee_base, hpcname="notAnOption", error_on_warnings=True
+        )
         assert "Folder does not exist" in str(exception_info.value)
 
 
 def test_get_genomes_biowulf():
-    genomes_dict = get_genomes_dict(hpcname="biowulf")
+    genomes_dict = get_genomes_dict(repo_base=renee_base, hpcname="biowulf")
     assert len(genomes_dict) > 10
