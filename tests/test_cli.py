@@ -71,7 +71,7 @@ def test_subcommands_help():
 
 def test_default_genome():
     output, config = run_in_temp(renee_run)
-    assert "No Genome Annotation JSONs found" in output.stderr
+    assert "No Genome+Annotation JSONs found" in output.stderr
 
 
 def test_genome_param():
