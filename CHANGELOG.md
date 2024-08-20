@@ -10,6 +10,7 @@
 ### Bug fixes
 
 - Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
+- Fix bug in the driver script that caused the snakemake module not to be loaded on biowulf in some cases. (#154, @kelly-sovacool)
 
 ### Documentation updates
 
