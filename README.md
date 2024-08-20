@@ -3,8 +3,11 @@
 An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
 
 [![Tests](https://github.com/CCBR/RENEE/actions/workflows/main.yaml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/main.yaml)
-[![mkdocs](https://github.com/CCBR/RENEE/actions/workflows/docs.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/docs.yml)
+[![docs](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml)
 [![DOI](https://zenodo.org/badge/447297455.svg)](https://zenodo.org/doi/10.5281/zenodo.10553198)
+
+See the website for detailed information, documentation, and examples:
+<https://ccbr.github.io/RENEE/latest/>
 
 ### Table of Contents
 
@@ -27,7 +30,7 @@ RNA-sequencing (_RNA-seq_) has a wide variety of applications. This popular tran
 
 **RENEE** is a comprehensive, open-source RNA-seq pipeline that relies on technologies like [Docker<sup>20</sup>](https://www.docker.com/why-docker) and [Singularity<sup>21</sup>... now called Apptainer](https://apptainer.org/docs/) to maintain the highest-level of reproducibility. The pipeline consists of a series of data processing and quality-control steps orchestrated by [Snakemake<sup>19</sup>](https://snakemake.readthedocs.io/en/stable/), a flexible and scalable workflow management system, to submit jobs to a cluster or cloud provider.
 
-![RENEE_overview_diagram](./resources/overview.svg)  
+![RENEE_overview_diagram](https://raw.githubusercontent.com/CCBR/RENEE/5e88c208846d8098a0e26570243cb987bc2d7402/resources/overview.svg)  
 <sup>**Fig 1. Run locally on a compute instance, on-premise using a cluster, or on the cloud using AWS.** A user can define the method or mode of execution. The pipeline can submit jobs to a cluster using a job scheduler like SLURM, or run on AWS using Tibanna (feature coming soon!). A hybrid approach ensures the pipeline is accessible to all users. As an optional step, relevelant output files and metadata can be stored in object storage using HPC DME (NIH users) or Amazon S3 for archival purposes (coming soon!).</sup>
 
 ### 2. Overview
@@ -38,7 +41,7 @@ A bioinformatics pipeline is more than the sum of its data processing steps. A p
 
 The accuracy of the downstream interpretations made from transcriptomic data are highly dependent on initial sample library. Unwanted sources of technical variation, which if not accounted for properly, can influence the results. RENEE's comprehensive quality-control helps ensure your results are reliable and _reproducible across experiments_. In the data processing steps, RENEE quantifies gene and isoform expression and predicts gene fusions. Please note that the detection of alternative splicing events and variant calling will be incorporated in a later release.
 
-![RNA-seq quantification pipeline](./resources/RENEE_Pipeline.svg) <sup>**Fig 2. An Overview of RENEE Pipeline.** Gene and isoform counts are quantified and a series of QC-checks are performed to assess the quality of the data. This pipeline stops at the generation of a raw counts matrix and gene-fusion calling. To run the pipeline, a user must select their raw data, a reference genome, and output directory (i.e., the location where the pipeline performs the analysis). Quality-control information is summarized across all samples in a MultiQC report.</sup>
+![RNA-seq quantification pipeline](https://raw.githubusercontent.com/CCBR/RENEE/5e88c208846d8098a0e26570243cb987bc2d7402/resources/RENEE_Pipeline.svg) <sup>**Fig 2. An Overview of RENEE Pipeline.** Gene and isoform counts are quantified and a series of QC-checks are performed to assess the quality of the data. This pipeline stops at the generation of a raw counts matrix and gene-fusion calling. To run the pipeline, a user must select their raw data, a reference genome, and output directory (i.e., the location where the pipeline performs the analysis). Quality-control information is summarized across all samples in a MultiQC report.</sup>
 
 **Quality Control**  
 [_FastQC_<sup>2</sup>](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) is used to assess the sequencing quality. FastQC is run twice, before and after adapter trimming. It generates a set of basic statistics to identify problems that can arise during sequencing or library preparation. FastQC will summarize per base and per read QC metrics such as quality scores and GC content. It will also summarize the distribution of sequence lengths and will report the presence of adapter sequences.
@@ -64,21 +67,12 @@ The accuracy of the downstream interpretations made from transcriptomic data are
 
 #### 2.2 Reference Genomes
 
-Reference files are pulled from an S3 bucket to the compute instance or local filesystem prior to execution.  
-RENEE comes bundled with pre-built reference files for the following genomes:
-| Name | Species | Genome | Annotation |
-| -------- | ------- | ------------------ | -------- |
-| hg38_30 | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 30](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_30/gencode.v30.annotation.gtf.gz) |
-| hg38_34 | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 34](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_34/gencode.v34.annotation.gtf.gz) |
-| hg38_38 | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 38](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/gencode.v38.annotation.gtf.gz) |
-| hg38_41 | Homo sapiens (human) | [GRCh38 or hg38](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_28/GRCh38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release 41](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_41/gencode.v41.annotation.gtf.gz) |
-| mm10_M21 | Mus musculus (mouse) | [GRCm38 or mm10](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release M21](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M21/gencode.vM21.annotation.gtf.gz) |
-| mm10_M23 | Mus musculus (mouse) | [GRCm38 or mm10](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release M23](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M23/gencode.vM23.annotation.gtf.gz) |
-| mm10_M25 | Mus musculus (mouse) | [GRCm38 or mm10](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M18/GRCm38.primary_assembly.genome.fa.gz) | [Gencode<sup>6</sup> Release M25](http://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M25/gencode.vM25.annotation.gtf.gz) |
+Pre-built reference genomes are provided on Biowulf and FRCE for a number of different annotation versions, view the list here:
+<https://ccbr.github.io/RENEE/latest/RNA-seq/Resources/#1-reference-genomes>
 
-> **Warning:** This section contains FTP links for downloading each reference file. Open the link in a new tab to start a download. DO NOT download if you are running on Biowulf or FRCE. Pre-built indices are already available for these genome+annotation combinations. This can be done by using the values under the _Name_ column above as the `--genome` renee argument.
-
-> **Note:** These were the only annotation versions available at the time of writing this documentation. Newer annotations versions may be added upon request and may be already available. Please contact [Vishal Koparde](mailto:vishal.koparde@nih.gov) for details.
+If you would like to use a custom reference that is not already listed above,
+you can prepare it with the `renee build` command. See docs here:
+<https://ccbr.github.io/RENEE/latest/RNA-seq/build/>
 
 #### 2.3 Dependencies
 
@@ -121,9 +115,15 @@ renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg
 
 # @slurm: uses slurm and singularity execution method
 # The slurm MODE will submit jobs to the cluster.
+# The --sif-cache flag will re-use singularity containers from a shared location.
 # It is recommended running RENEE in this mode.
 module load ccbrpipeliner
-renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode slurm
+renee run \
+  --input .tests/*.R?.fastq.gz \
+  --output /data/$USER/RNA_hg38 \
+  --genome hg38_30 \
+  --mode slurm \
+  --sif-cache /data/CCBR_Pipeliner/SIFS
 ```
 
 #### 3.2 FRCE
@@ -137,6 +137,19 @@ srun --export all --pty --x11 bash
 
 # run renee
 renee --help
+```
+
+When running renee on FRCE, we recommend setting `--tmp-dir` and `--sif-cache`
+with the following values:
+
+```sh
+renee run \
+  --input .tests/*.R?.fastq.gz \
+  --output /scratch/cluster_scratch/$USER/RNA_hg38 \
+  --genome hg38_30 \
+  --mode slurm \
+  --tmp-dir /scratch/cluster_scratch/$USER \
+  --sif-cache /mnt/projects/CCBR-Pipelines/SIFs
 ```
 
 <hr>
