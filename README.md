@@ -6,6 +6,9 @@ An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
 [![docs](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml)
 [![DOI](https://zenodo.org/badge/447297455.svg)](https://zenodo.org/doi/10.5281/zenodo.10553198)
 
+See the website for detailed information, documentation, and examples:
+<https://ccbr.github.io/RENEE/latest/>
+
 ### Table of Contents
 
 - [RENEE - **R**na s**E**quencing a**N**alysis pip**E**lin**E**](#renee---rna-sequencing-analysis-pipeline)
@@ -27,7 +30,7 @@ RNA-sequencing (_RNA-seq_) has a wide variety of applications. This popular tran
 
 **RENEE** is a comprehensive, open-source RNA-seq pipeline that relies on technologies like [Docker<sup>20</sup>](https://www.docker.com/why-docker) and [Singularity<sup>21</sup>... now called Apptainer](https://apptainer.org/docs/) to maintain the highest-level of reproducibility. The pipeline consists of a series of data processing and quality-control steps orchestrated by [Snakemake<sup>19</sup>](https://snakemake.readthedocs.io/en/stable/), a flexible and scalable workflow management system, to submit jobs to a cluster or cloud provider.
 
-![RENEE_overview_diagram](./resources/overview.svg)  
+![RENEE_overview_diagram](https://raw.githubusercontent.com/CCBR/RENEE/5e88c208846d8098a0e26570243cb987bc2d7402/resources/overview.svg)  
 <sup>**Fig 1. Run locally on a compute instance, on-premise using a cluster, or on the cloud using AWS.** A user can define the method or mode of execution. The pipeline can submit jobs to a cluster using a job scheduler like SLURM, or run on AWS using Tibanna (feature coming soon!). A hybrid approach ensures the pipeline is accessible to all users. As an optional step, relevelant output files and metadata can be stored in object storage using HPC DME (NIH users) or Amazon S3 for archival purposes (coming soon!).</sup>
 
 ### 2. Overview
@@ -38,7 +41,7 @@ A bioinformatics pipeline is more than the sum of its data processing steps. A p
 
 The accuracy of the downstream interpretations made from transcriptomic data are highly dependent on initial sample library. Unwanted sources of technical variation, which if not accounted for properly, can influence the results. RENEE's comprehensive quality-control helps ensure your results are reliable and _reproducible across experiments_. In the data processing steps, RENEE quantifies gene and isoform expression and predicts gene fusions. Please note that the detection of alternative splicing events and variant calling will be incorporated in a later release.
 
-![RNA-seq quantification pipeline](./resources/RENEE_Pipeline.svg) <sup>**Fig 2. An Overview of RENEE Pipeline.** Gene and isoform counts are quantified and a series of QC-checks are performed to assess the quality of the data. This pipeline stops at the generation of a raw counts matrix and gene-fusion calling. To run the pipeline, a user must select their raw data, a reference genome, and output directory (i.e., the location where the pipeline performs the analysis). Quality-control information is summarized across all samples in a MultiQC report.</sup>
+![RNA-seq quantification pipeline](https://raw.githubusercontent.com/CCBR/RENEE/5e88c208846d8098a0e26570243cb987bc2d7402/resources/RENEE_Pipeline.svg) <sup>**Fig 2. An Overview of RENEE Pipeline.** Gene and isoform counts are quantified and a series of QC-checks are performed to assess the quality of the data. This pipeline stops at the generation of a raw counts matrix and gene-fusion calling. To run the pipeline, a user must select their raw data, a reference genome, and output directory (i.e., the location where the pipeline performs the analysis). Quality-control information is summarized across all samples in a MultiQC report.</sup>
 
 **Quality Control**  
 [_FastQC_<sup>2</sup>](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) is used to assess the sequencing quality. FastQC is run twice, before and after adapter trimming. It generates a set of basic statistics to identify problems that can arise during sequencing or library preparation. FastQC will summarize per base and per read QC metrics such as quality scores and GC content. It will also summarize the distribution of sequence lengths and will report the presence of adapter sequences.
@@ -65,11 +68,11 @@ The accuracy of the downstream interpretations made from transcriptomic data are
 #### 2.2 Reference Genomes
 
 Pre-built reference genomes are provided on Biowulf and FRCE for a number of different annotation versions, view the list here:
-<https://ccbr.github.io/RENEE/RNA-seq/Resources/#1-reference-genomes>
+<https://ccbr.github.io/RENEE/latest/RNA-seq/Resources/#1-reference-genomes>
 
 If you would like to use a custom reference that is not already listed above,
 you can prepare it with the `renee build` command. See docs here:
-<https://ccbr.github.io/RENEE/RNA-seq/build/>
+<https://ccbr.github.io/RENEE/latest/RNA-seq/build/>
 
 #### 2.3 Dependencies
 
