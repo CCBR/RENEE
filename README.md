@@ -6,6 +6,9 @@ An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
 [![docs](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml)
 [![DOI](https://zenodo.org/badge/447297455.svg)](https://zenodo.org/doi/10.5281/zenodo.10553198)
 
+See the website for detailed information, documentation, and examples:
+<https://ccbr.github.io/RENEE/latest/>
+
 ### Table of Contents
 
 - [RENEE - **R**na s**E**quencing a**N**alysis pip**E**lin**E**](#renee---rna-sequencing-analysis-pipeline)
@@ -65,11 +68,11 @@ The accuracy of the downstream interpretations made from transcriptomic data are
 #### 2.2 Reference Genomes
 
 Pre-built reference genomes are provided on Biowulf and FRCE for a number of different annotation versions, view the list here:
-<https://ccbr.github.io/RENEE/RNA-seq/Resources/#1-reference-genomes>
+<https://ccbr.github.io/RENEE/latest/RNA-seq/Resources/#1-reference-genomes>
 
 If you would like to use a custom reference that is not already listed above,
 you can prepare it with the `renee build` command. See docs here:
-<https://ccbr.github.io/RENEE/RNA-seq/build/>
+<https://ccbr.github.io/RENEE/latest/RNA-seq/build/>
 
 #### 2.3 Dependencies
 
