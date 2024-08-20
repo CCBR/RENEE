@@ -13,7 +13,7 @@
 
 ### Documentation updates
 
-- Minor documentation improvements. (#132, #135, @kelly-sovacool)
+- Minor documentation improvements. (#132, #135, #152, @kelly-sovacool)
 - Add GUI instructions to the documentation website. (#38, @samarth8392)
 - The docs website now has a dropdown menu to select which version to view. The latest release is shown by default. (#150, @kelly-sovacool)
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
