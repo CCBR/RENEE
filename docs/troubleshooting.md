@@ -4,9 +4,14 @@ We have compiled this FAQ from the most common problems. If you are running into
 
 ## Job Status
 
-**Q. How do I know if RNA-seek finished running successfully?**
+**Q: How do I know if RENEE pipeline finished running?**
 
-**A.** There are several different ways of checking the status of each job submitted to the cluster.  
+**A.** Once the pipeline is done running to completion, you will receive an email with header like
+
+`Slurm Job_id=xxxx Name=pl:renee Ended, Run time xx:xx:xx, COMPLETED, ExitCode 0`
+
+There are several different ways of checking the status of each job submitted to the cluster.  
+
 Here are a few suggestions:
 
 !!! tldr "Check Job Status"
@@ -15,21 +20,7 @@ Here are a few suggestions:
 
         You can check the status of Biowulf jobs through the your [user dashboard](https://hpc.nih.gov/dashboard/).
 
-        Each job that RNA-seek submits to the cluster starts with the `pl:` prefix.
-
-    === "Snakemake Log"
-
-        [Snakemake](https://snakemake.readthedocs.io/en/stable/) generates the following file, `Reports/snakemake.log`, in each pipeline's working directory. This file contains information about each job submitted to the job scheduler. If there are no problems, snakemake will report 100% steps done in those last few lines of the file.
-
-        You can take a peek of the end of the file by running the following command:
-        ```bash
-        tail -n30 Reports/snakemake.log
-        ```
-
-        Or more specifically, you can pull out the timestamps of the last few completed jobs like this:
-        ```bash
-        grep -A 1 done Reports/snakemake.log | tail
-        ```
+        Each job that RENEE submits to the cluster starts with the `pl:` prefix.
 
     === "Query Job Scheduler"
 
@@ -45,34 +36,34 @@ Here are a few suggestions:
         sjobs
         ```
 
-        Each job that RNA-seek submits to the cluster starts with the `pl:` prefix.
+        Each job that RENEE submits to the cluster starts with the `pl:` prefix.
 
-**Q. How do I identify failed jobs?**
 
-**A.** If there are errors, you'll need to identify which jobs failed and check its corresponding SLURM output file.
-The SLURM output file may contain a clue as to why the job failed.
+**Q: What if the pipeline is finished running but I received a "FAILED" status? How do I identify failed jobs?**
+
+**A.** In case there was some error during the run, the easiest way to diagnose the problem is to go to logfiles folder within the RENEE output folder and look at the `snakemake.log.jobby.short` file. It contains three columns: jobname, state, and std_err. The jobs that failed would have the FAILED state and the jobs that completed successfully would have "COMPLETED" state.
 
 !!! tldr "Find Failed Jobs"
-
     === "SLURM output files"
 
-        Quick and dirty method to search for failed jobs by looking through each job's output file:
+        Quick and dirty method to search for failed jobs by looking through each job's output file
 
         ```bash
-        grep -i 'fail' slurmfiles/slurm-*.out
+        # Go to the logfiles folder within the renee output folder
+        cd renee_output/logfiles
+
+        # List the files that failed
+        grep "FAILED" snakemake.log.jobby.short | less
         ```
-
-    === "Snakemake Log"
-
-        [Bash script]( https://github.com/CCBR/Tools/blob/master/Biowulf/get_slurm_file_with_error.sh) identify the SLURM ID of the first failed job and check if the output file exists.
+    All the failed jobs would be listed with absolute paths to the error file (with extension `.err`). Go through the error files corresponding to the FAILED jobs (std_err) to explore why the job failed.
 
 Many failures are caused by filesystem or network issues on Biowulf, and in such cases, simply re-starting the Pipeline should resolve the issue. Snakemake will dynamically determine which steps have been completed, and which steps still need to be run. If you are still running into problems after re-running the pipeline, there may be another issue. If that is the case, please feel free to [contact us](https://github.com/skchronicles/RNA-seek/issues).
 
-**Q. How do I cancel ongoing RNA-seek jobs?**
+**Q. How do I cancel ongoing RENEE jobs?**
 
-**A.** Sometimes, you might need to manually stop a RNA-seek run prematurely, perhaps because the run was configured incorrectly or if a job is stalled. Although the walltime limits will eventually stop the workflow, this can take up to 5 or 10 days depending on the pipeline.
+**A.** Sometimes, you might need to manually stop a RENEE run prematurely, perhaps because the run was configured incorrectly or if a job is stalled. Although the walltime limits will eventually stop the workflow, this can take up to 5 or 10 days depending on the pipeline.
 
-To stop RNA-seek jobs that are currently running, you can follow these options.
+To stop RENEE jobs that are currently running, you can follow these options.
 
 !!! tldr "Cancel running jobs"
 
@@ -108,11 +99,11 @@ Once you've ensured that all running jobs have been stopped, you need to unlock 
 
 **Q. Why am I getting `sbatch: command not found error`?**
 
-**A.** Are you running the `rna-seek` on `helix.nih.gov` by mistake. [Helix](https://hpc.nih.gov/systems/) does not have a job scheduler. One may be able to fire up the singularity module, initial working directory and perform dry-run on `helix`. But to submit jobs, you need to log into `biowulf` using `ssh -Y username@biowulf.nih.gov`.
+**A.** Are you running the `renee` on `helix.nih.gov` by mistake. [Helix](https://hpc.nih.gov/systems/) does not have a job scheduler. One may be able to fire up the singularity module, initial working directory and perform dry-run on `helix`. But to submit jobs, you need to log into `biowulf` using `ssh -Y username@biowulf.nih.gov`.
 
 **Q. Why am I getting a message saying `Error: Directory cannot be locked. ...` when I do the dry-run?**
 
-**A.** This is caused when a run is stopped prematurely, either accidentally or on purpose, or the pipeline is still running in your working directory. Snakemake will lock a working directory to prevent two concurrent pipelines from writing to the same location. This can be remedied easily by running `rna-seek unlock` sub command. Please check to see if the pipeline is still running prior to running the commands below. If you would like to cancel a submitted or running pipeline, please reference the instructions above.
+**A.** This is caused when a run is stopped prematurely, either accidentally or on purpose, or the pipeline is still running in your working directory. Snakemake will lock a working directory to prevent two concurrent pipelines from writing to the same location. This can be remedied easily by running `renee unlock` sub command. Please check to see if the pipeline is still running prior to running the commands below. If you would like to cancel a submitted or running pipeline, please reference the instructions above.
 
 ```bash
 # Load Dependencies
