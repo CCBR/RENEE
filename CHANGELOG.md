@@ -11,10 +11,11 @@
 
 - Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
 - Run `rsem-generate-data-matrix` to create gene and isoform matrix files. (#149, @kelly-sovacool)
+- Fix bug in the driver script that caused the snakemake module not to be loaded on biowulf in some cases. (#154, @kelly-sovacool)
 
 ### Documentation updates
 
-- Minor documentation improvements. (#132, #135, @kelly-sovacool)
+- Minor documentation improvements. (#132, #135, #152, @kelly-sovacool)
 - Add GUI instructions to the documentation website. (#38, @samarth8392)
 - The docs website now has a dropdown menu to select which version to view. The latest release is shown by default. (#150, @kelly-sovacool)
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
