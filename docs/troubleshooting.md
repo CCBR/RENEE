@@ -77,11 +77,11 @@ To stop RENEE jobs that are currently running, you can follow these options.
     === "Child Jobs"
         When there are lots of secondary jobs running, or if you have multiple RENEE runs ongoing simultaneously, it's not feasible to manually cancel jobs based on the `sjobs` output (see previous tab).
 
-        We provide [a script](https://github.com/CCBR/Tools/blob/main/scripts/cancel_snakemake_jobs.sh) that will parse the snakemake log file and cancel all jobs listed within.
+        We provide [a script](https://github.com/CCBR/Tools/blob/c3324fc0ad2f9858438c84bbb2f24927a8f3a220/scripts/cancel_snakemake_jobs.sh) that will parse the snakemake log file and cancel all jobs listed within.
 
         ```bash
         ## Download the script (to the current directory)
-        wget https://raw.githubusercontent.com/CCBR/Tools/main/scripts/cancel_snakemake_jobs.sh
+        wget https://raw.githubusercontent.com/CCBR/Tools/c3324fc0ad2f9858438c84bbb2f24927a8f3a220/scripts/cancel_snakemake_jobs.sh
 
         ## Run the script
         bash cancel_snakemake_jobs.sh /path/to/output/logfiles/snakemake.log
