@@ -104,6 +104,7 @@ nav:
       - cache: RNA-seq/cache.md
       - unlock: RNA-seq/unlock.md
   - Graphical Interface: RNA-seq/gui.md
+  - Expected Output: RNA-seq/output.md
   - Resources: RNA-seq/Resources.md
   - FAQ:
       - General Questions: general-questions.md
