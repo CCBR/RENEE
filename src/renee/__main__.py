@@ -12,7 +12,6 @@ Example:
 """
 
 # Python standard library
-from __future__ import print_function
 from shutil import copy
 import json
 import os
@@ -22,22 +21,22 @@ import textwrap
 
 # 3rd party imports from pypi
 import argparse
+from ccbr_tools.pipeline.util import (
+    get_hpcname,
+    get_tmp_dir,
+    get_genomes_list,
+    check_python_version,
+    _cp_r_safe_,
+)
+from ccbr_tools.pipeline.cache import get_sif_cache_dir
 
 # local imports
-from .cache import get_sif_cache_dir
 from .run import run
 from .dryrun import dryrun
 from .gui import launch_gui
 from .conditions import fatal
-from .util import (
-    get_hpcname,
-    get_tmp_dir,
-    get_genomes_list,
-    get_version,
-    check_python_version,
-    _cp_r_safe_,
-    orchestrate,
-)
+from .util import renee_base, get_version
+from .orchestrate import orchestrate
 
 # Pipeline Metadata and globals
 RENEE_PATH = os.path.dirname(
@@ -398,9 +397,11 @@ def build(sub_args):
                 )
             )
     elif sub_args.mode == "slurm":
-        jobid = (
-            open(os.path.join(sub_args.output, "logfiles", "bjobid.log")).read().strip()
-        )
+        with open(
+            os.path.join(sub_args.output, "logfiles", "bjobid.log"), "r"
+        ) as infile:
+            jobid = infile.read().strip()
+
         if int(masterjob.returncode) == 0:
             print("Successfully submitted master job: ", end="")
         else:
@@ -770,7 +771,12 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            "renee", __version__, c.bold, c.url, c.end, list(get_genomes_list())
+            "renee",
+            __version__,
+            c.bold,
+            c.url,
+            c.end,
+            list(get_genomes_list(repo_base=renee_base)),
         )
     )
 
@@ -817,7 +823,9 @@ def parsed_arguments(name, description):
         "--genome",
         required=True,
         type=lambda option: str(
-            genome_options(subparser_run, option, get_genomes_list())
+            genome_options(
+                subparser_run, option, get_genomes_list(repo_base=renee_base)
+            )
         ),
         help=argparse.SUPPRESS,
     )
@@ -1126,7 +1134,12 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            "renee", __version__, c.bold, c.url, c.end, list(get_genomes_list())
+            "renee",
+            __version__,
+            c.bold,
+            c.url,
+            c.end,
+            list(get_genomes_list(repo_base=renee_base)),
         )
     )
 

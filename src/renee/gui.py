@@ -7,17 +7,16 @@ import PySimpleGUI as sg
 import sys
 from tkinter import Tk
 
-from .util import (
+from ccbr_tools.pipeline.util import (
     get_genomes_dict,
     get_tmp_dir,
-    get_shared_resources_dir,
-    renee_base,
-    get_version,
-    get_singularity_cachedir,
     get_hpcname,
 )
-from .cache import get_sif_cache_dir
-from .run import run_in_context
+from ccbr_tools.pipeline.cache import get_sif_cache_dir, get_singularity_cachedir
+from ccbr_tools.shell import exec_in_context
+
+from .util import get_version, renee_base, get_shared_resources_dir
+from .run import run
 
 # TODO: get rid of  all the global variables
 # TODO: let's use a tmp dir and put these files there instead. see for inspiration:https://github.com/CCBR/RENEE/blob/16d13dca1d5f0f43c7dfda379efb882a67635d17/tests/test_cache.py#L14-L28
@@ -27,7 +26,7 @@ FILES_TO_DELETE = list()
 
 def launch_gui(sub_args, debug=True):
     # get drop down genome+annotation options
-    jsons = get_genomes_dict(error_on_warnings=True)
+    jsons = get_genomes_dict(repo_base=renee_base, error_on_warnings=True)
     genome_annotation_combinations = list(jsons.keys())
     genome_annotation_combinations.sort()
     if debug:
@@ -191,7 +190,7 @@ def launch_gui(sub_args, debug=True):
                 threads=2,
             )
             # execute dry run and capture stdout/stderr
-            allout = run_in_context(run_args)
+            allout = exec_in_context(run, run_args)
             sg.popup_scrolled(
                 allout,
                 title="Dryrun:STDOUT/STDERR",
@@ -211,7 +210,7 @@ def launch_gui(sub_args, debug=True):
             if ch == "Yes":
                 run_args.dry_run = False
                 # execute live run
-                allout = run_in_context(run_args)
+                allout = exec_in_context(run, run_args)
                 sg.popup_scrolled(
                     allout,
                     title="Dryrun:STDOUT/STDERR",
