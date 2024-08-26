@@ -5,10 +5,6 @@ on:
     types:
       - published
 
-env:
-  GH_TOKEN: ${{ github.token }}
-  BRANCH: release/${{ github.ref_name }}
-
 jobs:
   cleanup:
     runs-on: ubuntu-latest
@@ -16,41 +12,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Configure git
-        run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git push origin --delete ${{ env.BRANCH }} || echo "No ${{ env.BRANCH }} branch to delete"
-          git switch -c ${{ env.BRANCH }}
-      - name: Bump changelog & version
-        shell: python {0}
-        run: |
-          with open("CHANGELOG.md", "r") as infile:
-            lines = infile.readlines()
-          lines.insert(0, "## ${{ github.event.repository.name }} development version\n\n")
-          with open("CHANGELOG.md", "w") as outfile:
-            outfile.writelines(lines)
-
-          with open('VERSION', 'r') as infile:
-            version = infile.read().strip()
-          with open('VERSION', 'w') as outfile:
-            outfile.write(f"{version}-dev\n")
-
-      - uses: pre-commit/action@v3.0.0
+      - uses: CCBR/actions/post-release@v0.1
         with:
-          extra_args: --files CITATION.cff CHANGELOG.md VERSION
-        continue-on-error: true
-
-      - name: Open pull request
-        run: |
-          git add CHANGELOG.md VERSION
-          git commit -m "chore: bump changelog & version after release of ${{ github.ref_name }}"
-          git push --set-upstream origin ${{ env.BRANCH }}
-
-          gh pr create \
-            --fill-first \
-            --reviewer ${{ github.triggering_actor }}
-
-      - name: Clean up release-draft branch
-        run: |
-          git push origin --delete release-draft || echo "No release-draft branch to delete"
+          github-token: ${{ github.token }}
