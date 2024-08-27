@@ -36,7 +36,7 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = [
     "argparse",
-    "ccbr_tools@git+https://github.com/CCBR/Tools",
+    "ccbr_tools@git+https://github.com/CCBR/Tools@v0.1.0",
     "Click >= 8.1.3",
     "PySimpleGui < 5",
     "snakemake >= 7.32, < 8",
