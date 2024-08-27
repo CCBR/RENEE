@@ -14,7 +14,7 @@ renee<span class=w> </span>run<span class=w> </span>--help
 <span class=c1># Grab an interactive node</span>
 sinteractive<span class=w> </span>--mem<span class=o>=</span>110g<span class=w> </span>--cpus-per-task<span class=o>=</span><span class=m>12</span><span class=w> </span>--gres<span class=o>=</span>lscratch:200
 module<span class=w> </span>load<span class=w> </span>ccbrpipeliner
-renee<span class=w> </span>run<span class=w> </span>--input<span class=w> </span>.tests/*.R?.fastq.gz<span class=w> </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/RNA_hg38<span class=w> </span>--genome<span class=w> </span>hg38_30<span class=w> </span>--mode<span class=w> </span><span class=nb>local</span>
+renee<span class=w> </span>run<span class=w> </span>--input<span class=w> </span>.tests/*.R?.fastq.gz<span class=w> </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/RNA_hg38<span class=w> </span>--genome<span class=w> </span>hg38_36<span class=w> </span>--mode<span class=w> </span><span class=nb>local</span>
 
 <span class=c1># @slurm: uses slurm and singularity execution method</span>
 <span class=c1># The slurm MODE will submit jobs to the cluster.</span>
@@ -24,7 +24,7 @@ module<span class=w> </span>load<span class=w> </span>ccbrpipeliner
 renee<span class=w> </span>run<span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--input<span class=w> </span>.tests/*.R?.fastq.gz<span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--output<span class=w> </span>/data/<span class=nv>$USER</span>/RNA_hg38<span class=w> </span><span class=se>\</span>
-<span class=w>  </span>--genome<span class=w> </span>hg38_30<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--genome<span class=w> </span>hg38_36<span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--mode<span class=w> </span>slurm<span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--sif-cache<span class=w> </span>/data/CCBR_Pipeliner/SIFS
 </code></pre></div> <h4 id=32-frce>3.2 FRCE<a class=headerlink href=#32-frce title="Permanent link">&para;</a></h4> <div class=highlight><pre><span></span><code><span class=c1># grab an interactive node</span>
@@ -38,7 +38,7 @@ renee<span class=w> </span>--help
 </code></pre></div> <p>When running renee on FRCE, we recommend setting <code>--tmp-dir</code> and <code>--sif-cache</code> with the following values:</p> <div class=highlight><pre><span></span><code>renee<span class=w> </span>run<span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--input<span class=w> </span>.tests/*.R?.fastq.gz<span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--output<span class=w> </span>/scratch/cluster_scratch/<span class=nv>$USER</span>/RNA_hg38<span class=w> </span><span class=se>\</span>
-<span class=w>  </span>--genome<span class=w> </span>hg38_30<span class=w> </span><span class=se>\</span>
+<span class=w>  </span>--genome<span class=w> </span>hg38_36<span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--mode<span class=w> </span>slurm<span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--tmp-dir<span class=w> </span>/scratch/cluster_scratch/<span class=nv>$USER</span><span class=w> </span><span class=se>\</span>
 <span class=w>  </span>--sif-cache<span class=w> </span>/mnt/projects/CCBR-Pipelines/SIFs
