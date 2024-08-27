@@ -8,7 +8,7 @@ About:
 USAGE:
 	$ renee <run|build|unlock|cache> [OPTIONS]
 Example:
-    $ renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode slurm
+    $ renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_36 --mode slurm
 """
 
 # Python standard library
@@ -573,7 +573,7 @@ def parsed_arguments(name, description):
                               [--threads THREADS] \\
                               --input INPUT [INPUT ...] \\
                               --output OUTPUT \\
-                              --genome {{hg38_30, mm10_M21}}
+                              --genome {{hg38_36, mm10_M21, custom.json, ...}}
 
         {1}{2}Description:{4}
           To run the pipeline with with your data, please provide a space separated
@@ -599,23 +599,22 @@ def parsed_arguments(name, description):
                                 it will be created automatically.
                                   Example: --output /data/$USER/RNA_hg38
 
-          --genome {{hg38_30,mm10_M21,custom.json}}
+          --genome {{hg38_36,mm10_M21,custom.json,...}}
                                 Reference genome. This option defines the reference
-                                genome of the samples. RENEE does comes bundled with
-                                pre built reference files for human and mouse samples;
+                                genome of the samples. The default is hg38_36 if not specifies.
+                                RENEE on biowulf comes bundled with
+                                pre-built reference files for human and mouse samples;
                                 however, it is worth noting that the pipeline can accept
                                 custom reference genomes created with the build sub
-                                command. Here is a list of available pre built genomes:
-                                hg38_30 or mm10_M21. hg38_30 uses the GENCODE version 30
-                                human annotation, while mm10_M21 uses GENCODE version M21
-                                mouse annotation. A custom reference genome created with
+                                command. Run `renee --help` to view the current list of pre-built genomes.
+                                A custom reference genome created with
                                 the build sub command can also be provided. The name of
                                 this custom reference JSON file is dependent on the
                                 values provided to the following renee build args
                                 '--ref-name REF_NAME --gtf-ver GTF_VER', where the name
                                 of the output file uses the following naming convention:
                                 '{{REF_NAME}}_{{GTF_VER}}.json'.
-                                  Example: --genome hg38_30
+                                  Example: --genome hg38_36
 
         {1}{2}Analysis options:{4}
           --small-rna           Uses ENCODE's recommendations for small RNA. This
@@ -753,7 +752,7 @@ def parsed_arguments(name, description):
           # Step 2A.) Dry run pipeline with provided test data
           ./{0} run --input .tests/*.R?.fastq.gz \\
                          --output /data/$USER/RNA_hg38 \\
-                         --genome hg38_30 \\
+                         --genome hg38_36 \\
                          --mode slurm \\
                          --dry-run
 
@@ -762,7 +761,7 @@ def parsed_arguments(name, description):
           # It is recommended running renee in this mode.
           ./{0} run --input .tests/*.R?.fastq.gz \\
                          --output /data/$USER/RNA_hg38 \\
-                         --genome hg38_30 \\
+                         --genome hg38_36 \\
                          --mode slurm
 
         {2}{3}Ver:{4}
@@ -821,7 +820,8 @@ def parsed_arguments(name, description):
     # selecting reference files
     subparser_run.add_argument(
         "--genome",
-        required=True,
+        required=False,
+        default="hg38_36",
         type=lambda option: str(
             genome_options(
                 subparser_run, option, get_genomes_list(repo_base=renee_base)

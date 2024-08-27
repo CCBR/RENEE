@@ -3,6 +3,8 @@
 ### New features
 
 - Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
+- hg38 genome index files now include decoy & virus sequences. (#136, @kelly-sovacool)
+  - Additionally, `--genome` is no longer required and is set to `hg38_36` by default.
 - Set default shared singularity SIF directory for biowulf and frce. (#94, @kelly-sovacool)
 - Add `renee gui` subcommand to launch the graphical user interface. (#94, @kelly-sovacool)
   - Previously, `renee_gui` (with an underscore) was a command in the `ccbrpipeliner` module.

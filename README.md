@@ -111,7 +111,7 @@ renee run --help
 # Grab an interactive node
 sinteractive --mem=110g --cpus-per-task=12 --gres=lscratch:200
 module load ccbrpipeliner
-renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode local
+renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_36 --mode local
 
 # @slurm: uses slurm and singularity execution method
 # The slurm MODE will submit jobs to the cluster.
@@ -121,7 +121,7 @@ module load ccbrpipeliner
 renee run \
   --input .tests/*.R?.fastq.gz \
   --output /data/$USER/RNA_hg38 \
-  --genome hg38_30 \
+  --genome hg38_36 \
   --mode slurm \
   --sif-cache /data/CCBR_Pipeliner/SIFS
 ```
@@ -146,7 +146,7 @@ with the following values:
 renee run \
   --input .tests/*.R?.fastq.gz \
   --output /scratch/cluster_scratch/$USER/RNA_hg38 \
-  --genome hg38_30 \
+  --genome hg38_36 \
   --mode slurm \
   --tmp-dir /scratch/cluster_scratch/$USER \
   --sif-cache /mnt/projects/CCBR-Pipelines/SIFs
