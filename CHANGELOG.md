@@ -1,4 +1,4 @@
-## RENEE development version
+## RENEE 2.6.0
 
 ### New features
 
