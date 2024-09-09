@@ -1,5 +1,7 @@
 ## RENEE development version
 
+## RENEE 2.6.0
+
 ### New features
 
 - Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
