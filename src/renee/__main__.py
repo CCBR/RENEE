@@ -546,7 +546,6 @@ def parsed_arguments(name, description):
     parser.add_argument(
         "--version", action="version", version="renee {}".format(__version__)
     )
-
     # Create sub-command parser
     subparsers = parser.add_subparsers(help="List of available sub-commands")
 
@@ -1462,8 +1461,15 @@ def parsed_arguments(name, description):
     # Add custom help message
     subparser_cache.add_argument("-h", "--help", action="help", help=argparse.SUPPRESS)
 
+    subparser_debug = subparsers.add_parser(
+        "debug",
+        help="Debug the RENEE pipeline base directory.",
+        usage=argparse.SUPPRESS,
+    )
+
     # Define handlers for each sub-parser
     subparser_run.set_defaults(func=run)
+    subparser_debug.set_defaults(func=debug)
     subparser_unlock.set_defaults(func=unlock)
     subparser_build.set_defaults(func=build)
     subparser_cache.set_defaults(func=cache)
@@ -1472,6 +1478,11 @@ def parsed_arguments(name, description):
     # Parse command-line args
     args = parser.parse_args()
     return args
+
+
+def debug(args):
+    print("RENEE BASE:", renee_base())
+    print(get_version(debug=True))
 
 
 def main():
