@@ -109,4 +109,5 @@ nav:
   - FAQ:
       - General Questions: general-questions.md
       - Troubleshooting: troubleshooting.md
+      - How to contribute: contributing.md
   - License: license.md
