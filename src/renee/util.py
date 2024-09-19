@@ -2,19 +2,25 @@ import pathlib
 from ccbr_tools.pipeline.util import get_hpcname
 
 
-def renee_base(*paths):
+def renee_base(*paths, debug=False):
     """Get the absolute path to a file in the repository
     @return abs_path <str>
     """
-    basedir = pathlib.Path(__file__).absolute().parent.parent.parent
+    src_file = pathlib.Path(__file__).absolute()
+    if debug:
+        print("SRC FILE:", src_file)
+    basedir = src_file.parent.parent.parent
     return str(basedir.joinpath(*paths))
 
 
-def get_version():
+def get_version(debug=False):
     """Get the current RENEE version
     @return version <str>
     """
-    with open(renee_base("VERSION"), "r") as vfile:
+    version_file = renee_base("VERSION")
+    if debug:
+        print("VERSION FILE:", version_file)
+    with open(version_file, "r") as vfile:
         version = f"v{vfile.read().strip()}"
     return version
 
