@@ -1481,7 +1481,7 @@ def parsed_arguments(name, description):
 
 
 def debug(args):
-    print("RENEE BASE:", renee_base())
+    print("RENEE BASE:", renee_base(debug=True))
     print(get_version(debug=True))
 
 
