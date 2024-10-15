@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 # This is a wrapper for the pipeline script
 # It:
@@ -17,34 +18,18 @@ TOOLDIR=$(dirname "$SCRIPTDIRNAME")
 hpc_name=$(scontrol show config | grep ClusterName | sed "s/^.*= //")
 # load conda
 if [[ $hpc_name == biowulf ]]; then
-	. "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh"
-	conda activate py311
+	. "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh" && conda activate py311
+	module load singularity snakemake/7
 elif [[ $hpc_name == fnlcr ]]; then
-	. "/mnt/projects/CCBR-Pipelines/resources/miniconda3/etc/profile.d/conda.sh"
-	conda activate py311
+	. "/mnt/projects/CCBR-Pipelines/resources/miniconda3/etc/profile.d/conda.sh" && conda activate py311
+	module load singularity
+	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
 else
 	echo "You are NOT running on BIOWULF or on FRCE"
 	echo "Please make sure that:"
 	echo "  - py311 conda environment is activated"
 	echo "  - singularity is in PATH"
 	echo "  - snakemake is in PATH"
-fi
-# if not on biowulf or frce then
-# use py311.environment.yml in resources folder to create the py311 conda environment
-# and load py311
-
-# load required modules
-# if running somewhere other than biowulf or frce, then ensure that
-#   - singularity
-#   - snakemake
-# are in PATH
-if [[ $hpc_name == biowulf ]];then
-	module load singularity snakemake/7
-elif [[ $hpc_name == fnlcr ]];then
-	# snakemake module on FRCE does not work as expected
-	# use the conda installed version of snakemake instead
-	module load singularity
-	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
 fi
 
 ${TOOLDIR}/main.py "$@" || true
