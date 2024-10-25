@@ -61,3 +61,10 @@ def test_get_singularity_cachedir():
     ]
     errors = [assertion for assertion in assertions if not eval(assertion)]
     assert not errors, "errors occurred:\n{}".format("\n".join(errors))
+
+
+def test_cache_in_temp():
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        outdir = os.path.join(tmp_dir, "testout")
+        output = shell_run(f"./bin/renee cache --sif-cache {outdir} --dry-run")
+    assert output.contains("Image will be pulled from")
