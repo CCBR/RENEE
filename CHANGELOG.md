@@ -1,4 +1,4 @@
-## RENEE development version
+## RENEE 2.6.1
 
 - New contributing guide available on GitHub and the documentation website. (#159, @kelly-sovacool)
 - New `renee debug` subcommand to determine the base directory for debugging purposes. (#159, @kelly-sovacool)
