@@ -67,4 +67,4 @@ def test_cache_in_temp():
     with tempfile.TemporaryDirectory() as tmp_dir:
         outdir = os.path.join(tmp_dir, "testout")
         output = shell_run(f"./bin/renee cache --sif-cache {outdir} --dry-run")
-    assert output.contains("Image will be pulled from")
+    assert "Image will be pulled from" in output
