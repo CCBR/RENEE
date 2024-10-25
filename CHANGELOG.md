@@ -1,5 +1,7 @@
 ## RENEE development version
 
+## RENEE 2.6.1
+
 - New contributing guide available on GitHub and the documentation website. (#159, @kelly-sovacool)
 - New `renee debug` subcommand to determine the base directory for debugging purposes. (#159, @kelly-sovacool)
 - Fix `renee cache` subcommand to correctly read the container images config file. (#163, @kelly-sovacool)
