@@ -418,8 +418,7 @@ def cache(sub_args):
     """
     sif_cache = sub_args.sif_cache
     # Get absolute PATH to templates in renee git repo
-    repo_path = os.path.dirname(os.path.abspath(__file__))
-    images = os.path.join(repo_path, "config", "containers", "images.json")
+    images = os.path.join(RENEE_PATH, "config", "containers", "images.json")
 
     # Create image cache
     if not os.path.exists(sif_cache):
@@ -462,7 +461,7 @@ def cache(sub_args):
             username = os.environ.get("USER", os.environ.get("USERNAME"))
             masterjob = subprocess.Popen(
                 "sbatch --parsable -J pl:cache --time=10:00:00 --mail-type=BEGIN,END,FAIL "
-                + str(os.path.join(repo_path, "resources", "cacher"))
+                + str(os.path.join(RENEE_PATH, "resources", "cacher"))
                 + " slurm "
                 + " -s '{}' ".format(sif_cache)
                 + " -i '{}' ".format(",".join(pull))
