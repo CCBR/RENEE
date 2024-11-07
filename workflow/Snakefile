@@ -28,7 +28,7 @@ tmpdir   = config['options']['tmp_dir']          # Temporary directory
 # threads, mem, walltimes, etc.
 # TODO: Add handler for when the
 # mode is set to local.
-with open(join('resources', 'cluster.json')) as fh:
+with open(join('config', 'cluster.json')) as fh:
     cluster = json.load(fh)
 
 # Check for SE or PE FastQ files:

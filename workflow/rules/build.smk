@@ -80,7 +80,7 @@ workdir:OUTDIR
 # threads, mem, walltimes, etc.
 # TODO: Add handler for when the
 # mode is set to local.
-with open(join(OUTDIR, 'resources', 'build_cluster.json')) as fh:
+with open(join(OUTDIR, 'config', 'cluster.json')) as fh:
     cluster = json.load(fh)
 
 # Ensures backwards compatibility

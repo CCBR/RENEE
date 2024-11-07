@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Consolidate `build_cluster.json` into `cluster.json`. (#167, @kelly-sovacool)
+
 ## RENEE 2.6.1
 
 - New contributing guide available on GitHub and the documentation website. (#159, @kelly-sovacool)
