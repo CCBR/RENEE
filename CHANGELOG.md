@@ -1,6 +1,7 @@
 ## RENEE development version
 
 - Consolidate `build_cluster.json` into `cluster.json`. (#167, @kelly-sovacool)
+- Remove unused miniconda container. (#168, @kelly-sovacool)
 
 ## RENEE 2.6.1
 
