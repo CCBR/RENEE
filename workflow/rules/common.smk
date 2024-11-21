@@ -4,11 +4,6 @@ from scripts.common import (
     allocated
 )
 
-# This container defines the underlying OS for each job when using the workflow
-# with --use-conda --use-singularity
-container: config['images']['miniconda']
-
-
 # Rules common to RNA-seq pipeline, irrespective if the data is single-end or paired-end
 rule fc_lane:
     """
