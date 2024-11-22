@@ -362,6 +362,7 @@ elif config['options']['small_rna']:
             out2=join(workpath,star_dir,"{name}.p2.ReadsPerGene.out.tab"),
             out3=join(workpath,bams_dir,"{name}.p2.Aligned.toTranscriptome.out.bam"),
             out5=join(workpath,log_dir,"{name}.p2.Log.final.out"),
+            genomic_bam=join(workpath,bams_dir,"{name}.p2.Aligned.out.bam")
         params:
             rname='pl:star_small',
             prefix=join(workpath, star_dir, "{name}.p2"),
@@ -391,48 +392,49 @@ elif config['options']['small_rna']:
         threads: int(allocated("threads", "star_small", cluster)),
         envmodules: config['bin'][pfamily]['tool_versions']['STARVER']
         container: config['images']['arriba']
-        shell: """
-        # Setups temporary directory for
-        # intermediate files with built-in
-        # mechanism for deletion on exit
-        if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
-        tmp=$(mktemp -d -p "{params.tmpdir}")
-        trap 'rm -rf "${{tmp}}"' EXIT
+        shell:
+            """
+            # Setups temporary directory for
+            # intermediate files with built-in
+            # mechanism for deletion on exit
+            if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
+            tmp=$(mktemp -d -p "{params.tmpdir}")
+            trap 'rm -rf "${{tmp}}"' EXIT
 
-        # Optimal readlength for sjdbOverhang = max(ReadLength) - 1 [Default: 100]
-        readlength=$(zcat {input.file1} | awk -v maxlen=100 'NR%4==2 {{if (length($1) > maxlen+0) maxlen=length($1)}}; END {{print maxlen-1}}')
-        echo "sjdbOverhang for STAR: ${{readlength}}"
+            # Optimal readlength for sjdbOverhang = max(ReadLength) - 1 [Default: 100]
+            readlength=$(zcat {input.file1} | awk -v maxlen=100 'NR%4==2 {{if (length($1) > maxlen+0) maxlen=length($1)}}; END {{print maxlen-1}}')
+            echo "sjdbOverhang for STAR: ${{readlength}}"
 
-        STAR --genomeDir {params.stardir} \
-            --outFilterMultimapNmax {params.filtermultimapnmax} \
-            --alignSJDBoverhangMin 1000 \
-            --outFilterScoreMinOverLread 0 \
-            --outFilterMatchNminOverLread 0 \
-            --outFilterMatchNmin 16 \
-            --outFilterMismatchNoverLmax {params.filtermismatchnoverlmax} \
-            --alignIntronMax 1 \
-            --clip3pAdapterSeq {params.adapter1} {params.adapter2} \
-            --readFilesIn {input.file1} --readFilesCommand zcat \
-            --runThreadN {threads} \
-            --outFileNamePrefix {params.prefix}. \
-            --outSAMunmapped Within \
-            --sjdbGTFfile {params.gtffile} \
-            --limitSjdbInsertNsj {params.nbjuncs} \
-            --quantMode TranscriptomeSAM GeneCounts \
-            --outSAMtype BAM Unsorted \
-            --outTmpDir=${{tmp}}/STARtmp_{wildcards.name} \
-            --sjdbOverhang ${{readlength}}
+            STAR --genomeDir {params.stardir} \
+                --outFilterMultimapNmax {params.filtermultimapnmax} \
+                --alignSJDBoverhangMin 1000 \
+                --outFilterScoreMinOverLread 0 \
+                --outFilterMatchNminOverLread 0 \
+                --outFilterMatchNmin 16 \
+                --outFilterMismatchNoverLmax {params.filtermismatchnoverlmax} \
+                --alignIntronMax 1 \
+                --clip3pAdapterSeq {params.adapter1} {params.adapter2} \
+                --readFilesIn {input.file1} --readFilesCommand zcat \
+                --runThreadN {threads} \
+                --outFileNamePrefix {params.prefix}. \
+                --outSAMunmapped Within \
+                --sjdbGTFfile {params.gtffile} \
+                --limitSjdbInsertNsj {params.nbjuncs} \
+                --quantMode TranscriptomeSAM GeneCounts \
+                --outSAMtype BAM Unsorted \
+                --outTmpDir=${{tmp}}/STARtmp_{wildcards.name} \
+                --sjdbOverhang ${{readlength}}
 
-        # SAMtools sort (uses less memory than STAR SortedByCoordinate)
-        samtools sort -@ {threads} \
-            -m 2G -T ${{tmp}}/SORTtmp_{wildcards.name} \
-            -O bam {params.prefix}.Aligned.out.bam \
-            > {output.out1}
+            # SAMtools sort (uses less memory than STAR SortedByCoordinate)
+            samtools sort -@ {threads} \
+                -m 2G -T ${{tmp}}/SORTtmp_{wildcards.name} \
+                -O bam {params.prefix}.Aligned.out.bam \
+                > {output.out1}
 
-        rm {params.prefix}.Aligned.out.bam
-        mv {params.prefix}.Aligned.toTranscriptome.out.bam {workpath}/{bams_dir};
-        mv {params.prefix}.Log.final.out {workpath}/{log_dir}
-        """
+            mv {params.prefix}.Aligned.out.bam {output.genomic_bam}
+            mv {params.prefix}.Aligned.toTranscriptome.out.bam {workpath}/{bams_dir};
+            mv {params.prefix}.Log.final.out {workpath}/{log_dir}
+            """
 else:
     # Run STAR with multi-sample 2-pass mapping
     # For a study with multiple samples, it is recommended to collect 1st pass
