@@ -96,7 +96,16 @@ rule trim_pe:
         -m {params.minlen}:{params.minlen} \
         -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} \
         -j {threads} -o {output.out1} -p {output.out2} {input.file1} {input.file2}
+    for f in {output.out1} {output.out2}; do
+        check_output=$(gzip -cd $f | head | wc -l)
+        if [ $check_output -lt 10 ]; then
+            echo "ERROR: Trimmed FastQ file is empty. $f"
+            exit 1
+        fi
+    done
     """
+
+
 
 
 rule fastqc:
