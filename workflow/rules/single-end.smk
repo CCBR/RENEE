@@ -88,6 +88,11 @@ if config['options']['small_rna']:
             -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
             -m 16 -b file:{params.fastawithadaptersetd} -j {threads} \
             -o {output.outfq} {input.infq}
+        check_output=$(gzip -cd {output.outfq} | head | wc -l)
+        if [ $check_output -lt 10 ]; then
+            echo "ERROR: Trimmed FastQ file is empty."
+            exit 1
+        fi
         """
 else:
     # Use default trimming rule for long RNAs
@@ -120,6 +125,11 @@ else:
             -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
             -m {params.minlen} -b file:{params.fastawithadaptersetd} -j {threads} \
             -o {output.outfq} {input.infq}
+        check_output=$(gzip -cd {output.outfq} | head | wc -l)
+        if [ $check_output -lt 10 ]; then
+            echo "ERROR: Trimmed FastQ file is empty."
+            exit 1
+        fi
         """
 
 
