@@ -28,7 +28,7 @@ from ccbr_tools.pipeline.util import (
     check_python_version,
     _cp_r_safe_,
 )
-from ccbr_tools.pipeline.cache import get_sif_cache_dir
+from ccbr_tools.pipeline.cache import get_sif_cache_dir, image_cache
 
 # local imports
 from .run import run

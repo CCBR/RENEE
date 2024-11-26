@@ -4,8 +4,9 @@
 
 - Consolidate `build_cluster.json` into `cluster.json`. (#167, @kelly-sovacool)
 - Remove unused miniconda container. (#168, @kelly-sovacool)
+- Fix error in `renee build` where `image_cache()` wasn't imported. (#178, @kelly-sovacool)
 - Upgrade containers to fix $PYTHONPATH clashes in `fc_lane`, `inner_distance`, `rseqc`, `tin`, `tin_merge`, and `rnaseq_multiqc`. (#172, #176, @kelly-sovacool)
-- Fix error that prevented existing output directories to be re-run. (#176, @kelly-sovacool)
+- Fix error that prevented existing output directories to be re-run. (#172, #176, @kelly-sovacool)
 
 ## RENEE 2.6.1
 
