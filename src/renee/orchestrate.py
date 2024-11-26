@@ -4,6 +4,7 @@ import subprocess
 from ccbr_tools.pipeline.util import (
     get_hpcname,
     get_tmp_dir,
+    _get_file_mtime,
 )
 from ccbr_tools.pipeline.cache import get_singularity_cachedir
 
