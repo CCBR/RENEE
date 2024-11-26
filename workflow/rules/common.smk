@@ -27,7 +27,7 @@ rule fc_lane:
         rname='pl:fc_lane',
         get_flowcell_lanes=join("workflow", "scripts", "get_flowcell_lanes.py"),
     envmodules: config['bin'][pfamily]['tool_versions']['PYTHONVER']
-    container: config['images']['python']
+    container: config['images']['base']
     shell: """
     python {params.get_flowcell_lanes} {input.R1} {wildcards.name} > {output.fqinfo}
     """
@@ -201,7 +201,7 @@ rule rsem_merge:
         pythonscript=join("workflow", "scripts", "merge_rsem_results.py"),
         inputdir=join(workpath, degall_dir)
     envmodules: config['bin'][pfamily]['tool_versions']['PYTHONVER'],
-    container: config['images']['python']
+    container: config['images']['base']
     shell: """
     python {params.pythonscript} {params.annotate} {params.inputdir} {params.inputdir}
     sed 's/\\t/|/1' {output.gene_counts_matrix} | \
@@ -301,7 +301,7 @@ rule tin_merge:
         rname="pl:tin_merge",
         create_matrix=join("workflow", "scripts", "create_tin_matrix.py")
     envmodules: config['bin'][pfamily]['tool_versions']['PYTHONVER'],
-    container: config['images']['python']
+    container: config['images']['base']
     shell: """
     python {params.create_matrix} {input.tins} > {output.matrix}
     """
