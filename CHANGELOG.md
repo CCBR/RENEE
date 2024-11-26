@@ -5,6 +5,7 @@
 - Consolidate `build_cluster.json` into `cluster.json`. (#167, @kelly-sovacool)
 - Remove unused miniconda container. (#168, @kelly-sovacool)
 - Fix error in RSEQC rules. (#172, @kelly-sovacool)
+- Fix error in `renee build` where `image_cache()` wasn't imported. (#178, @kelly-sovacool)
 
 ## RENEE 2.6.1
 
