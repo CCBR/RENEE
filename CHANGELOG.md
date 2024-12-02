@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Fix spelling of shared SIF directory on biowulf -- it is `/data/CCBR_Pipeliner/SIFs` with a lowercase "s" at the end. (#182, @kelly-sovacool)
+
 ## RENEE 2.6.3
 
 - Upgrade containers to fix $PYTHONPATH clashes in `fc_lane`, `inner_distance`, `tin`, `tin_merge`, and `rnaseq_multiqc`. (#176, @kelly-sovacool)
