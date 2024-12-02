@@ -1,8 +1,18 @@
 ## RENEE development version
 
+- Raise an error if too few reads are left after trimming with cutadapt. (#170, @kelly-sovacool)
+
+## RENEE 2.6.3
+
+- Upgrade containers to fix $PYTHONPATH clashes in `fc_lane`, `inner_distance`, `tin`, `tin_merge`, and `rnaseq_multiqc`. (#176, @kelly-sovacool)
+- Fix error that prevented existing output directories from being re-run. (#176, @kelly-sovacool)
+- Fix error in `renee build` where `image_cache()` wasn't imported. (#178, @kelly-sovacool)
+
+## RENEE 2.6.2
+
 - Consolidate `build_cluster.json` into `cluster.json`. (#167, @kelly-sovacool)
 - Remove unused miniconda container. (#168, @kelly-sovacool)
-- Raise an error if too few reads are left after trimming with cutadapt. (#170, @kelly-sovacool)
+- Fix error in RSEQC rules. (#172, @kelly-sovacool)
 
 ## RENEE 2.6.1
 

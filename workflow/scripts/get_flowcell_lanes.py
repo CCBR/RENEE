@@ -45,19 +45,6 @@ def usage(message="", exitcode=0):
     sys.exit(exitcode)
 
 
-def reader(fname):
-    """Returns correct file object handler or reader for gzipped
-    or non-gzipped FastQ files based on the file extension. Assumes
-    gzipped files endwith the '.gz' extension.
-    """
-    if fname.endswith(".gz"):
-        # Opens up file with gzip handler
-        return gzip.open
-    else:
-        # Opens up file normal, uncompressed handler
-        return open
-
-
 def get_flowcell_lane(sequence_identifier):
     """Returns flowcell and lane information for different fastq formats.
     FastQ files generated with older versions of Casava or downloaded from
@@ -137,10 +124,9 @@ if __name__ == "__main__":
     md5 = md5sum(filename)
 
     # Get Flowcell and Lane information
-    handle = reader(filename)
     meta = {"flowcell": [], "lane": [], "flowcell_lane": []}
     i = 0  # keeps track of line number
-    with handle(filename, "r") as file:
+    with gzip.open(filename, "rt") as file:
         print(
             "sample_name\ttotal_read_pairs\tflowcell_ids\tlanes\tflowcell_lanes\tmd5_checksum"
         )
