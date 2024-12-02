@@ -102,7 +102,8 @@ rule trim_pe:
         -j {threads} -o {output.out1} -p {output.out2} \
         {input.file1} {input.file2} \
         > {log.stdout} 2> {log.stderr}
-    npassed=$(grep "passing filters" {log.stdout} | awk '{{print $1}}' | sed -s 's/,//g')
+    npassed=$(grep "passing filters" {log.stdout} | awk '{{print $5}}' | sed -s 's/,//g')
+    echo "number of reads passing filters: $npassed"
     if [ $npassed -lt {params.min_reads} ]; then
         echo "ERROR: too few reads are left after trimming."
         exit 1

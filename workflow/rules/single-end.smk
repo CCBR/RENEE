@@ -96,7 +96,8 @@ rule trim_se:
         -m {params.minlen} -b file:{params.fastawithadaptersetd} -j {threads} \
         -o {output.outfq} {input.infq} \
         > {log.stdout} 2> {log.stderr}
-    npassed=$(grep "passing filters" {log.stdout} | awk '{{print $1}}' | sed -s 's/,//g')
+    npassed=$(grep "passing filters" {log.stdout} | awk '{{print $5}}' | sed -s 's/,//g')
+    echo "number of reads passing filters: $npassed"
     if [ $npassed -lt {params.min_reads} ]; then
         echo "ERROR: too few reads are left after trimming."
         exit 1
