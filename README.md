@@ -123,7 +123,7 @@ renee run \
   --output /data/$USER/RNA_hg38 \
   --genome hg38_36 \
   --mode slurm \
-  --sif-cache /data/CCBR_Pipeliner/SIFS
+  --sif-cache /data/CCBR_Pipeliner/SIFs
 ```
 
 #### 3.2 FRCE
