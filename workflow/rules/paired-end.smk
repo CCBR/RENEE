@@ -80,6 +80,9 @@ rule trim_pe:
         #out2=temp(join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"))
         out1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
         out2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz")
+    log:
+        stdout=join(workpath,'logfiles','trim','{name}.cutadapt.out'),
+        stderr=join(workpath,'logfiles','trim','{name}.cutadapt.err')
     params:
         rname='pl:trim_pe',
         # Exposed Parameters: modify config/templates/tools.json to change defaults
@@ -87,6 +90,7 @@ rule trim_pe:
         leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
         trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
         minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
+        min_reads=config['bin'][pfamily]['tool_parameters']['CUTADAPT_MIN_READS'],
     threads: int(allocated("threads", "trim_pe", cluster)),
     envmodules: config['bin'][pfamily]['tool_versions']['CUTADAPTVER']
     container: config['images']['cutadapt']
@@ -95,17 +99,15 @@ rule trim_pe:
         -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
         -m {params.minlen}:{params.minlen} \
         -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} \
-        -j {threads} -o {output.out1} -p {output.out2} {input.file1} {input.file2}
-    for f in {output.out1} {output.out2}; do
-        check_output=$(gzip -cd $f | head | wc -l)
-        if [ $check_output -lt 10 ]; then
-            echo "ERROR: Trimmed FastQ file is empty. $f"
-            exit 1
-        fi
-    done
+        -j {threads} -o {output.out1} -p {output.out2} \
+        {input.file1} {input.file2} \
+        > {log.stdout} 2> {log.stderr}
+    npassed=$(grep "passing filters" {log.stdout} | awk '{{print $1}}' | sed -s 's/,//g')
+    if [ $npassed -lt {params.min_reads} ]; then
+        echo "ERROR: too few reads are left after trimming."
+        exit 1
+    fi
     """
-
-
 
 
 rule fastqc:

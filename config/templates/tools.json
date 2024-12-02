@@ -36,7 +36,8 @@
                 "Trimsettings": "---------------------------- TRIMMOMATIC parameters ----------------------------------------------------------",
                 "LEADINGQUALITY": 10,
                 "TRAILINGQUALITY": 10,
-                "MINLEN": 35
+                "MINLEN": 35,
+                "CUTADAPT_MIN_READS": 100
             },
             "ADAPTER1": "-",
             "ADAPTER2": "",
