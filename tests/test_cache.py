@@ -47,7 +47,7 @@ def test_cache_nosif():
 
 def test_get_sif_cache_dir():
     assertions = [
-        "'CCBR_Pipeliner/SIFS' in get_sif_cache_dir('biowulf')",
+        "'CCBR_Pipeliner/SIFs' in get_sif_cache_dir('biowulf')",
         "'CCBR-Pipelines/SIFs' in get_sif_cache_dir('frce')",
     ]
     errors = [assertion for assertion in assertions if not eval(assertion)]
