@@ -51,7 +51,8 @@
         "time": "1-00:00:00"
     },
     "qualimapinfo": {
-        "mem": "20g"
+        "mem": "20g",
+        "time": "1:00:00"
     },
     "rsem": {
         "gres": "lscratch:500",
@@ -120,5 +121,9 @@
     },
     "trim_se": {
         "threads": "32"
+    },
+    "reformat_gtf": {
+        "mem": "20g",
+        "time": "1:00:00"
     }
 }

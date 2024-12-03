@@ -53,24 +53,31 @@ def write_qualimap_info(args):
     open_func = get_open(gtfFileName)
     with open_func(gtfFileName) as gtf_file:
         gtf_file = HTSeq.GFF_Reader(gtf_file)
-        features = collections.defaultdict(list)
+        exons_dict = collections.defaultdict(list)
+        other_features = []
         for feature in gtf_file:
             if feature.type == "exon":
                 geneName = feature.attr["gene_id"]
-                features[geneName].append(feature)
-
+                exons_dict[geneName].append(feature)
     outFile = open(outFileName, "w")
     outFile.write(f'"biotypes"\t"length"\t"gc"\n')
 
-    for geneId, exons in features.items():
+    for geneId, exons in exons_dict.items():
         print("Processing %s" % geneId)
 
         if len(exons) == 0:
             continue
-        try:
-            biotype = exons[0].attr["gene_type"]
-        except KeyError:
-            biotype = exons[0].attr["gene_biotype"]
+
+        biotypes = ["gene_type", "gene_biotype"]
+        biotype = None
+        for biotype_str in biotypes:
+            if biotype_str in exons[0].attr:
+                biotype = exons[0].attr[biotype_str]
+                break
+        if not biotype:
+            raise ValueError(
+                f"No biotype found for exon {exons[0].attr['transcript_id']}. Exons must have at least one of these attributes: {', '.join(biotypes)}"
+            )
 
         # build transcripts dictionary
         transcripts = {}
