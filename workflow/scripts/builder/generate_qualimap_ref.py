@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from __future__ import print_function
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -6,6 +7,17 @@ import argparse
 import Bio.SeqUtils as SeqUtils
 import HTSeq
 import numpy as np
+
+# GC was deprecated in favor of gc_fraction from Biopython 1.82
+# https://github.com/nextgenusfs/funannotate/issues/1000
+try:
+    from Bio.SeqUtils import gc_fraction
+
+    def GC(sequence):
+        return 100 * gc_fraction(sequence, ambiguous="ignore")
+
+except ImportError:
+    from Bio.SeqUtils import GC
 
 
 def idsContainGiven(givenId, transcriptIds):
@@ -16,50 +28,7 @@ def idsContainGiven(givenId, transcriptIds):
     return False
 
 
-if __name__ == "__main__":
-    descriptionText = "The script extracts features from a GTF file and a FASTA file into Qualimap annotation format. Note: exons have to be sorted according to exon number! This important for correct reverse transcribed cDNA sequences extraction."
-    parser = argparse.ArgumentParser(
-        description=descriptionText,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    parser.add_argument(
-        "-g",
-        action="store",
-        required="true",
-        dest="gtfFile",
-        help="Input file with list of genes in GTF format",
-    )
-    parser.add_argument(
-        "-f",
-        action="store",
-        required="true",
-        dest="fastaFile",
-        help="Input genome sequence. ",
-    )
-    parser.add_argument(
-        "-o",
-        action="store",
-        dest="outFile",
-        default="annotations.txt",
-        help="Output file. Default is annotations.txt",
-    )
-    parser.add_argument(
-        "--filter",
-        action="store",
-        dest="filterStr",
-        default="",
-        help="Comma-separted list of entries to filter from GTF file based on given attribute id",
-    )
-    parser.add_argument(
-        "--ignore-strange-chrom",
-        action="store_true",
-        default=False,
-        dest="ignoreStrangeChromosomes",
-        help="All chromosomes except numbered and X,Y,MT are ignored ",
-    )
-    args = parser.parse_args()
-    print(args)
-
+def write_qualimap_info(args):
     gtfFileName = args.gtfFile
     fastaFileName = args.fastaFile
     outFileName = args.outFile
@@ -69,9 +38,10 @@ if __name__ == "__main__":
     gtf_file = HTSeq.GFF_Reader(gtfFileName)
     features = {}
 
-    filtered_transcripts = args.filterStr.split(",")
-    if filtered_transcripts:
-        print("Filtering for: ", filtered_transcripts)
+    if args.filterStr:
+        filtered_transcripts = args.filterStr.split(",")
+        if filtered_transcripts:
+            print("Filtering for: ", filtered_transcripts)
 
     for feature in gtf_file:
         if feature.type == "exon":
@@ -125,7 +95,7 @@ if __name__ == "__main__":
 
         for tSeq in transcripts.values():
             lengths.append(len(tSeq))
-            gc_array.append(SeqUtils.GC(tSeq))
+            gc_array.append(GC(tSeq))
 
         gene_length = np.mean(lengths)
         gene_gc = np.mean(gc_array)
@@ -134,3 +104,49 @@ if __name__ == "__main__":
         outFile.write(line)
 
     outFile.close()
+
+
+if __name__ == "__main__":
+    descriptionText = "The script extracts features from a GTF file and a FASTA file into Qualimap annotation format. Note: exons have to be sorted according to exon number! This important for correct reverse transcribed cDNA sequences extraction."
+    parser = argparse.ArgumentParser(
+        description=descriptionText,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "-g",
+        action="store",
+        required="true",
+        dest="gtfFile",
+        help="Input file with list of genes in GTF format",
+    )
+    parser.add_argument(
+        "-f",
+        action="store",
+        required="true",
+        dest="fastaFile",
+        help="Input genome sequence. ",
+    )
+    parser.add_argument(
+        "-o",
+        action="store",
+        dest="outFile",
+        default="annotations.txt",
+        help="Output file. Default is annotations.txt",
+    )
+    parser.add_argument(
+        "--filter",
+        action="store",
+        dest="filterStr",
+        default="",
+        help="Comma-separted list of entries to filter from GTF file based on given attribute id",
+    )
+    parser.add_argument(
+        "--ignore-strange-chrom",
+        action="store_true",
+        default=False,
+        dest="ignoreStrangeChromosomes",
+        help="All chromosomes except numbered and X,Y,MT are ignored ",
+    )
+    args = parser.parse_args()
+    print(args)
+    write_qualimap_info(args)
