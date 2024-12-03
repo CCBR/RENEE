@@ -2,6 +2,8 @@
 
 - Fix spelling of shared SIF directory on biowulf -- it is `/data/CCBR_Pipeliner/SIFs` with a lowercase "s" at the end. (#182, @kelly-sovacool)
 - Raise an error if too few reads are left after trimming with cutadapt. (#184, @kelly-sovacool)
+- Reformat GTF files during `renee build` that are missing 'gene_biotype' or 'gene_type' attributes in exons. (#185, @kelly-sovacool)
+- Add support for the marmoset genome (mCalJac1 2021). (#185, @kelly-sovacool)
 
 ## RENEE 2.6.3
 
