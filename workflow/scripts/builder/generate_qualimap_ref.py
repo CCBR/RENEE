@@ -4,8 +4,10 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 import sys
 import argparse
-import Bio.SeqUtils as SeqUtils
+import collections
+import gzip
 import HTSeq
+import functools
 import numpy as np
 
 # GC was deprecated in favor of gc_fraction from Biopython 1.82
@@ -20,6 +22,10 @@ except ImportError:
     from Bio.SeqUtils import GC
 
 
+def get_open(filename):
+    return functools.partial(gzip.open, mode="rt") if filename.endswith(".gz") else open
+
+
 def idsContainGiven(givenId, transcriptIds):
     for tId in transcriptIds:
         if givenId.find(tId) != -1:
@@ -32,29 +38,31 @@ def write_qualimap_info(args):
     gtfFileName = args.gtfFile
     fastaFileName = args.fastaFile
     outFileName = args.outFile
-    attr_id = "gene_id"
-
-    # parse GTF file
-    gtf_file = HTSeq.GFF_Reader(gtfFileName)
-    features = {}
 
     if args.filterStr:
         filtered_transcripts = args.filterStr.split(",")
         if filtered_transcripts:
             print("Filtering for: ", filtered_transcripts)
 
-    for feature in gtf_file:
-        if feature.type == "exon":
-            geneName = feature.attr[attr_id]
-            if geneName in features:
-                features[geneName].append(feature)
-            else:
-                features[geneName] = [feature]
+    # parse GTF file
+    open_func = get_open(gtfFileName)
+    with open_func(gtfFileName) as gtf_file:
+        gtf_file = HTSeq.GFF_Reader(gtf_file)
+        features = {}
+        for feature in gtf_file:
+            if feature.type == "exon":
+                geneName = feature.attr["gene_id"]
+                if geneName in features:
+                    features[geneName].append(feature)
+                else:
+                    features[geneName] = [feature]
 
     # load & save sequences
-    seqData = SeqIO.to_dict(SeqIO.parse(fastaFileName, "fasta"))
-    outFile = open(outFileName, "w")
+    open_func = get_open(fastaFileName)
+    with open_func(fastaFileName) as fasta_file:
+        seqData = SeqIO.to_dict(SeqIO.parse(fasta_file, "fasta"))
 
+    outFile = open(outFileName, "w")
     header = '"%s"\t"%s"\t"%s"\n' % ("biotypes", "length", "gc")
     outFile.write(header)
 
