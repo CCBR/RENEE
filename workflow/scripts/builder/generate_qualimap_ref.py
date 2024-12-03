@@ -44,30 +44,25 @@ def write_qualimap_info(args):
         if filtered_transcripts:
             print("Filtering for: ", filtered_transcripts)
 
-    # parse GTF file
-    open_func = get_open(gtfFileName)
-    with open_func(gtfFileName) as gtf_file:
-        gtf_file = HTSeq.GFF_Reader(gtf_file)
-        features = {}
-        for feature in gtf_file:
-            if feature.type == "exon":
-                geneName = feature.attr["gene_id"]
-                if geneName in features:
-                    features[geneName].append(feature)
-                else:
-                    features[geneName] = [feature]
-
-    # load & save sequences
+    # load fasta sequences
     open_func = get_open(fastaFileName)
     with open_func(fastaFileName) as fasta_file:
         seqData = SeqIO.to_dict(SeqIO.parse(fasta_file, "fasta"))
 
-    outFile = open(outFileName, "w")
-    header = '"%s"\t"%s"\t"%s"\n' % ("biotypes", "length", "gc")
-    outFile.write(header)
+    # parse GTF file
+    open_func = get_open(gtfFileName)
+    with open_func(gtfFileName) as gtf_file:
+        gtf_file = HTSeq.GFF_Reader(gtf_file)
+        features = collections.defaultdict(list)
+        for feature in gtf_file:
+            if feature.type == "exon":
+                geneName = feature.attr["gene_id"]
+                features[geneName].append(feature)
 
-    for geneId in features:
-        exons = features[geneId]
+    outFile = open(outFileName, "w")
+    outFile.write(f'"biotypes"\t"length"\t"gc"\n')
+
+    for geneId, exons in features.items():
         print("Processing %s" % geneId)
 
         if len(exons) == 0:
@@ -76,9 +71,9 @@ def write_qualimap_info(args):
             biotype = exons[0].attr["gene_type"]
         except KeyError:
             biotype = exons[0].attr["gene_biotype"]
-        length = 0
-        transcripts = {}
 
+        # build transcripts dictionary
+        transcripts = {}
         for exon in exons:
             transcriptId = exon.attr["transcript_id"]
             tSeq = transcripts.get(transcriptId, Seq(""))
@@ -98,18 +93,13 @@ def write_qualimap_info(args):
                 )
             transcripts[transcriptId] = tSeq
 
-        gc_array = []
-        lengths = []
+        gc_array = [GC(tSeq) for tSeq in transcripts.values()]
+        lengths = [len(tSeq) for tSeq in transcripts.values()]
 
-        for tSeq in transcripts.values():
-            lengths.append(len(tSeq))
-            gc_array.append(GC(tSeq))
+        gene_length_mean = int(np.mean(lengths))
+        gene_gc_mean = "{:.2f}".format(round(np.mean(gc_array), 2))
 
-        gene_length = np.mean(lengths)
-        gene_gc = np.mean(gc_array)
-
-        line = '"%s"\t"%s"\t%d\t%.2f\n' % (geneId, biotype, gene_length, gene_gc)
-        outFile.write(line)
+        outFile.write(f'"{geneId}"\t"{biotype}"\t{gene_length_mean}\t{gene_gc_mean}\n')
 
     outFile.close()
 

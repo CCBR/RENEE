@@ -10,6 +10,14 @@ from ccbr_tools.shell import shell_run
 from renee.workflow.scripts.builder.generate_qualimap_ref import write_qualimap_info
 
 
+qualimap_cmd = """workflow/scripts/builder/generate_qualimap_ref.py \
+-g {gtf} \
+-f {fasta} \
+-o {outfile} \
+--ignore-strange-chrom
+"""
+
+
 def filter_by_qualimap(gtf_filename, qualimap_filename, out_filename=""):
     """
     Filter a GTF file based on entries in a qualimap file.
@@ -31,6 +39,34 @@ def filter_by_qualimap(gtf_filename, qualimap_filename, out_filename=""):
                     out_file.write(feature.get_gff_line())
 
 
+def create_mouse_subset():
+    mouse_gtf = (
+        "/data/CCBR_Pipeliner/db/PipeDB/Indices/GTFs/mm10/gencode.vM21.annotation.gtf"
+    )
+
+    mouse_fa = "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.fa"
+    shell_run(
+        qualimap_cmd.format(gtf=mouse_gtf, fasta=mouse_fa, outfile="qualimap_info.txt")
+    )
+    filter_by_qualimap(
+        gtf_filename=mouse_gtf,
+        qualimap_filename="tests/data/genomes/mm10_M21.subset.qualimap_info.txt",
+        out_filename="tests/data/genomes/M21.subset.gtf",
+    )
+    shell_run(
+        qualimap_cmd.format(
+            gtf="tests/data/genomes/M21.subset.gtf",
+            fasta=mouse_fa,
+            outfile="tests/data/genomes/qualimap_info.subset.txt",
+        )
+    )
+    assert filecmp.cmp(
+        "tests/data/genomes/qualimap_info.subset.txt",
+        "tests/data/genomes/mm10_M21.subset.qualimap_info.txt",
+        shallow=False,
+    )
+
+
 def run_qualimap_comp(fasta, gtf, oracle):
     with tempfile.TemporaryDirectory() as tmp_dir:
         outfile = f"{tmp_dir}/qualimap_info.txt"
@@ -46,6 +82,14 @@ def run_qualimap_comp(fasta, gtf, oracle):
     return result
 
 
+def test_qualimap_ref_tiny():
+    assert run_qualimap_comp(
+        "tests/data/genomes/tiny/genome.fa.gz",
+        "tests/data/genomes/tiny/genes.gtf.gz",
+        "tests/data/genomes/tiny/qualimap_info.txt",
+    )
+
+
 if get_hpcname() == "biowulf":
 
     def test_qualimap_ref_mouse():
@@ -56,38 +100,22 @@ if get_hpcname() == "biowulf":
         )
 
 
-def test_qualimap_ref_tiny():
-    assert run_qualimap_comp(
-        "tests/data/genomes/tiny/genome.fa.gz",
-        "tests/data/genomes/tiny/genes.gtf.gz",
-        "tests/data/genomes/tiny/qualimap_info.txt",
-    )
-
-
-qualimap_cmd = """workflow/scripts/builder/generate_qualimap_ref.py \
--g {gtf} \
--f {fasta} \
--o {outfile} \
---ignore-strange-chrom
-"""
-
 if __name__ == "__main__":
+    # generate test snapshots
     start = time.perf_counter()
-    mouse_gtf = (
-        "/data/CCBR_Pipeliner/db/PipeDB/Indices/GTFs/mm10/gencode.vM21.annotation.gtf"
+    shell_run(
+        qualimap_cmd.format(
+            gtf="tests/data/genomes/tiny/genes.gtf.gz",
+            fasta="tests/data/genomes/tiny/genome.fa.gz",
+            outfile="tests/data/genomes/tiny/qualimap_info.txt",
+        )
     )
-    mouse_fa = "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.fa"
-    # shell_run(qualimap_cmd.format(gtf=mouse_gtf, fasta=mouse_fasta, outfile='qualimap_info.txt'))
-    # filter_by_qualimap(gtf_filename=mouse_gtf,
-    #                     qualimap_filename='tests/data/genomes/mm10_M21.subset.qualimap_info.txt',
-    #                     out_filename='tests/data/genomes/M21.subset.gtf')
-    # shell_run(qualimap_cmd.format(gtf='tests/data/genomes/M21.subset.gtf', fasta=mouse_fasta, outfile='qualimap_info.subset.txt'))
-    # assert filecmp.cmp('tests/data/genomes/qualimap_info.subset.txt', 'tests/data/genomes/mm10_M21.subset.qualimap_info.txt', shallow=False)
-
-    run_qualimap_comp(
-        "tests/data/genomes/mm10.fa.gz",
-        "tests/data/genomes/M21.subset.gtf.gz",
-        "tests/data/genomes/mm10_M21.subset.qualimap_info.txt",
+    shell_run(
+        qualimap_cmd.format(
+            gtf="tests/data/genomes/M21.subset.gtf.gz",
+            fasta="/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.fa",
+            outfile="tests/data/genomes/mm10_M21.subset.qualimap_info.txt",
+        )
     )
     end = time.perf_counter()
     print("elapsed", end - start)
