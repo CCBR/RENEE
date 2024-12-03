@@ -5,6 +5,7 @@
         "base": "docker://nciccbr/ccbr_ubuntu_22.04:v4",
         "bbtools": "docker://nciccbr/ccbr_bbtools_38.87:v0.0.1",
         "build_rnaseq": "docker://nciccbr/ccbr_build_rnaseq:v0.0.1",
+        "build_gtf": "docker://nciccbr/ccbr_build_rnaseq:v2",
         "cutadapt": "docker://nciccbr/ccbr_cutadapt_1.18:v032219",
         "fastq_screen": "docker://nciccbr/ccbr_fastq_screen_0.13.0:v2.0",
         "fastqc": "docker://nciccbr/ccbr_fastqc_0.11.9:v1.1",
