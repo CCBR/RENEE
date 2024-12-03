@@ -1,0 +1,22 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/GCF_011100555.1_mCalJa1.2.pat.X_genomic.fna",
+            "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/GCF_011100555.1_mCalJa1.2.pat.X_genomic.fna",
+            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/GCF_011100555.1_mCalJa1.2.pat.X_genomic.gtf.reformat.gtf",
+            "GENOME_STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/STAR/2.7.6a/genome",
+            "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/annotate.isoforms.txt",
+            "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/refFlat.txt",
+            "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/genes.ref.bed",
+            "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/geneinfo.bed",
+            "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/qualimap_info.txt",
+            "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/karyobeds/",
+            "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/rsemref/mCalJac1_2021",
+            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/mCalJac1_2021.rRNA_interval_list",
+            "ORGANISM": "mCalJac1",
+            "TINREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mCalJac1_2021/transcripts.protein_coding_only.bed12"
+        }
+    }
+}
