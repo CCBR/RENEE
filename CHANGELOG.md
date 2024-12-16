@@ -1,4 +1,4 @@
-## RENEE development version
+## RENEE 2.6.4
 
 - Fix spelling of shared SIF directory on biowulf -- it is `/data/CCBR_Pipeliner/SIFs` with a lowercase "s" at the end. (#182, @kelly-sovacool)
 - Raise an error if too few reads are left after trimming with cutadapt. (#184, @kelly-sovacool)
