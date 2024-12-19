@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Increase memory for `fastq_screen`. (#188, @kelly-sovacool)
+
 ## RENEE 2.6.4
 
 - Fix spelling of shared SIF directory on biowulf -- it is `/data/CCBR_Pipeliner/SIFs` with a lowercase "s" at the end. (#182, @kelly-sovacool)
