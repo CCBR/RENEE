@@ -1,12 +1,13 @@
-# RENEE - **R**na s**E**quencing a**N**alysis pip**E**lin**E**
+# RENEE
 
-An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
+**R**na s**E**quencing a**N**alysis pip**E**lin**E**
 
 [![build](https://github.com/CCBR/RENEE/actions/workflows/build.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/build.yml)
 [![docs](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml)
 [![DOI](https://zenodo.org/badge/447297455.svg)](https://zenodo.org/doi/10.5281/zenodo.10553198)
 [![release](https://img.shields.io/github/v/release/CCBR/RENEE?color=blue&label=latest%20release)](https://github.com/CCBR/RENEE/releases/latest)
 
+An open-source, reproducible, and scalable solution for analyzing RNA-seq data.
 See the website for detailed information, documentation, and examples:
 <https://ccbr.github.io/RENEE/latest/>
 
