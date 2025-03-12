@@ -2,7 +2,7 @@
 import argparse
 import glob
 import os
-import FreeSimpleGUI as sg
+import PySimpleGUI as sg
 import sys
 from tkinter import Tk
 
