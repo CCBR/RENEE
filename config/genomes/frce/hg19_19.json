@@ -17,9 +17,9 @@
             "RRNALIST": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg19_19/hg19_19.rRNA_interval_list",
             "ORGANISM": "hg19",
             "TINREF": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg19_19/transcripts.protein_coding_only.bed12",
-            "FUSIONBLACKLIST": "s3://nciccbr/Resources/RNA-seq/arriba/blacklist_hg19_hs37d5_GRCh37_v2.0.0.tsv.gz",
-            "FUSIONCYTOBAND": "s3://nciccbr/Resources/RNA-seq/arriba/cytobands_hg19_hs37d5_GRCh37_v2.0.0.tsv",
-            "FUSIONPROTDOMAIN": "s3://nciccbr/Resources/RNA-seq/arriba/protein_domains_hg19_hs37d5_GRCh37_v2.0.0.gff3"
+            "FUSIONBLACKLIST": "/mnt/projects/CCBR-Pipelines/db/arriba/arriba_v2.4.0/database/blacklist_hg19_hs37d5_GRCh37_v2.4.0.tsv.gz",
+            "FUSIONCYTOBAND": "/mnt/projects/CCBR-Pipelines/db/arriba/arriba_v2.4.0/database/cytobands_hg19_hs37d5_GRCh37_v2.4.0.tsv",
+            "FUSIONPROTDOMAIN": "/mnt/projects/CCBR-Pipelines/db/arriba/arriba_v2.4.0/database/protein_domains_hg19_hs37d5_GRCh37_v2.4.0.gff3"
         }
     }
 }

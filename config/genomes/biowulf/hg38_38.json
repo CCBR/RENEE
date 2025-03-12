@@ -17,9 +17,9 @@
             "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg38_38/hg38_38.rRNA_interval_list",
             "ORGANISM": "hg38",
             "TINREF": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg38_38/transcripts.protein_coding_only.bed12",
-            "FUSIONBLACKLIST": "s3://nciccbr/Resources/RNA-seq/arriba/blacklist_hg38_GRCh38_v2.0.0.tsv.gz",
-            "FUSIONCYTOBAND": "s3://nciccbr/Resources/RNA-seq/arriba/cytobands_hg38_GRCh38_v2.0.0.tsv",
-            "FUSIONPROTDOMAIN": "s3://nciccbr/Resources/RNA-seq/arriba/protein_domains_hg38_GRCh38_v2.0.0.gff3"
+            "FUSIONBLACKLIST": "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/blacklist_hg38_GRCh38_v2.4.0.tsv.gz",
+            "FUSIONCYTOBAND": "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/cytobands_hg38_GRCh38_v2.4.0.tsv",
+            "FUSIONPROTDOMAIN": "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/protein_domains_hg38_GRCh38_v2.4.0.gff3"
         }
     }
 }
