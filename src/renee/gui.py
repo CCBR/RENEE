@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import glob
-import io
 import os
 import PySimpleGUI as sg
 import sys
