@@ -1,7 +1,13 @@
 ## RENEE development version
 
+### Bug fixes
+
 - Fix spelling of shared SIF directory on biowulf -- it is `/data/CCBR_Pipeliner/SIFs` with a lowercase "s" at the end. (#182, @kelly-sovacool)
 - Raise an error if too few reads are left after trimming with cutadapt. (#184, @kelly-sovacool)
+- Use local copies of Arriba resources for biowulf & frce instead of downloading them from an S3 bucket. (#191, @kelly-sovacool)
+
+### New features
+
 - Reformat GTF files during `renee build` that are missing 'gene_biotype' or 'gene_type' attributes in exons. (#185, @kelly-sovacool)
 - Add support for the marmoset genome (mCalJac1 2021). (#185, @kelly-sovacool)
 
