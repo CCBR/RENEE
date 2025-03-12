@@ -1,5 +1,6 @@
 ## RENEE development version
 
+- Critical bug fix: use local copies of Arriba resources for biowulf & frce instead of downloading them from an S3 bucket. (#191, @kelly-sovacool)
 - Increase memory for `fastq_screen`. (#188, @kelly-sovacool)
 
 ## RENEE 2.6.4

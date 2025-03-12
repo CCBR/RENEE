@@ -60,7 +60,9 @@ jobs:
         shell: micromamba-shell {0}
       - name: pip install python package
         run: |
-          pip install .[dev,test]
+          pip install \
+            --extra-index-url https://PySimpleGUI.net/install \
+            .[dev,test]
         shell: micromamba-shell {0}
       - name: Test
         run: |
