@@ -1,3 +1,10 @@
+## RENEE development version
+
+- Backport all genome config files from v2.6.5.
+  - Critical bug fix due to missing S3 bucket. (#191)
+  - Rebuild hg19 & hg38 references from GDC. (#136)
+  - Add marmoset genome. (#185)
+
 ## RENEE 2.5.12
 
 - Minor documentation improvements. (#100, @kelly-sovacool)

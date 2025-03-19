@@ -1,25 +1,25 @@
 {
     "references": {
         "rnaseq": {
-            "GENOMEFILE": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/hg38.fa",
-            "GENOME": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/hg38.fa",
-            "GTFFILE": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/30.gtf",
-            "GENOME_STARDIR": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/STAR/2.7.6a/genome",
-            "ANNOTATE": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/annotate.genes.txt",
-            "ANNOTATEISOFORMS": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/annotate.isoforms.txt",
-            "REFFLAT": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/refFlat.txt",
-            "BEDREF": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/genes.ref.bed",
-            "GENEINFO": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/geneinfo.bed",
-            "QUALIMAP_INFO": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/qualimap_info.txt",
-            "KARYOBEDS": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/karyobeds/",
-            "KARYOPLOTER": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/karyoplot_gene_coordinates.txt",
-            "RSEMREF": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/rsemref/hg38_30",
-            "RRNALIST": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/hg38_30.rRNA_interval_list",
-            "ORGANISM": "hg38_30",
-            "TINREF": "/mnt/projects/CCBR-Pipelines/pipelines/RENEE/resources/hg38/30/transcripts.protein_coding_only.bed12",
-            "FUSIONBLACKLIST": "s3://nciccbr/Resources/RNA-seq/arriba/blacklist_hg38_GRCh38_v2.0.0.tsv.gz",
-            "FUSIONCYTOBAND": "s3://nciccbr/Resources/RNA-seq/arriba/cytobands_hg38_GRCh38_v2.0.0.tsv",
-            "FUSIONPROTDOMAIN": "s3://nciccbr/Resources/RNA-seq/arriba/protein_domains_hg38_GRCh38_v2.0.0.gff3"
+            "GENOMEFILE": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/GRCh38.d1.vd1.fa",
+            "GENOME": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/GRCh38.d1.vd1.fa",
+            "GTFFILE": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/gencode.v30.primary_assembly.annotation.gtf",
+            "GENOME_STARDIR": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/STAR/2.7.6a/genome",
+            "ANNOTATE": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/annotate.isoforms.txt",
+            "REFFLAT": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/refFlat.txt",
+            "BEDREF": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/genes.ref.bed",
+            "GENEINFO": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/geneinfo.bed",
+            "QUALIMAP_INFO": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/qualimap_info.txt",
+            "KARYOBEDS": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/karyobeds/",
+            "KARYOPLOTER": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/rsemref/hg38_30",
+            "RRNALIST": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/hg38_30.rRNA_interval_list",
+            "ORGANISM": "hg38",
+            "TINREF": "/mnt/projects/CCBR-Pipelines/db/GDC_refs/hg38_30/transcripts.protein_coding_only.bed12",
+            "FUSIONBLACKLIST": "/mnt/projects/CCBR-Pipelines/db/arriba/arriba_v2.4.0/database/blacklist_hg38_GRCh38_v2.4.0.tsv.gz",
+            "FUSIONCYTOBAND": "/mnt/projects/CCBR-Pipelines/db/arriba/arriba_v2.4.0/database/cytobands_hg38_GRCh38_v2.4.0.tsv",
+            "FUSIONPROTDOMAIN": "/mnt/projects/CCBR-Pipelines/db/arriba/arriba_v2.4.0/database/protein_domains_hg38_GRCh38_v2.4.0.gff3"
         }
     }
 }
