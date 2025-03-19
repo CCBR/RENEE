@@ -83,8 +83,8 @@ Each of the following arguments are required. Failure to provide a required argu
 > **Path to an output directory.**  
 > _type: path_
 >
-> This location is where the build pipeline will create all of its output files. If the user-provided working directory has not been initialized, it will automatically be created.  
-> **_Example:_** `--output /data/$USER/refs/hg38_v36/`
+> This location is where the build pipeline will create all of its output files. If the user-provided working directory has not been initialized, it will automatically be created. Note: by default, any files in `config`, `resources,` or `workflow` in the output directory may be overwritten by `renee build`.
+> **_Example:_** `--output /data/$USER/refs/hg38_36/`
 
 ### 2.2 Build Options
 

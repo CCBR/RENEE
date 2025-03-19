@@ -64,13 +64,13 @@ def str_bool(s):
 
 
 # Global Workflow variables
-configfile:join("config","build.yml")
+configfile: join("config","build.yml")
 GENOME=config["GENOME"].strip().replace(' ', '')
 # READLENGTHS=config["READLENGTHS"]
 REFFA=config["REFFA"]
-GTFFILE=config["GTFFILE"]
 GTFVER=config["GTFVER"].strip().replace(' ', '')
 OUTDIR=config["OUTDIR"]
+GTFFILE = join(OUTDIR, basename(config["GTFFILE"]) + '.reformat.gtf')
 SCRIPTSDIR=config["SCRIPTSDIR"]
 tmpdir=config["TMP_DIR"]
 workdir:OUTDIR
@@ -80,19 +80,12 @@ workdir:OUTDIR
 # threads, mem, walltimes, etc.
 # TODO: Add handler for when the
 # mode is set to local.
-with open(join(OUTDIR, 'resources', 'build_cluster.json')) as fh:
+with open(join(OUTDIR, 'config', 'cluster.json')) as fh:
     cluster = json.load(fh)
 
 # Ensures backwards compatibility
-try:
-    SMALL_GENOME=config["SMALL_GENOME"]
-except KeyError:
-    SMALL_GENOME="False"
-
-try:
-    SHARED_PATH=config["SHARED_RESOURCES"]
-except KeyError:
-    SHARED_PATH="None"
+SMALL_GENOME=config["SMALL_GENOME"] if "SMALL_GENOME" in config else "False"
+SHARED_PATH=config["SHARED_RESOURCES"] if "SHARED_RESOURCES" in config else "None"
 
 
 rule all:
@@ -134,6 +127,21 @@ rule all:
         # Kraken2 Database,
         # conditional runs with --shared-resources option
         provided(expand(join(SHARED_PATH, "20180907_standard_kraken2", "{ref}.k2d"), ref=["hash", "opts", "taxo"]), SHARED_PATH),
+
+
+rule reformat_gtf:
+    """
+    Repairs GTF file to ensure it is in a format that is compatible with qualimap.
+    All exons must have a gene_type or gene_biotype column.
+    """
+    input:
+        gtf = config["GTFFILE"]
+    output:
+        gtf = GTFFILE
+    container: config['images']['build_gtf']
+    script:
+        join(SCRIPTSDIR, "repair_gtf.py")
+
 
 
 rule rsem:
@@ -512,16 +520,18 @@ rule qualimapinfo:
         gtf=GTFFILE,
     output:
         "qualimap_info.txt",
+    log:
+        stderr="qualimap_error.log",
     params:
         rname='bl:qualimapinfo',
         generate_qualimap=join(SCRIPTSDIR, "generate_qualimap_ref.py"),
-    container: config['images']['build_rnaseq']
+    container: config['images']['build_gtf']
     shell: """
     python3 {params.generate_qualimap} \\
         -g {input.gtf} \\
         -f {input.fa} \\
         -o {output} \\
-        --ignore-strange-chrom 2> qualimap_error.log
+        --ignore-strange-chrom 2> {log.stderr}
     """
 
 

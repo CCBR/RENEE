@@ -1,9 +1,9 @@
 {
     "__default__": {
-        "gres": "lscratch:256",
-        "mem": "48g",
+        "gres": "lscratch:128",
+        "mem": "8g",
         "partition": "norm",
-        "threads": "4",
+        "threads": "1",
         "time": "4:00:00",
         "name": "{rule}.{wildcards}",
         "output": "logfiles/slurmfiles/${{SLURM_JOBID}}.%j.{rule}.{wildcards}.out",
@@ -23,7 +23,8 @@
     },
     "fastq_screen": {
         "threads": "32",
-        "time": "2-00:00:00"
+        "time": "2-00:00:00",
+        "mem": "12g"
     },
     "kraken_pe": {
         "cpus-per-task": "32",
@@ -50,9 +51,14 @@
         "threads": "16",
         "time": "1-00:00:00"
     },
+    "qualimapinfo": {
+        "mem": "20g",
+        "time": "1:00:00"
+    },
     "rsem": {
         "gres": "lscratch:500",
-        "threads": "16",
+        "mem": "48g",
+        "threads": "32",
         "time": "1-00:00:00"
     },
     "star1p": {
@@ -77,6 +83,18 @@
         "mem": "110g",
         "threads": "32",
         "time": "2-00:00:00"
+    },
+    "star_rl": {
+        "mem": "48g",
+        "gres": "lscratch:128",
+        "threads": "32",
+        "time": "12:00:00"
+    },
+    "star_genome": {
+        "mem": "48g",
+        "gres": "lscratch:128",
+        "threads": "32",
+        "time": "12:00:00"
     },
     "arriba": {
         "gres": "lscratch:256",
@@ -104,5 +122,9 @@
     },
     "trim_se": {
         "threads": "32"
+    },
+    "reformat_gtf": {
+        "mem": "20g",
+        "time": "1:00:00"
     }
 }

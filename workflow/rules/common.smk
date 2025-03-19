@@ -4,11 +4,6 @@ from scripts.common import (
     allocated
 )
 
-# This container defines the underlying OS for each job when using the workflow
-# with --use-conda --use-singularity
-container: config['images']['miniconda']
-
-
 # Rules common to RNA-seq pipeline, irrespective if the data is single-end or paired-end
 rule fc_lane:
     """
@@ -32,7 +27,7 @@ rule fc_lane:
         rname='pl:fc_lane',
         get_flowcell_lanes=join("workflow", "scripts", "get_flowcell_lanes.py"),
     envmodules: config['bin'][pfamily]['tool_versions']['PYTHONVER']
-    container: config['images']['python']
+    container: config['images']['base']
     shell: """
     python {params.get_flowcell_lanes} {input.R1} {wildcards.name} > {output.fqinfo}
     """
@@ -206,12 +201,31 @@ rule rsem_merge:
         pythonscript=join("workflow", "scripts", "merge_rsem_results.py"),
         inputdir=join(workpath, degall_dir)
     envmodules: config['bin'][pfamily]['tool_versions']['PYTHONVER'],
-    container: config['images']['python']
+    container: config['images']['base']
     shell: """
     python {params.pythonscript} {params.annotate} {params.inputdir} {params.inputdir}
     sed 's/\\t/|/1' {output.gene_counts_matrix} | \
         sed '1 s/^gene_id|GeneName/symbol/' > {output.reformatted}
     """
+
+rule rsem_data_matrix:
+    input:
+        genes=expand(join(workpath,degall_dir,"{name}.RSEM.genes.results"), name=samples),
+        isoforms=expand(join(workpath,degall_dir,"{name}.RSEM.isoforms.results"), name=samples),
+    output:
+        genes=join(workpath, degall_dir, "RSEM.genes.expected_counts.all_samples.matrix"),
+        isoforms=join(workpath, degall_dir, "RSEM.isoforms.expected_counts.all_samples.matrix")
+    params:
+        rname='pl:rsem_data_matrix',
+    envmodules:
+        config['bin'][pfamily]['tool_versions']['RSEMVER'],
+        config['bin'][pfamily]['tool_versions']['PYTHONVER'],
+    container: config['images']['rsem']
+    shell:
+        """
+        rsem-generate-data-matrix {input.genes} > {output.genes}
+        rsem-generate-data-matrix {input.isoforms} > {output.isoforms}
+        """
 
 
 rule rseqc:
@@ -287,7 +301,7 @@ rule tin_merge:
         rname="pl:tin_merge",
         create_matrix=join("workflow", "scripts", "create_tin_matrix.py")
     envmodules: config['bin'][pfamily]['tool_versions']['PYTHONVER'],
-    container: config['images']['python']
+    container: config['images']['base']
     shell: """
     python {params.create_matrix} {input.tins} > {output.matrix}
     """

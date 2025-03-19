@@ -1,3 +1,60 @@
+## RENEE development version
+
+## RENEE 2.6.5
+
+- Critical bug fix: use local copies of Arriba resources for biowulf & frce instead of downloading them from an S3 bucket. (#191, @kelly-sovacool)
+- Increase memory for `fastq_screen`. (#188, @kelly-sovacool)
+
+## RENEE 2.6.4
+
+- Fix spelling of shared SIF directory on biowulf -- it is `/data/CCBR_Pipeliner/SIFs` with a lowercase "s" at the end. (#182, @kelly-sovacool)
+- Raise an error if too few reads are left after trimming with cutadapt. (#184, @kelly-sovacool)
+- Reformat GTF files during `renee build` that are missing 'gene_biotype' or 'gene_type' attributes in exons. (#185, @kelly-sovacool)
+- Add support for the marmoset genome (mCalJac1 2021). (#185, @kelly-sovacool)
+
+## RENEE 2.6.3
+
+- Upgrade containers to fix $PYTHONPATH clashes in `fc_lane`, `inner_distance`, `tin`, `tin_merge`, and `rnaseq_multiqc`. (#176, @kelly-sovacool)
+- Fix error that prevented existing output directories from being re-run. (#176, @kelly-sovacool)
+- Fix error in `renee build` where `image_cache()` wasn't imported. (#178, @kelly-sovacool)
+
+## RENEE 2.6.2
+
+- Consolidate `build_cluster.json` into `cluster.json`. (#167, @kelly-sovacool)
+- Remove unused miniconda container. (#168, @kelly-sovacool)
+- Fix error in RSEQC rules. (#172, @kelly-sovacool)
+
+## RENEE 2.6.1
+
+- New contributing guide available on GitHub and the documentation website. (#159, @kelly-sovacool)
+- New `renee debug` subcommand to determine the base directory for debugging purposes. (#159, @kelly-sovacool)
+- Fix `renee cache` subcommand to correctly read the container images config file. (#163, @kelly-sovacool)
+
+## RENEE 2.6.0
+
+### New features
+
+- Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
+- hg38 genome index files now include decoy & virus sequences. (#136, @kelly-sovacool)
+  - Additionally, `--genome` is no longer required and is set to `hg38_36` by default.
+- Set default shared singularity SIF directory for biowulf and frce. (#94, @kelly-sovacool)
+- Add `renee gui` subcommand to launch the graphical user interface. (#94, @kelly-sovacool)
+  - Previously, `renee_gui` (with an underscore) was a command in the `ccbrpipeliner` module.
+
+### Bug fixes
+
+- Ensure `renee build` creates necessary `config` directory during initialization. (#139, @kelly-sovacool)
+- Run `rsem-generate-data-matrix` to create gene and isoform matrix files. (#149, @kelly-sovacool)
+- Fix bug in the driver script that caused the snakemake module not to be loaded on biowulf in some cases. (#154, @kelly-sovacool)
+
+### Documentation updates
+
+- Minor documentation improvements. (#132, #135, #152, @kelly-sovacool)
+- Add GUI instructions to the documentation website. (#38, @samarth8392)
+- The docs website now has a dropdown menu to select which version to view. The latest release is shown by default. (#150, @kelly-sovacool)
+- Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
+- Added Expected output tab to the documentation website and updated FAQs (#156, @samarth8392)
+
 ## RENEE 2.5.13
 
 - Backport all genome config files from v2.6.5. (#196, @kelly-sovacool)

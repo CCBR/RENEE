@@ -56,71 +56,53 @@ rule rawfastqc:
     fastqc {input.R1} -t {threads} -o {params.outdir};
     """
 
-if config['options']['small_rna']:
-    # Run STAR with ENCODE's recommendations for small RNA sequencing.
-    # Set the min read length to
-    rule trim_se:
-        """
-        Data-processing step to remove adapter sequences and perform quality trimming
-        prior to alignment the reference genome.  Adapters are composed of synthetic
-        sequences and should be removed prior to alignment.
-        @Input:
-            Raw FastQ file (scatter)
-        @Output:
-            Trimmed FastQ file
-        """
-        input:
-            infq=join(workpath,"{name}.R1.fastq.gz"),
-        output:
-            outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"))
-        params:
-            rname='pl:trim_se',
-            # Exposed Parameters: modify config/templates/tools.json to change defaults
-            fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
-            leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
-            trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
-            minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
-        threads: int(allocated("threads", "trim_se", cluster)),
-        envmodules: config['bin'][pfamily]['tool_versions']['CUTADAPTVER']
-        container: config['images']['cutadapt']
-        shell: """
-        cutadapt --nextseq-trim=2 --trim-n \
-            -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
-            -m 16 -b file:{params.fastawithadaptersetd} -j {threads} \
-            -o {output.outfq} {input.infq}
-        """
-else:
-    # Use default trimming rule for long RNAs
-    rule trim_se:
-        """
-        Data-processing step to remove adapter sequences and perform quality trimming
-        prior to alignment the reference genome.  Adapters are composed of synthetic
-        sequences and should be removed prior to alignment.
-        @Input:
-            Raw FastQ file (scatter)
-        @Output:
-            Trimmed FastQ file
-        """
-        input:
-            infq=join(workpath,"{name}.R1.fastq.gz"),
-        output:
-            outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"))
-        params:
-            rname='pl:trim_se',
-            # Exposed Parameters: modify config/templates/tools.json to change defaults
-            fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
-            leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
-            trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
-            minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
-        threads: int(allocated("threads", "trim_se", cluster)),
-        envmodules: config['bin'][pfamily]['tool_versions']['CUTADAPTVER']
-        container: config['images']['cutadapt']
-        shell: """
-        cutadapt --nextseq-trim=2 --trim-n \
-            -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
-            -m {params.minlen} -b file:{params.fastawithadaptersetd} -j {threads} \
-            -o {output.outfq} {input.infq}
-        """
+rule trim_se:
+    """
+    Data-processing step to remove adapter sequences and perform quality trimming
+    prior to alignment the reference genome.  Adapters are composed of synthetic
+    sequences and should be removed prior to alignment.
+
+    The minimum length is set in `config['bin'][pfamily]['tool_parameters']['MINLEN']`.
+    However, this is overridden if `config['options']['small_rna']` is `true`
+    (which occurs when the `--small-rna` flag is used with `renee run`),
+    then the minimum length is set to 16.
+
+    @Input:
+        Raw FastQ file (scatter)
+    @Output:
+        Trimmed FastQ file
+    """
+    input:
+        infq=join(workpath,"{name}.R1.fastq.gz"),
+    output:
+        outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"))
+    log:
+        stdout=join(workpath,'logfiles','trim','{name}.cutadapt.out'),
+        stderr=join(workpath,'logfiles','trim','{name}.cutadapt.err')
+    params:
+        rname='pl:trim_se',
+        # Exposed Parameters: modify config/templates/tools.json to change defaults
+        fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
+        leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
+        trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
+        minlen=16 if config['options']['small_rna'] else config['bin'][pfamily]['tool_parameters']['MINLEN'],
+        min_reads=config['bin'][pfamily]['tool_parameters']['CUTADAPT_MIN_READS'],
+    threads: int(allocated("threads", "trim_se", cluster)),
+    envmodules: config['bin'][pfamily]['tool_versions']['CUTADAPTVER']
+    container: config['images']['cutadapt']
+    shell: """
+    cutadapt --nextseq-trim=2 --trim-n \
+        -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
+        -m {params.minlen} -b file:{params.fastawithadaptersetd} -j {threads} \
+        -o {output.outfq} {input.infq} \
+        > {log.stdout} 2> {log.stderr}
+    npassed=$(grep "passing filters" {log.stdout} | awk '{{print $5}}' | sed -s 's/,//g')
+    echo "number of reads passing filters: $npassed"
+    if [ $npassed -lt {params.min_reads} ]; then
+        echo "ERROR: too few reads are left after trimming."
+        exit 1
+    fi
+    """
 
 
 rule fastqc:

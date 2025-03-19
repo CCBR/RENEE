@@ -1,0 +1,71 @@
+[build-system]
+requires = [
+    "setuptools >= 62.3.0",
+    "wheel >= 0.29.0",
+]
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'RENEE'
+dynamic = ['version','readme']
+description = "Rna sEquencing aNalysis pipElinE"
+authors = [
+    {name = "Kelly Sovacool", email = "kelly.sovacool@nih.gov"},
+    {name = "Samanthe Sevilla"},
+    {name = "Vishal Koparde", email = "vishal.koparde@nih.gov"},
+    {name = "Skyler Kuhn"},
+    {name = "Mayank Tandon"}
+]
+maintainers = [
+    {name = "CCR Collaborative Bioinformatics Resource", email = "ccbr@mail.nih.gov"},
+]
+license = {file = "LICENSE"}
+classifiers = [
+    "Environment :: Console",
+    "Environment :: MacOS X",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT license",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "argparse",
+    "biopython",
+    "ccbr_tools@git+https://github.com/CCBR/Tools@v0.1",
+    "Click >= 8.1.3",
+    "HTSeq",
+    "numpy",
+    "PySimpleGUI-4-foss",
+    "snakemake >= 7.32, < 8"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black >= 22.0.0",
+    "pre-commit"
+]
+test = [
+    "pytest"
+]
+
+[project.scripts]
+renee = "renee.src.renee.__main__:main"
+
+[project.urls]
+Repository = "https://github.com/CCBR/RENEE"
+
+[tool.setuptools.package-dir]
+renee = "."
+
+[tool.setuptools.package-data]
+"*" = ["CITATION.cff", "LICENSE", "VERSION", "docker/**", "resources/**", "bin/**", "config/**", "resources/**", "workflow/**", "tests/**", ".tests/**"]
+
+[tool.setuptools.dynamic]
+version = {file = "VERSION"}
+readme = {file = "README.md"}

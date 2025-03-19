@@ -32,11 +32,12 @@
                 "FASTAWITHADAPTERSETD": "resources/TruSeq_and_nextera_adapters.consolidated.fa",
                 "FASTQ_SCREEN_CONFIG": "resources/fastq_screen.conf",
                 "FASTQ_SCREEN_CONFIG2": "resources/fastq_screen_2.conf",
-                "KRAKENBACDB": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/shared_resources/20180907_standard_kraken2",
+                "KRAKENBACDB": "shared_resources/20180907_standard_kraken2",
                 "Trimsettings": "---------------------------- TRIMMOMATIC parameters ----------------------------------------------------------",
                 "LEADINGQUALITY": 10,
                 "TRAILINGQUALITY": 10,
-                "MINLEN": 35
+                "MINLEN": 35,
+                "CUTADAPT_MIN_READS": 100
             },
             "ADAPTER1": "-",
             "ADAPTER2": "",

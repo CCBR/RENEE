@@ -42,6 +42,10 @@ plugins:
   - git-revision-date
   - minify:
       minify_html: true
+  - mike:
+      alias_type: symlink
+      canonical_version: latest
+      version_selector: true
 
 # Customization
 extra:
@@ -66,8 +70,6 @@ markdown_extensions:
       permalink: true
   - pymdownx.arithmatex:
       generic: true
-  - pymdownx.betterem:
-      smart_enable: all
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
@@ -96,13 +98,16 @@ nav:
   - About: index.md
   - Theory: RNA-seq/Theory.md
   - Getting started: RNA-seq/TLDR-RNA-seq.md
-  - Usage:
+  - Command Line:
       - run: RNA-seq/run.md
       - build: RNA-seq/build.md
       - cache: RNA-seq/cache.md
       - unlock: RNA-seq/unlock.md
+  - Graphical Interface: RNA-seq/gui.md
+  - Expected Output: RNA-seq/output.md
   - Resources: RNA-seq/Resources.md
   - FAQ:
       - General Questions: general-questions.md
       - Troubleshooting: troubleshooting.md
+      - How to contribute: contributing.md
   - License: license.md

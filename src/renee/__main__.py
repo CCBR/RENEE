@@ -2,107 +2,51 @@
 # -*- coding: UTF-8 -*-
 
 """RENEE: Rna sEquencing aNalysis pipElinE:
-An highly reproducible and portable RNA-seq data analysises pipeline
+An highly reproducible and portable RNA-seq data analysis pipeline
 About:
     This is the main entry for the RENEE pipeline.
 USAGE:
 	$ renee <run|build|unlock|cache> [OPTIONS]
 Example:
-    $ renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_30 --mode slurm
+    $ renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_36 --mode slurm
 """
 
 # Python standard library
-from __future__ import print_function
-from shutil import copy, copytree
-import sys, os, subprocess, re, json, textwrap, shlex, glob
-from pathlib import Path
-from datetime import datetime
-import warnings
+from shutil import copy
+import json
+import os
+import subprocess
+import sys
+import textwrap
 
 # 3rd party imports from pypi
-import argparse  # potential python3 3rd party package, added in python/3.5
+import argparse
+from ccbr_tools.pipeline.util import (
+    get_hpcname,
+    get_tmp_dir,
+    get_genomes_list,
+    check_python_version,
+    _cp_r_safe_,
+)
+from ccbr_tools.pipeline.cache import get_sif_cache_dir, image_cache
 
+# local imports
+from .run import run
+from .dryrun import dryrun
+from .gui import launch_gui
+from .conditions import fatal
+from .util import renee_base, get_version
+from .orchestrate import orchestrate
 
 # Pipeline Metadata and globals
-# __version__ = "v2.5.2"
 RENEE_PATH = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
-
-vfile = open(os.path.join(RENEE_PATH, "VERSION"), "r")
-__version__ = "v" + vfile.read()
-__version__ = __version__.strip()
-vfile.close()
+__version__ = get_version()
 __home__ = os.path.dirname(os.path.abspath(__file__))
 _name = os.path.basename(sys.argv[0])
 _description = "a highly-reproducible RNA-seq pipeline"
-
-# check python version ... should be 3.7 or newer
-MIN_PYTHON = (3, 7)
-try:
-    assert sys.version_info >= MIN_PYTHON
-except AssertionError:
-    exit(
-        f"{sys.argv[0]} requires Python {'.'.join([str(n) for n in MIN_PYTHON])} or newer"
-    )
-
-
-def scontrol_show():
-    """Run scontrol show config and parse the output as a dictionary
-    @return scontrol_dict <dict>:
-    """
-    scontrol_dict = dict()
-    scontrol_out = subprocess.run(
-        "scontrol show config", shell=True, capture_output=True, text=True
-    ).stdout
-    if len(scontrol_out) > 0:
-        for line in scontrol_out.split("\n"):
-            line_split = line.split("=")
-            if len(line_split) > 1:
-                scontrol_dict[line_split[0].strip()] = line_split[1].strip()
-    return scontrol_dict
-
-
-def get_hpcname():
-    """Get the HPC name (biowulf, frce, or an empty string)
-    @return hpcname <str>
-    """
-    scontrol_out = scontrol_show()
-    hpc = scontrol_out["ClusterName"] if "ClusterName" in scontrol_out.keys() else ""
-    if hpc == "fnlcr":
-        hpc = "frce"
-    return hpc
-
-
-def get_tmp_dir(tmp_dir, outdir):
-    """Get default temporary directory for biowulf and frce. Allow user override."""
-    hpc = get_hpcname()
-    if not tmp_dir:
-        if hpc == "biowulf":
-            tmp_dir = "/lscratch/$SLURM_JOBID"
-        elif hpc == "frce":
-            tmp_dir = outdir
-        else:
-            tmp_dir = None
-    return tmp_dir
-
-
-def get_genomes_list(renee_path, hpcname=get_hpcname()):
-    """Get list of genome annotations available for the current platform
-    @return genomes_list <list>
-    """
-    genome_config_dir = os.path.join(renee_path, "config", "genomes", hpcname)
-    json_files = glob.glob(genome_config_dir + "/*.json")
-    if not json_files:
-        warnings.warn(
-            f"WARNING: No Genome Annotation JSONs found in {genome_config_dir}. Please specify a custom genome json file with `--genome`"
-        )
-    genomes = [os.path.basename(file).replace(".json", "") for file in json_files]
-    return sorted(genomes)
-
-
-# Get list of prebuilt genome annotations available for the platform
-GENOMES_LIST = get_genomes_list(RENEE_PATH)
+check_python_version()
 
 
 class Colors:
@@ -139,79 +83,6 @@ class Colors:
     bg_white = "\33[47m"
 
 
-def err(*message, **kwargs):
-    """Prints any provided args to standard error.
-    kwargs can be provided to modify print functions
-    behavior.
-    @param message <any>:
-        Values printed to standard error
-    @params kwargs <print()>
-        Key words to modify print function behavior
-    """
-    print(*message, file=sys.stderr, **kwargs)
-
-
-def fatal(*message, **kwargs):
-    """Prints any provided args to standard error
-    and exits with an exit code of 1.
-    @param message <any>:
-        Values printed to standard error
-    @params kwargs <print()>
-        Key words to modify print function behavior
-    """
-    err(*message, **kwargs)
-    sys.exit(1)
-
-
-def _now():
-    ct = datetime.now()
-    now = ct.strftime("%y%m%d%H%M%S")
-    return now
-
-
-def _get_file_mtime(f):
-    timestamp = datetime.fromtimestamp(os.path.getmtime(os.path.abspath(f)))
-    mtime = timestamp.strftime("%y%m%d%H%M%S")
-    return mtime
-
-
-def exists(testpath):
-    """Checks if file exists on the local filesystem.
-    @param parser <argparse.ArgumentParser() object>:
-        argparse parser object
-    @param testpath <str>:
-        Name of file/directory to check
-    @return does_exist <boolean>:
-        True when file/directory exists, False when file/directory does not exist
-    """
-    does_exist = True
-    if not os.path.exists(testpath):
-        does_exist = False  # File or directory does not exist on the filesystem
-
-    return does_exist
-
-
-def exe_in_path(cmd, path=None):
-    """Checks if an executable is in $PATH
-    @param cmd <str>:
-        Name of executable to check
-    @param path <list>:
-        Optional list of PATHs to check [default: $PATH]
-    @return <boolean>:
-        True if exe in PATH, False if not in PATH
-    """
-    if path is None:
-        path = os.environ["PATH"].split(os.pathsep)
-
-    for prefix in path:
-        filename = os.path.join(prefix, cmd)
-        executable = os.access(filename, os.X_OK)
-        is_not_directory = os.path.isfile(filename)
-        if executable and is_not_directory:
-            return True
-    return False
-
-
 def permissions(parser, filename, *args, **kwargs):
     """Checks permissions using os.access() to see the user is authorized to access
     a file/directory. Checks for existence, readability, writability and executability via:
@@ -223,7 +94,7 @@ def permissions(parser, filename, *args, **kwargs):
     @return filename <str>:
         If file exists and user can read from file
     """
-    if not exists(filename):
+    if not os.path.exists(filename):
         parser.error(
             "File '{}' does not exists! Failed to provide valid input.".format(filename)
         )
@@ -249,7 +120,7 @@ def check_cache(parser, cache, *args, **kwargs):
     @return cache <str>:
         If singularity cache dir is valid
     """
-    if not exists(cache):
+    if not os.path.exists(cache):
         # Cache directory does not exist on filesystem
         os.makedirs(cache)
     elif os.path.isfile(cache):
@@ -267,7 +138,7 @@ def check_cache(parser, cache, *args, **kwargs):
         # Check that the user owns the child cache directory
         # May revert to os.getuid() if user id is not sufficient
         if (
-            exists(os.path.join(cache, "cache"))
+            os.path.exists(os.path.join(cache, "cache"))
             and os.stat(os.path.join(cache, "cache")).st_uid != os.getuid()
         ):
             # User does NOT own the cache directory, raise error
@@ -282,929 +153,6 @@ def check_cache(parser, cache, *args, **kwargs):
             )
 
     return cache
-
-
-def _cp_r_safe_(source, target, resources=[]):
-    """Private function: Given a list paths it will recursively copy each to the
-    target location. If a target path already exists, it will NOT over-write the
-    existing paths data.
-    @param resources <list[str]>:
-        List of paths to copy over to target location
-    @params source <str>:
-        Add a prefix PATH to each resource
-    @param target <str>:
-        Target path to copy templates and required resources
-    """
-    for resource in resources:
-        destination = os.path.join(target, resource)
-        if not exists(destination):
-            # Required resources do not exist
-            copytree(os.path.join(source, resource), destination)
-
-
-def rename(filename):
-    """Dynamically renames FastQ file to have one of the following extensions: *.R1.fastq.gz, *.R2.fastq.gz
-    To automatically rename the fastq files, a few assumptions are made. If the extension of the
-    FastQ file cannot be inferred, an exception is raised telling the user to fix the filename
-    of the fastq files.
-    @param filename <str>:
-        Original name of file to be renamed
-    @return filename <str>:
-        A renamed FastQ filename
-    """
-    # Covers common extensions from SF, SRA, EBI, TCGA, and external sequencing providers
-    # key = regex to match string and value = how it will be renamed
-    extensions = {
-        # Matches: _R[12]_fastq.gz, _R[12].fastq.gz, _R[12]_fq.gz, etc.
-        ".R1.f(ast)?q.gz$": ".R1.fastq.gz",
-        ".R2.f(ast)?q.gz$": ".R2.fastq.gz",
-        # Matches: _R[12]_001_fastq_gz, _R[12].001.fastq.gz, _R[12]_001.fq.gz, etc.
-        # Capture lane information as named group
-        ".R1.(?P<lane>...).f(ast)?q.gz$": ".R1.fastq.gz",
-        ".R2.(?P<lane>...).f(ast)?q.gz$": ".R2.fastq.gz",
-        # Matches: _[12].fastq.gz, _[12].fq.gz, _[12]_fastq_gz, etc.
-        "_1.f(ast)?q.gz$": ".R1.fastq.gz",
-        "_2.f(ast)?q.gz$": ".R2.fastq.gz",
-    }
-
-    if filename.endswith(".R1.fastq.gz") or filename.endswith(".R2.fastq.gz"):
-        # Filename is already in the correct format
-        return filename
-
-    converted = False
-    for regex, new_ext in extensions.items():
-        matched = re.search(regex, filename)
-        if matched:
-            # regex matches with a pattern in extensions
-            converted = True
-            # Try to get substring for named group lane, retain this in new file extension
-            # Come back to this later, I am not sure if this is necessary
-            # That string maybe static (i.e. always the same)
-            # https://support.illumina.com/help/BaseSpace_OLH_009008/Content/Source/Informatics/BS/NamingConvention_FASTQ-files-swBS.htm#
-            try:
-                new_ext = "_{}{}".format(matched.group("lane"), new_ext)
-            except IndexError:
-                pass  # Does not contain the named group lane
-
-            filename = re.sub(regex, new_ext, filename)
-            break  # only rename once
-
-    if not converted:
-        raise NameError(
-            """\n\tFatal: Failed to rename provided input '{}'!
-        Cannot determine the extension of the user provided input file.
-        Please rename the file list above before trying again.
-        Here is example of acceptable input file extensions:
-          sampleName.R1.fastq.gz      sampleName.R2.fastq.gz
-          sampleName_R1_001.fastq.gz  sampleName_R2_001.fastq.gz
-          sampleName_1.fastq.gz       sampleName_2.fastq.gz
-        Please also check that your input files are gzipped?
-        If they are not, please gzip them before proceeding again.
-        """.format(
-                filename, sys.argv[0]
-            )
-        )
-
-    return filename
-
-
-def _sym_safe_(input_data, target):
-    """Creates re-named symlinks for each FastQ file provided
-    as input. If a symlink already exists, it will not try to create a new symlink.
-    If relative source PATH is provided, it will be converted to an absolute PATH.
-    @param input_data <list[<str>]>:
-        List of input files to symlink to target location
-    @param target <str>:
-        Target path to copy templates and required resources
-    @return input_fastqs list[<str>]:
-        List of renamed input FastQs
-    """
-    input_fastqs = []  # store renamed fastq file names
-    for file in input_data:
-        filename = os.path.basename(file)
-        renamed = os.path.join(target, rename(filename))
-        input_fastqs.append(renamed)
-
-        if not exists(renamed):
-            # Create a symlink if it does not already exist
-            # Follow source symlinks to resolve any binding issues
-            os.symlink(os.path.abspath(os.path.realpath(file)), renamed)
-
-    return input_fastqs
-
-
-def initialize(sub_args, repo_path, output_path):
-    """Initialize the output directory and copy over required pipeline resources.
-    If user provides a output directory path that already exists on the filesystem
-    as a file (small chance of happening but possible), a OSError is raised. If the
-    output directory PATH already EXISTS, it will not try to create the directory.
-    If a resource also already exists in the output directory (i.e. output/workflow),
-    it will not try to copy over that directory. In the future, it maybe worth adding
-    an optional cli arg called --force, that can modify this behavior. Returns a list
-    of renamed FastQ files (i.e. renamed symlinks).
-    @param sub_args <parser.parse_args() object>:
-        Parsed arguments for run sub-command
-    @param repo_path <str>:
-        Path to RENEE source code and its templates
-    @param output_path <str>:
-        Pipeline output path, created if it does not exist
-    @return inputs list[<str>]:
-        List of pipeline's input FastQ files
-    """
-    if not exists(output_path):
-        # Pipeline output directory does not exist on filesystem
-        os.makedirs(output_path)
-
-    elif exists(output_path) and os.path.isfile(output_path):
-        # Provided Path for pipeline output directory exists as file
-        raise OSError(
-            """\n\tFatal: Failed to create provided pipeline output directory!
-        User provided --output PATH already exists on the filesystem as a file.
-        Please run {} again with a different --output PATH.
-        """.format(
-                sys.argv[0]
-            )
-        )
-
-    # Copy over templates are other required resources
-    required_resources = ["workflow", "resources", "config"]
-    _cp_r_safe_(source=repo_path, target=output_path, resources=required_resources)
-
-    # Create renamed symlinks to rawdata
-    inputs = _sym_safe_(input_data=sub_args.input, target=output_path)
-
-    return inputs
-
-
-def join_jsons(templates):
-    """Joins multiple JSON files to into one data structure
-    Used to join multiple template JSON files to create a global config dictionary.
-    @params templates <list[str]>:
-        List of template JSON files to join together
-    @return aggregated <dict>:
-        Dictionary containing the contents of all the input JSON files
-    """
-    # Get absolute PATH to templates in renee git repo
-    repo_path = os.path.dirname(os.path.abspath(__file__))
-    aggregated = {}
-
-    for file in templates:
-        with open(os.path.join(repo_path, file), "r") as fh:
-            aggregated.update(json.load(fh))
-
-    return aggregated
-
-
-def add_user_information(config):
-    """Adds username and user's home directory to config.
-    @params config <dict>:
-        Config dictionary containing metadata to run pipeline
-    @return config <dict>:
-         Updated config dictionary containing user information (username and home directory)
-    """
-    # Get PATH to user's home directory
-    # Method is portable across unix-like OS and Windows
-    home = os.path.expanduser("~")
-
-    # Get username from home directory PATH
-    username = os.path.split(home)[-1]
-
-    # Update config with home directory and username
-    config["project"]["userhome"] = home
-    config["project"]["username"] = username
-
-    return config
-
-
-def get_nends(ifiles):
-    """Determines whether the dataset is paired-end or single-end.
-    If paired-end data, checks to see if both mates (R1 and R2) are present for each sample.
-    If single-end, nends is set to 1. Else if paired-end, nends is set to 2.
-    @params ifiles list[<str>]:
-        List containing pipeline input files (renamed symlinks)
-    @return nends_status <int>:
-         Integer reflecting nends status: 1 = se, 2 = pe
-    """
-    # Determine if dataset contains paired-end data
-    paired_end = False
-    nends_status = 1
-    for file in ifiles:
-        if file.endswith(".R2.fastq.gz"):
-            paired_end = True
-            nends_status = 2
-            break  # dataset is paired-end
-
-    # Check to see if both mates (R1 and R2) are present paired-end data
-    if paired_end:
-        nends = {}  # keep count of R1 and R2 for each sample
-        for file in ifiles:
-            # Split sample name on file extension
-            sample = re.split("\.R[12]\.fastq\.gz", os.path.basename(file))[0]
-            if sample not in nends:
-                nends[sample] = 0
-
-            nends[sample] += 1
-
-        # Check if samples contain both read mates
-        missing_mates = [sample for sample, count in nends.items() if count == 1]
-        if missing_mates:
-            # Missing an R1 or R2 for a provided input sample
-            raise NameError(
-                """\n\tFatal: Detected pair-end data but user failed to provide
-               both mates (R1 and R2) for the following samples:\n\t\t{}\n
-            Please check that the basename for each sample is consistent across mates.
-            Here is an example of a consistent basename across mates:
-              consistent_basename.R1.fastq.gz
-              consistent_basename.R2.fastq.gz
-
-            Please do not run the pipeline with a mixture of single-end and paired-end
-            samples. This feature is currently not supported within {}, and it is
-            not recommended either. If this is a priority for your project, please run
-            paired-end samples and single-end samples separately (in two separate output directories).
-            If you feel like this functionality should exist, feel free to open an issue on Github.
-            """.format(
-                    missing_mates, sys.argv[0]
-                )
-            )
-
-    return nends_status
-
-
-def get_fastq_screen_paths(fastq_screen_confs, match="DATABASE", file_index=-1):
-    """Parses fastq_screen.conf files to get the paths of each fastq_screen database.
-    This path contains bowtie2 indices for reference genome to screen against.
-    The paths are added as singularity bind points.
-    @param fastq_screen_confs list[<str>]:
-        Name of fastq_screen config files to parse
-    @param match <string>:
-        Keyword to indicate a line match [default: 'DATABASE']
-    @param file_index <int>:
-        Index of line line containing the fastq_screen database path
-    @return list[<str>]:
-        Returns a list of fastq_screen database paths
-    """
-    databases = []
-    for file in fastq_screen_confs:
-        with open(file, "r") as fh:
-            for line in fh:
-                if line.startswith(match):
-                    db_path = line.strip().split()[file_index]
-                    databases.append(db_path)
-    return databases
-
-
-def get_rawdata_bind_paths(input_files):
-    """
-    Gets rawdata bind paths of user provided fastq files.
-    @params input_files list[<str>]:
-        List containing user-provided input fastq files
-    @return bindpaths <set>:
-        Set of rawdata bind paths
-    """
-    bindpaths = []
-    for file in input_files:
-        # Get directory of input file
-        rawdata_src_path = os.path.dirname(os.path.abspath(os.path.realpath(file)))
-        if rawdata_src_path not in bindpaths:
-            bindpaths.append(rawdata_src_path)
-
-    return bindpaths
-
-
-def add_sample_metadata(input_files, config, group=None):
-    """Adds sample metadata such as sample basename, label, and group information.
-    If sample sheet is provided, it will default to using information in that file.
-    If no sample sheet is provided, it will only add sample basenames and labels.
-    @params input_files list[<str>]:
-        List containing pipeline input fastq files
-    @params config <dict>:
-        Config dictionary containing metadata to run pipeline
-    @params group <str>:
-        Sample sheet containing basename, group, and label for each sample
-    @return config <dict>:
-        Updated config with basenames, labels, and groups (if provided)
-    """
-    # TODO: Add functionality for basecase when user has samplesheet
-    added = []
-    for file in input_files:
-        # Split sample name on file extension
-        sample = re.split("\.R[12]\.fastq\.gz", os.path.basename(file))[0]
-        if sample not in added:
-            # Only add PE sample information once
-            added.append(sample)
-            config["project"]["groups"]["rsamps"].append(sample)
-            config["project"]["groups"]["rgroups"].append(sample)
-            config["project"]["groups"]["rlabels"].append(sample)
-
-    return config
-
-
-def add_rawdata_information(sub_args, config, ifiles):
-    """Adds information about rawdata provided to pipeline.
-    Determines whether the dataset is paired-end or single-end and finds the set of all
-    rawdata directories (needed for -B option when running singularity). If a user provides
-    paired-end data, checks to see if both mates (R1 and R2) are present for each sample.
-    @param sub_args <parser.parse_args() object>:
-        Parsed arguments for run sub-command
-    @params ifiles list[<str>]:
-        List containing pipeline input files (renamed symlinks)
-    @params config <dict>:
-        Config dictionary containing metadata to run pipeline
-    @return config <dict>:
-         Updated config dictionary containing user information (username and home directory)
-    """
-    # Determine whether dataset is paired-end or single-ends
-    # Updates config['project']['nends']: 1 = single-end, 2 = paired-end
-    nends = get_nends(ifiles)  # Checks PE data for both mates (R1 and R2)
-    config["project"]["nends"] = nends
-
-    # Finds the set of rawdata directories to bind
-    rawdata_paths = get_rawdata_bind_paths(input_files=sub_args.input)
-    config["project"]["datapath"] = ",".join(rawdata_paths)
-
-    # Add each sample's basename, label and group info
-    config = add_sample_metadata(input_files=ifiles, config=config)
-
-    return config
-
-
-def image_cache(sub_args, config):
-    """Adds Docker Image URIs, or SIF paths to config if singularity cache option is provided.
-    If singularity cache option is provided and a local SIF does not exist, a warning is
-    displayed and the image will be pulled from URI in 'config/containers/images.json'.
-    @param sub_args <parser.parse_args() object>:
-        Parsed arguments for run sub-command
-    @params config <file>:
-        Docker Image config file
-    @return config <dict>:
-         Updated config dictionary containing user information (username and home directory)
-    """
-    # Get absolute PATH to templates in renee git repo
-    repo_path = os.path.dirname(os.path.abspath(__file__))
-    images = os.path.join(sub_args.output, "config", "containers", "images.json")
-
-    # Read in config for docker image uris
-    with open(images, "r") as fh:
-        data = json.load(fh)
-    # Check if local sif exists
-    for image, uri in data["images"].items():
-        if sub_args.sif_cache:
-            sif = os.path.join(
-                sub_args.sif_cache,
-                "{}.sif".format(os.path.basename(uri).replace(":", "_")),
-            )
-            if not exists(sif):
-                # If local sif does not exist on in cache, print warning
-                # and default to pulling from URI in config/containers/images.json
-                print(
-                    'Warning: Local image "{}" does not exist in singularity cache'.format(
-                        sif
-                    ),
-                    file=sys.stderr,
-                )
-            else:
-                # Change pointer to image from Registry URI to local SIF
-                data["images"][image] = sif
-
-    config.update(data)
-
-    return config
-
-
-def get_repo_git_commit_hash(repo_path):
-    """Gets the git commit hash of the RENEE repo.
-    @param repo_path <str>:
-        Path to RENEE git repo
-    @return githash <str>:
-        Latest git commit hash
-    """
-    try:
-        githash = (
-            subprocess.check_output(
-                ["git", "rev-parse", "HEAD"], stderr=subprocess.STDOUT, cwd=repo_path
-            )
-            .strip()
-            .decode("utf-8")
-        )
-        # Typecast to fix python3 TypeError (Object of type bytes is not JSON serializable)
-        # subprocess.check_output() returns a byte string
-        githash = str(githash)
-    except Exception as e:
-        # Github releases are missing the .git directory,
-        # meaning you cannot get a commit hash, set the
-        # commit hash to indicate its from a GH release
-        githash = "github_release"
-
-    return githash
-
-
-def setup(sub_args, ifiles, repo_path, output_path):
-    """Setup the pipeline for execution and creates config file from templates
-    @param sub_args <parser.parse_args() object>:
-        Parsed arguments for run sub-command
-    @param repo_path <str>:
-        Path to RENEE source code and its templates
-    @param output_path <str>:
-        Pipeline output path, created if it does not exist
-    @return config <dict>:
-         Config dictionary containing metadata to run the pipeline
-    @return hpcname <str>:
-    """
-    # Resolves PATH to template for genomic reference files to select from a
-    # bundled reference genome or a user generated reference genome built via
-    # renee build subcommand
-    hpcname = get_hpcname()
-    if hpcname == "biowulf":
-        print("Thank you for running RENEE on BIOWULF!")
-        genome_config = os.path.join(
-            output_path, "config", "genomes", hpcname, sub_args.genome + ".json"
-        )
-    elif hpcname == "frce":
-        print("Thank you for running RENEE on FRCE!")
-        genome_config = os.path.join(
-            output_path, "config", "genomes", hpcname, sub_args.genome + ".json"
-        )
-    else:
-        genome_config = os.path.join(
-            output_path, "config", "genomes", sub_args.genome + ".json"
-        )
-    if sub_args.genome.endswith(".json"):
-        # Provided a custom reference genome generated by renee build
-        genome_config = os.path.abspath(sub_args.genome)
-
-    required = {
-        # Template for project-level information
-        "project": os.path.join(output_path, "config", "templates", "project.json"),
-        # Template for genomic reference files
-        # User provided argument --genome is used to select the template
-        "genome": genome_config,
-        # Template for tool information
-        "tools": os.path.join(output_path, "config", "templates", "tools.json"),
-    }
-
-    # Global config file for pipeline, config.json
-    config = join_jsons(required.values())  # uses templates in the renee repo
-    # Update cluster-specific paths for fastq screen & kraken db
-    if hpcname == "biowulf" or hpcname == "frce":
-        db_json_filename = os.path.join(
-            output_path, "config", "templates", f"dbs_{hpcname}.json"
-        )
-        with open(
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), db_json_filename),
-            "r",
-        ) as json_file:
-            config["bin"]["rnaseq"]["tool_parameters"].update(json.load(json_file))
-
-    config = add_user_information(config)
-    config = add_rawdata_information(sub_args, config, ifiles)
-
-    # Resolves if an image needs to be pulled from an OCI registry or
-    # a local SIF generated from the renee cache subcommand exists
-    config = image_cache(sub_args, config)
-
-    # Add other cli collected info
-    config["project"]["annotation"] = sub_args.genome
-    config["project"]["version"] = __version__
-    config["project"]["pipelinehome"] = os.path.dirname(__file__)
-    config["project"]["workpath"] = os.path.abspath(sub_args.output)
-    genome_annotation = sub_args.genome
-    config["project"]["organism"] = genome_annotation.split("_")[0]
-
-    # Add optional cli workflow steps
-    config["options"] = {}
-    config["options"]["star_2_pass_basic"] = sub_args.star_2_pass_basic
-    config["options"]["small_rna"] = sub_args.small_rna
-    config["options"]["tmp_dir"] = get_tmp_dir(sub_args.tmp_dir, output_path)
-    config["options"]["shared_resources"] = sub_args.shared_resources
-    if sub_args.wait:
-        config["options"]["wait"] = "True"
-    else:
-        config["options"]["wait"] = "False"
-    if sub_args.create_nidap_folder:
-        config["options"]["create_nidap_folder"] = "True"
-    else:
-        config["options"]["create_nidap_folder"] = "False"
-
-    # Get latest git commit hash
-    git_hash = get_repo_git_commit_hash(repo_path)
-    config["project"]["git_commit_hash"] = git_hash
-
-    if sub_args.shared_resources:
-        # Update paths to shared resources directory
-        config["bin"]["rnaseq"]["tool_parameters"][
-            "FASTQ_SCREEN_CONFIG"
-        ] = os.path.join(
-            sub_args.shared_resources, "fastq_screen_db", "fastq_screen.conf"
-        )
-        config["bin"]["rnaseq"]["tool_parameters"][
-            "FASTQ_SCREEN_CONFIG2"
-        ] = os.path.join(
-            sub_args.shared_resources, "fastq_screen_db", "fastq_screen_2.conf"
-        )
-        config["bin"]["rnaseq"]["tool_parameters"]["KRAKENBACDB"] = os.path.join(
-            sub_args.shared_resources, "20180907_standard_kraken2"
-        )
-
-    # Save config to output directory
-    print(
-        "\nGenerating config file in '{}'... ".format(
-            os.path.join(output_path, "config.json")
-        ),
-        end="",
-    )
-    with open(os.path.join(output_path, "config.json"), "w") as fh:
-        json.dump(config, fh, indent=4, sort_keys=True)
-    print("Done!")
-
-    return config
-
-
-def dryrun(
-    outdir,
-    config="config.json",
-    snakefile=os.path.join("workflow", "Snakefile"),
-    write_to_file=True,
-):
-    """Dryruns the pipeline to ensure there are no errors prior to running.
-    @param outdir <str>:
-        Pipeline output PATH
-    @return dryrun_output <str>:
-        Byte string representation of dryrun command
-    """
-    try:
-        dryrun_output = subprocess.check_output(
-            [
-                "snakemake",
-                "-npr",
-                "-s",
-                str(snakefile),
-                "--use-singularity",
-                "--rerun-incomplete",
-                "--cores",
-                "4",
-                "--configfile={}".format(config),
-            ],
-            cwd=outdir,
-            stderr=subprocess.STDOUT,
-        )
-
-    except subprocess.CalledProcessError as e:
-        # Singularity is NOT in $PATH
-        # Tell user to load both main dependencies to avoid the OSError below
-        print(
-            "Are singularity and snakemake in your PATH? Please check before proceeding again!"
-        )
-        sys.exit("{}\n{}".format(e, e.output.decode("utf-8")))
-    except OSError as e:
-        # Catch: OSError: [Errno 2] No such file or directory
-        #  Occurs when command returns a non-zero exit-code
-        if e.errno == 2 and not exe_in_path("snakemake"):
-            # Failure caused because snakemake is NOT in $PATH
-            print(
-                "\x1b[6;37;41m\nError: Are snakemake AND singularity in your $PATH?\nPlease check before proceeding again!\x1b[0m",
-                file=sys.stderr,
-            )
-            sys.exit("{}".format(e))
-        else:
-            # Failure caused by unknown cause, raise error
-            raise e
-
-    if write_to_file:
-        now = _now()
-        with open(os.path.join(outdir, "dryrun." + str(now) + ".log"), "w") as outfile:
-            outfile.write("{}".format(dryrun_output.decode("utf-8")))
-
-    return dryrun_output
-
-
-def orchestrate(
-    mode,
-    outdir,
-    additional_bind_paths,
-    alt_cache,
-    threads=2,
-    submission_script="runner",
-    masterjob="pl:renee",
-    tmp_dir=None,
-    wait="",
-    hpcname="",
-):
-    """Runs RENEE pipeline via selected executor: local or slurm.
-    If 'local' is selected, the pipeline is executed locally on a compute node/instance.
-    If 'slurm' is selected, jobs will be submitted to the cluster using SLURM job scheduler.
-    Support for additional job schedulers (i.e. PBS, SGE, LSF) may be added in the future.
-    @param outdir <str>:
-        Pipeline output PATH
-    @param mode <str>:
-        Execution method or mode:
-            local runs serially a compute instance without submitting to the cluster.
-            slurm will submit jobs to the cluster using the SLURM job scheduler.
-    @param additional_bind_paths <str>:
-        Additional paths to bind to container filesystem (i.e. input file paths)
-    @param alt_cache <str>:
-        Alternative singularity cache location
-    @param threads <str>:
-        Number of threads to use for local execution method
-    @param submission_script <str>:
-        Path to master jobs submission script:
-            renee run =   /path/to/output/resources/runner
-            renee build = /path/to/output/resources/builder
-    @param masterjob <str>:
-        Name of the master job
-    @param tmp_dir <str>:
-        Absolute Path to temp dir for compute node
-    @param wait <str>:
-        "--wait" to wait for master job to finish. This waits when pipeline is called via NIDAP API
-    @param hpcname <str>:
-        "biowulf" if run on biowulf, "frce" if run on frce, blank otherwise. hpcname is determined in setup() function
-    @return masterjob <subprocess.Popen() object>:
-    """
-    # Add additional singularity bind PATHs
-    # to mount the local filesystem to the
-    # containers filesystem, NOTE: these
-    # PATHs must be an absolute PATHs
-    outdir = os.path.abspath(outdir)
-    # Add any default PATHs to bind to
-    # the container's filesystem, like
-    # tmp directories, /lscratch
-    addpaths = []
-    # set tmp_dir depending on hpc
-    tmp_dir = get_tmp_dir(tmp_dir, outdir)
-    temp = os.path.dirname(tmp_dir.rstrip("/"))
-    if temp == os.sep:
-        temp = tmp_dir.rstrip("/")
-    if outdir not in additional_bind_paths.split(","):
-        addpaths.append(outdir)
-    if temp not in additional_bind_paths.split(","):
-        addpaths.append(temp)
-    bindpaths = ",".join(addpaths)
-
-    # Set ENV variable 'SINGULARITY_CACHEDIR'
-    # to output directory
-    my_env = {}
-    my_env.update(os.environ)
-    cache = os.path.join(outdir, ".singularity")
-    my_env["SINGULARITY_CACHEDIR"] = cache
-
-    if alt_cache:
-        # Override the pipeline's default cache location
-        my_env["SINGULARITY_CACHEDIR"] = alt_cache
-        cache = alt_cache
-
-    if additional_bind_paths:
-        # Add Bind PATHs for outdir and tmp dir
-        if bindpaths:
-            bindpaths = ",{}".format(bindpaths)
-        bindpaths = "{}{}".format(additional_bind_paths, bindpaths)
-
-    if not exists(os.path.join(outdir, "logfiles")):
-        # Create directory for logfiles
-        os.makedirs(os.path.join(outdir, "logfiles"))
-
-    if exists(os.path.join(outdir, "logfiles", "snakemake.log")):
-        mtime = _get_file_mtime(os.path.join(outdir, "logfiles", "snakemake.log"))
-        newname = os.path.join(outdir, "logfiles", "snakemake." + str(mtime) + ".log")
-        os.rename(os.path.join(outdir, "logfiles", "snakemake.log"), newname)
-
-    # Create .singularity directory for installations of snakemake
-    # without setuid which create a sandbox in the SINGULARITY_CACHEDIR
-    if not exists(cache):
-        # Create directory for sandbox and image layers
-        os.makedirs(cache)
-
-    # Run on compute node or instance without submitting jobs to a scheduler
-    if mode == "local":
-        # Run RENEE: instantiate main/master process
-        # Look into later: it maybe worth replacing Popen subprocess with a direct
-        # snakemake API call: https://snakemake.readthedocs.io/en/stable/api_reference/snakemake.html
-        # Create log file for pipeline
-        logfh = open(os.path.join(outdir, "logfiles", "snakemake.log"), "w")
-        masterjob = subprocess.Popen(
-            [
-                "snakemake",
-                "-pr",
-                "--use-singularity",
-                "--singularity-args",
-                "'-B {}'".format(bindpaths),
-                "--cores",
-                str(threads),
-                "--configfile=config.json",
-            ],
-            cwd=outdir,
-            env=my_env,
-        )
-
-    # Submitting jobs to cluster via SLURM's job scheduler
-    elif mode == "slurm":
-        # Run RENEE: instantiate main/master process
-        # Look into later: it maybe worth replacing Popen subprocess with a direct
-        # snakemake API call: https://snakemake.readthedocs.io/en/stable/api_reference/snakemake.html
-        # snakemake --latency-wait 120  -s $R/Snakefile -d $R --printshellcmds
-        #    --cluster-config $R/cluster.json --keep-going --restart-times 3
-        #    --cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name={params.rname}"
-        #    -j 500 --rerun-incomplete --stats $R/Reports/initialqc.stats -T
-        #    2>&1| tee -a $R/Reports/snakemake.log
-
-        # Create log file for master job information
-        logfh = open(os.path.join(outdir, "logfiles", "master.log"), "w")
-        # submission_script for renee run is /path/to/output/resources/runner
-        # submission_script for renee build is /path/to/output/resources/builder
-        cmdlist = [
-            str(os.path.join(outdir, "resources", str(submission_script))),
-            mode,
-            "-j",
-            str(masterjob),
-            "-b",
-            str(bindpaths),
-            "-o",
-            str(outdir),
-            "-c",
-            str(cache),
-            "-t",
-            str(tmp_dir),
-        ]
-        if str(wait) == "--wait":
-            cmdlist.append("-w")
-        if str(hpcname) != "":
-            cmdlist.append("-n")
-            cmdlist.append(hpcname)
-        else:
-            cmdlist.append("-n")
-            cmdlist.append("unknown")
-
-        print(" ".join(cmdlist))
-        masterjob = subprocess.Popen(
-            cmdlist, cwd=outdir, stderr=subprocess.STDOUT, stdout=logfh, env=my_env
-        )
-
-    return masterjob
-
-
-def resolve_additional_bind_paths(search_paths):
-    """Finds additional singularity bind paths from a list of random paths. Paths are
-    indexed with a compostite key containing the first two directories of an absolute
-    file path to avoid issues related to shared names across the /gpfs shared network
-    filesystem. For each indexed list of file paths, a common path is found. Assumes
-    that the paths provided are absolute paths, the renee build sub command creates
-    resource file index with absolute filenames.
-    @param search_paths list[<str>]:
-        List of absolute file paths to find common bind paths from
-    @return common_paths list[<str>]:
-        Returns a list of common shared file paths to create additional singularity bind paths
-    """
-    common_paths = []
-    indexed_paths = {}
-
-    for ref in search_paths:
-        # Skip over resources with remote URI and
-        # skip over strings that are not file PATHS as
-        # RENEE build creates absolute resource PATHS
-        if (
-            ref.lower().startswith("sftp://")
-            or ref.lower().startswith("s3://")
-            or ref.lower().startswith("gs://")
-            or not ref.lower().startswith(os.sep)
-        ):
-            continue
-
-        # Break up path into directory tokens
-        for r in [
-            ref,
-            str(Path(ref).resolve()),
-        ]:  # taking care of paths which are symlinks!
-            path_list = os.path.abspath(r).split(os.sep)
-
-            try:  # Create composite index from first two directories
-                # Avoids issues created by shared /gpfs/ PATHS
-                index = path_list[1:3]
-                index = tuple(index)
-            except IndexError:
-                index = path_list[1]  # ref startswith /
-            if index not in indexed_paths:
-                indexed_paths[index] = []
-            # Create an INDEX to find common PATHS for each root child directory
-            # like /scratch or /data. This prevents issues when trying to find the
-            # common path between these two different directories (resolves to /)
-            indexed_paths[index].append(str(os.sep).join(path_list))
-
-    for index, paths in indexed_paths.items():
-        # Find common paths for each path index
-        common_paths.append(os.path.dirname(os.path.commonprefix(paths)))
-
-    return list(set(common_paths))
-
-
-def run(sub_args):
-    """Initialize, setup, and run the RENEE pipeline.
-    Calls initialize() to create output directory and copy over pipeline resources,
-    setup() to create the pipeline config file, dryrun() to ensure their are no issues
-    before running the pipeline, and finally run() to execute the Snakemake workflow.
-    @param sub_args <parser.parse_args() object>:
-        Parsed arguments for run sub-command
-    """
-    # Get PATH to RENEE git repository for copying over pipeline resources
-
-    # hpcname is either biowulf, frce, or blank
-    hpcname = get_hpcname()
-    if sub_args.runmode == "init" or not os.path.exists(
-        os.path.join(sub_args.output, "config.json")
-    ):
-        # Initialize working directory, copy over required pipeline resources
-        input_files = initialize(
-            sub_args, repo_path=RENEE_PATH, output_path=sub_args.output
-        )
-
-        # Step pipeline for execution, create config.json config file from templates
-        config = setup(
-            sub_args,
-            ifiles=input_files,
-            repo_path=RENEE_PATH,
-            output_path=sub_args.output,
-        )
-    # load config from existing file
-    else:
-        with open(os.path.join(sub_args.output, "config.json"), "r") as config_file:
-            config = json.load(config_file)
-
-    # ensure the working dir is read/write friendly
-    scripts_path = os.path.join(sub_args.output, "workflow", "scripts")
-    os.chmod(scripts_path, 0o755)
-
-    # Optional Step: Dry-run pipeline
-    if sub_args.dry_run:
-        dryrun_output = dryrun(
-            outdir=sub_args.output
-        )  # python3 returns byte-string representation
-        print("\nDry-running RENEE pipeline:\n{}".format(dryrun_output.decode("utf-8")))
-        # sys.exit(0) # DONT exit now ... exit after printing singularity bind paths
-
-    # determine "wait"
-    wait = ""
-    if sub_args.wait:
-        wait = "--wait"
-
-    # Resolve all Singularity Bindpaths
-    rawdata_bind_paths = config["project"]["datapath"]
-
-    # Get FastQ Screen Database paths
-    # and other reference genome file paths
-    fqscreen_cfg1 = config["bin"]["rnaseq"]["tool_parameters"]["FASTQ_SCREEN_CONFIG"]
-    fqscreen_cfg2 = config["bin"]["rnaseq"]["tool_parameters"]["FASTQ_SCREEN_CONFIG2"]
-    fq_screen_paths = get_fastq_screen_paths(
-        [
-            os.path.join(sub_args.output, fqscreen_cfg1),
-            os.path.join(sub_args.output, fqscreen_cfg2),
-        ]
-    )
-    kraken_db_path = [config["bin"]["rnaseq"]["tool_parameters"]["KRAKENBACDB"]]
-    genome_bind_paths = resolve_additional_bind_paths(
-        list(config["references"]["rnaseq"].values()) + fq_screen_paths + kraken_db_path
-    )
-    all_bind_paths = "{},{}".format(",".join(genome_bind_paths), rawdata_bind_paths)
-
-    if sub_args.dry_run:  # print singularity bind baths and exit
-        print("\nSingularity Bind Paths:{}".format(all_bind_paths))
-        sys.exit(0)
-
-    # Run pipeline
-    masterjob = orchestrate(
-        mode=sub_args.mode,
-        outdir=sub_args.output,
-        additional_bind_paths=all_bind_paths,
-        alt_cache=sub_args.singularity_cache,
-        threads=sub_args.threads,
-        tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
-        wait=wait,
-        hpcname=hpcname,
-    )
-
-    # Wait for subprocess to complete,
-    # this is blocking
-    masterjob.wait()
-
-    # Relay information about submission
-    # of the master job or the exit code of the
-    # pipeline that ran in local mode
-    if sub_args.mode == "local":
-        if int(masterjob.returncode) == 0:
-            print("{} pipeline has successfully completed".format(_name))
-        else:
-            fatal(
-                "{} pipeline failed. Please see standard output for more information."
-            )
-    elif sub_args.mode == "slurm":
-        jobid = (
-            open(os.path.join(sub_args.output, "logfiles", "mjobid.log")).read().strip()
-        )
-        if int(masterjob.returncode) == 0:
-            print("Successfully submitted master job: ", end="")
-        else:
-            fatal(
-                "Error occurred when submitting the master job. Error code = {}".format(
-                    masterjob.returncode
-                )
-            )
-        print(jobid)
 
 
 def unlock(sub_args):
@@ -1224,7 +172,9 @@ def unlock(sub_args):
             cwd=outdir,
             stderr=subprocess.STDOUT,
         )
-    except subprocess.CalledProcessError as e:
+    except (
+        subprocess.CalledProcessError
+    ) as e:  # TODO: why capture this exception at all?
         # Unlocking process returned a non-zero exit code
         sys.exit("{}\n{}".format(e, e.output))
 
@@ -1255,7 +205,7 @@ def _sym_refs(input_data, target, make_copy=False):
         source_name = os.path.abspath(os.path.realpath(file))
         canocial_input_paths.append(os.path.dirname(source_name))
 
-        if not exists(target_name):
+        if not os.path.exists(target_name):
             if not make_copy:
                 # Create a symlink if it does not already exist
                 # Follow source symlinks to resolve any binding issues
@@ -1330,11 +280,11 @@ def configure_build(sub_args, git_repo, output_path):
     @return additional_bind_paths list[<str>]:
         List of canonical paths for the list of input files to be added singularity bindpath
     """
-    if not exists(output_path):
+    if not os.path.exists(output_path):
         # Pipeline output directory does not exist on filesystem
         os.makedirs(output_path)
 
-    elif exists(output_path) and os.path.isfile(output_path):
+    elif os.path.exists(output_path) and os.path.isfile(output_path):
         # Provided Path for pipeline output directory exists as file
         raise OSError(
             """\n\tFatal: Failed to create provided pipeline output directory!
@@ -1345,9 +295,13 @@ def configure_build(sub_args, git_repo, output_path):
             )
         )
 
-    # Copy over templates are other required resources
-    required_resources = ["workflow", "resources", "config"]
-    _cp_r_safe_(source=git_repo, target=output_path, resources=required_resources)
+    # Copy over templates are other required resources, overwriting if they exist
+    _cp_r_safe_(
+        source=git_repo,
+        target=output_path,
+        resources=["workflow", "resources", "config"],
+        safe_mode=False,
+    )
     _reset_write_permission(target=output_path)
     _configure(
         sub_args=sub_args,
@@ -1435,15 +389,19 @@ def build(sub_args):
     sub_args.mode = "slurm"
     if sub_args.mode == "local":
         if int(masterjob.returncode) == 0:
-            print("{} pipeline has successfully completed".format(_name))
+            print("{} pipeline has successfully completed".format("RENEE"))
         else:
             fatal(
-                "{} pipeline failed. Please see standard output for more information."
+                "{} pipeline failed. Please see standard output for more information.".format(
+                    "RENEE"
+                )
             )
     elif sub_args.mode == "slurm":
-        jobid = (
-            open(os.path.join(sub_args.output, "logfiles", "bjobid.log")).read().strip()
-        )
+        with open(
+            os.path.join(sub_args.output, "logfiles", "bjobid.log"), "r"
+        ) as infile:
+            jobid = infile.read().strip()
+
         if int(masterjob.returncode) == 0:
             print("Successfully submitted master job: ", end="")
         else:
@@ -1460,14 +418,13 @@ def cache(sub_args):
     """
     sif_cache = sub_args.sif_cache
     # Get absolute PATH to templates in renee git repo
-    repo_path = os.path.dirname(os.path.abspath(__file__))
-    images = os.path.join(repo_path, "config", "containers", "images.json")
+    images = os.path.join(RENEE_PATH, "config", "containers", "images.json")
 
     # Create image cache
-    if not exists(sif_cache):
+    if not os.path.exists(sif_cache):
         # Pipeline output directory does not exist on filesystem
         os.makedirs(sif_cache)
-    elif exists(sif_cache) and os.path.isfile(sif_cache):
+    elif os.path.exists(sif_cache) and os.path.isfile(sif_cache):
         # Provided Path for pipeline output directory exists as file
         raise OSError(
             """\n\tFatal: Failed to create provided sif cache directory!
@@ -1487,7 +444,7 @@ def cache(sub_args):
         sif = os.path.join(
             sif_cache, "{}.sif".format(os.path.basename(uri).replace(":", "_"))
         )
-        if not exists(sif):
+        if not os.path.exists(sif):
             # If local sif does not exist on in cache, print warning
             # and default to pulling from URI in config/containers/images.json
             print('Image will be pulled from "{}".'.format(uri), file=sys.stderr)
@@ -1504,7 +461,7 @@ def cache(sub_args):
             username = os.environ.get("USER", os.environ.get("USERNAME"))
             masterjob = subprocess.Popen(
                 "sbatch --parsable -J pl:cache --time=10:00:00 --mail-type=BEGIN,END,FAIL "
-                + str(os.path.join(repo_path, "resources", "cacher"))
+                + str(os.path.join(RENEE_PATH, "resources", "cacher"))
                 + " slurm "
                 + " -s '{}' ".format(sif_cache)
                 + " -i '{}' ".format(",".join(pull))
@@ -1547,7 +504,7 @@ def genome_options(parser, user_option, prebuilt):
     # Checks against valid pre-built options
     # TODO: makes this more dynamic in the future to have it check against
     # a list of genomes (files) in config/genomes/*.json
-    elif not user_option in prebuilt:
+    elif user_option not in prebuilt:
         # User did NOT provide a valid choice
         parser.error(
             """provided invalid choice, '{}', to --genome argument!\n
@@ -1582,15 +539,12 @@ def parsed_arguments(name, description):
     description = "{0}{1}{2}".format(c.bold, description, c.end)
 
     # Create a top-level parser
-    parser = argparse.ArgumentParser(
-        description="{}: {}".format(styled_name, description)
-    )
+    parser = argparse.ArgumentParser(prog="renee", description=description)
 
     # Adding Version information
     parser.add_argument(
         "--version", action="version", version="renee {}".format(__version__)
     )
-
     # Create sub-command parser
     subparsers = parser.add_subparsers(help="List of available sub-commands")
 
@@ -1617,7 +571,7 @@ def parsed_arguments(name, description):
                               [--threads THREADS] \\
                               --input INPUT [INPUT ...] \\
                               --output OUTPUT \\
-                              --genome {{hg38_30, mm10_M21}}
+                              --genome {{hg38_36, mm10_M21, custom.json, ...}}
 
         {1}{2}Description:{4}
           To run the pipeline with with your data, please provide a space separated
@@ -1643,23 +597,22 @@ def parsed_arguments(name, description):
                                 it will be created automatically.
                                   Example: --output /data/$USER/RNA_hg38
 
-          --genome {{hg38_30,mm10_M21,custom.json}}
+          --genome {{hg38_36,mm10_M21,custom.json,...}}
                                 Reference genome. This option defines the reference
-                                genome of the samples. RENEE does comes bundled with
-                                pre built reference files for human and mouse samples;
+                                genome of the samples. The default is hg38_36 if not specifies.
+                                RENEE on biowulf comes bundled with
+                                pre-built reference files for human and mouse samples;
                                 however, it is worth noting that the pipeline can accept
                                 custom reference genomes created with the build sub
-                                command. Here is a list of available pre built genomes:
-                                hg38_30 or mm10_M21. hg38_30 uses the GENCODE version 30
-                                human annotation, while mm10_M21 uses GENCODE version M21
-                                mouse annotation. A custom reference genome created with
+                                command. Run `renee --help` to view the current list of pre-built genomes.
+                                A custom reference genome created with
                                 the build sub command can also be provided. The name of
                                 this custom reference JSON file is dependent on the
                                 values provided to the following renee build args
                                 '--ref-name REF_NAME --gtf-ver GTF_VER', where the name
                                 of the output file uses the following naming convention:
                                 '{{REF_NAME}}_{{GTF_VER}}.json'.
-                                  Example: --genome hg38_30
+                                  Example: --genome hg38_36
 
         {1}{2}Analysis options:{4}
           --small-rna           Uses ENCODE's recommendations for small RNA. This
@@ -1779,7 +732,7 @@ def parsed_arguments(name, description):
           -h, --help            Show usage information, help message, and exit.
                                   Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -1797,7 +750,7 @@ def parsed_arguments(name, description):
           # Step 2A.) Dry run pipeline with provided test data
           ./{0} run --input .tests/*.R?.fastq.gz \\
                          --output /data/$USER/RNA_hg38 \\
-                         --genome hg38_30 \\
+                         --genome hg38_36 \\
                          --mode slurm \\
                          --dry-run
 
@@ -1806,7 +759,7 @@ def parsed_arguments(name, description):
           # It is recommended running renee in this mode.
           ./{0} run --input .tests/*.R?.fastq.gz \\
                          --output /data/$USER/RNA_hg38 \\
-                         --genome hg38_30 \\
+                         --genome hg38_36 \\
                          --mode slurm
 
         {2}{3}Ver:{4}
@@ -1815,7 +768,12 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
+            "renee",
+            __version__,
+            c.bold,
+            c.url,
+            c.end,
+            list(get_genomes_list(repo_base=renee_base)),
         )
     )
 
@@ -1828,6 +786,12 @@ def parsed_arguments(name, description):
         description=required_run_options,
         epilog=run_epilog,
         add_help=False,
+    )
+
+    subparser_gui = subparsers.add_parser(
+        "gui",
+        help="Launch the RENEE pipeline with a Graphical User Interface (GUI)",
+        description="",
     )
 
     # Required Arguments
@@ -1854,8 +818,13 @@ def parsed_arguments(name, description):
     # selecting reference files
     subparser_run.add_argument(
         "--genome",
-        required=True,
-        type=lambda option: str(genome_options(subparser_run, option, GENOMES_LIST)),
+        required=False,
+        default="hg38_36",
+        type=lambda option: str(
+            genome_options(
+                subparser_run, option, get_genomes_list(repo_base=renee_base)
+            )
+        ),
         help=argparse.SUPPRESS,
     )
 
@@ -1947,6 +916,7 @@ def parsed_arguments(name, description):
         type=lambda option: os.path.abspath(os.path.expanduser(option)),
         required=False,
         help=argparse.SUPPRESS,
+        default=get_sif_cache_dir(hpc=get_hpcname()),
     )
 
     # Create NIDAP output folder
@@ -2126,7 +1096,7 @@ def parsed_arguments(name, description):
           -h, --help          Show usage information, help message, and exit.
                                 Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -2149,7 +1119,7 @@ def parsed_arguments(name, description):
                          --output /data/$USER/refs/mm39_M26 \\
                          --dry-run
 
-          # Step 2A.) Build RENEE reference files
+          # Step 2A.) Build {0} reference files
           renee build --ref-fa GRCm39.primary_assembly.genome.fa \\
                          --ref-name mm39 \\
                          --ref-gtf gencode.vM26.annotation.gtf \\
@@ -2162,7 +1132,12 @@ def parsed_arguments(name, description):
         {2}{3}Prebuilt genome+annotation combos:{4}
           {5}
         """.format(
-            name, __version__, c.bold, c.url, c.end, list(GENOMES_LIST)
+            "renee",
+            __version__,
+            c.bold,
+            c.url,
+            c.end,
+            list(get_genomes_list(repo_base=renee_base)),
         )
     )
 
@@ -2326,7 +1301,7 @@ def parsed_arguments(name, description):
           -h, --help            Show usage information and exit.
                                   Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -2347,7 +1322,7 @@ def parsed_arguments(name, description):
         {2}{3}Version:{4}
           {1}
         """.format(
-            name, __version__, c.bold, c.url, c.end
+            "renee", __version__, c.bold, c.url, c.end
         )
     )
 
@@ -2382,7 +1357,7 @@ def parsed_arguments(name, description):
         {1}{0} {3}cache{4}: {1}Cache software containers locally.{4}
 
         {1}{2}Synopsis:{4}
-          $ {0} cache [-h] [--dry-run] \\
+          $ {0} cache [--help] [--dry-run] \\
                   --sif-cache SIF_CACHE
 
         {1}{2}Description:{4}
@@ -2420,7 +1395,7 @@ def parsed_arguments(name, description):
           -h, --help            Show usage information and exits.
                                   Example: --help
         """.format(
-            name, c.bold, c.url, c.italic, c.end
+            "renee", c.bold, c.url, c.italic, c.end
         )
     )
 
@@ -2447,7 +1422,7 @@ def parsed_arguments(name, description):
         {2}Version:{3}
           {1}
         """.format(
-            name, __version__, c.bold, c.end
+            "renee", __version__, c.bold, c.end
         )
     )
 
@@ -2485,22 +1460,35 @@ def parsed_arguments(name, description):
     # Add custom help message
     subparser_cache.add_argument("-h", "--help", action="help", help=argparse.SUPPRESS)
 
+    subparser_debug = subparsers.add_parser(
+        "debug",
+        help="Debug the RENEE pipeline base directory.",
+        usage=argparse.SUPPRESS,
+    )
+
     # Define handlers for each sub-parser
     subparser_run.set_defaults(func=run)
+    subparser_debug.set_defaults(func=debug)
     subparser_unlock.set_defaults(func=unlock)
     subparser_build.set_defaults(func=build)
     subparser_cache.set_defaults(func=cache)
+    subparser_gui.set_defaults(func=launch_gui)
 
     # Parse command-line args
     args = parser.parse_args()
     return args
 
 
+def debug(args):
+    print("RENEE BASE:", renee_base(debug=True))
+    print(get_version(debug=True))
+
+
 def main():
     # Sanity check for usage
     if len(sys.argv) == 1:
         # Nothing was provided
-        fatal("Invalid usage: {} [-h] [--version] ...".format(_name))
+        fatal("Invalid usage: {} [-h] [--version] ...".format("renee"))
 
     # Collect args for sub-command
     args = parsed_arguments(name=_name, description=_description)
