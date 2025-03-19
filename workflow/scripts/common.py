@@ -168,7 +168,7 @@ def abstract_location(file_address, *args, **kwargs):
             remote_provider = snakemake.remote.SFTP.RemoteProvider()
             file_list[i] = remote_provider.remote(uri, *args, **kwargs)
 
-    return file_list
+    return file_list if len(file_list) > 1 else file_list[0]
 
 
 def allocated(resource, rule, lookup, default="__default__"):

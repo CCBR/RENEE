@@ -55,6 +55,13 @@
 - Show the name of the pipeline rather than the python script for CLI help messages. (#131, @kelly-sovacool)
 - Added Expected output tab to the documentation website and updated FAQs (#156, @samarth8392)
 
+## RENEE 2.5.13
+
+- Backport all genome config files from v2.6.5. (#196, @kelly-sovacool)
+  - Critical bug fix due to missing S3 bucket. (#191)
+  - Rebuild hg19 & hg38 references from GDC. (#136)
+  - Add marmoset genome. (#185)
+
 ## RENEE 2.5.12
 
 - Minor documentation improvements. (#100, @kelly-sovacool)
