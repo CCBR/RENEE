@@ -1,5 +1,6 @@
 ## RENEE development version
 
+- Support the mm39 M36 reference genome on biowulf. (#199, @kelly-sovacool)
 - Minor documentation updates. (#198, @kelly-sovacool)
 
 ## RENEE 2.6.5
