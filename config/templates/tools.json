@@ -59,7 +59,8 @@
             "SAMSTRANDFIELD": "None",
             "STARSTRANDCOL": 4,
             "WIGSTRAND": "Stranded",
-            "WIGTYPE": "None"
+            "WIGTYPE": "None",
+            "ccbr_tools_path": "/data/CCBR_Pipeliner/Tools/ccbr_tools/v0.2/bin/"
         }
     }
 }
