@@ -22,6 +22,7 @@ See details here: <https://github.com/CCBR/build-renee-refs>
 | mm10_M21      | Mus musculus (mouse)                           | [Gencode Release M21](https://www.gencodegenes.org/mouse/release_M21.html)                       | [GRCm38](https://www.gencodegenes.org/mouse/release_M21.html), Annotation Release date: 04/2019 |
 | mm10_M23      | Mus musculus (mouse)                           | [Gencode Release M23](https://www.gencodegenes.org/mouse/release_M23.html)                       | [GRCm38](https://www.gencodegenes.org/mouse/release_M23.html), Annotation Release date: 09/2019 |
 | mm10_M25      | Mus musculus (mouse)                           | [Gencode Release M25](https://www.gencodegenes.org/mouse/release_M25.html)                       | [GRCm38](https://www.gencodegenes.org/mouse/release_M25.html), Annotation Release date: 04/2020 |
+| mm39_M36      | Mus musculus (mouse)                           | [Gencode Release M36](https://www.gencodegenes.org/mouse/release_M36.html)                       | GRCm39, Annotation Release date: 10/2024                                                        |
 | mCalJac1_2021 | Callithrix jacchus (white-tufted-ear marmoset) | [Genome assembly mCalJa1.2.pat.X](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_011100555.1/) | Annotation release date: 04/2021                                                                |
 
 You can run `renee run --help` to view the most up-to-date list of genome annotations available in your installation of RENEE.
