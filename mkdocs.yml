@@ -11,41 +11,20 @@ repo_url: https://github.com/CCBR/RENEE
 edit_uri: https://github.com/CCBR/RENEE/edit/master/docs/
 
 # Copyright
-copyright: Copyright &copy; 2023 CCBR
+copyright: Copyright &copy; 2023-{{ now().year }} CCBR
 
 # Configuration
 theme:
-  name: material
-  features:
-    - navigation.tabs
-    - navigation.top
-    - toc.integrate
-  palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/toggle-switch-off-outline
-        name: Switch to dark mode
-    - scheme: slate
-      primary: red
-      accent: red
-      toggle:
-        icon: material/toggle-switch
-        name: Switch to light mode
-  logo: assets/icons/doc-book.svg
-  favicon: assets/favicon/favicon.ico
-
+  name: readthedocs
+  locale: en
+  custom_dir: docs/overrides
+  #
 # Plugins
 plugins:
   - search
   - git-revision-date
   - minify:
       minify_html: true
-  - mike:
-      alias_type: symlink
-      canonical_version: latest
-      version_selector: true
 
 # Customization
 extra:
@@ -56,8 +35,13 @@ extra:
       link: https://github.com/CCBR
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/orgs/nciccbr/repositories
-  version:
-    provider: mike
+  # version:
+  #   provider: mike
+
+extra_css:
+  - css/custom.css
+extra_javascript:
+  - js/custom.js
 
 # Extensions
 markdown_extensions:
@@ -73,16 +57,9 @@ markdown_extensions:
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.highlight
   - pymdownx.inlinehilite
   - pymdownx.keys
-  - pymdownx.magiclink:
-      repo_url_shorthand: true
-      user: squidfunk
-      repo: mkdocs-material
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.snippets:
