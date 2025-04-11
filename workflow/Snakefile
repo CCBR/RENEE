@@ -22,7 +22,7 @@ samples  = config['project']['groups']['rsamps'] # sample basenames
 pfamily  = config['project']['pfamily']          # rnaseq
 workpath = config['project']['workpath']         # Parent Output directory
 tmpdir   = config['options']['tmp_dir']          # Temporary directory
-
+version  = config['project']['version']         # Workflow version
 # Read in resource information,
 # containing information about
 # threads, mem, walltimes, etc.
@@ -221,26 +221,26 @@ include: "rules/group-info.smk"
 if config['options']['create_nidap_folder']:
     include: "rules/nidap.smk"
 
-# create jobby tables
-jobby_cmd = "run_jobby_on_snakemake_log " + join('logfiles', 'snakemake.log') + " | tee " + join('logfiles', 'snakemake.log.jobby') + " | cut -f2,3,18 > " + join('logfiles', 'snakemake.log.jobby.short')
-spook_cmd = "spooker " + workpath + " RENEE | tee " + join('logfiles', 'spooker.log')
+on_complete = f"""
+for cmd in spooker run_jobby_on_snakemake_log; do
+    if ! command -v $cmd 2>&1 >/dev/null; then
+        export PATH="$PATH:{config['bin']['rnaseq']['ccbr_tools_path']}"
+    fi
+done
+run_jobby_on_snakemake_log logfiles/snakemake.log | tee logfiles/snakemake.log.jobby | cut -f2,3,18 > logfiles/snakemake.log.jobby.short
+spooker {workpath} RENEE {version} | tee logfiles/spooker.log
+"""
 
 onsuccess:
-    #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print("OnSuccess")
     shell("printenv")
     shell("module list")
-    print(jobby_cmd)
-    shell(jobby_cmd)
-    print(spook_cmd)
-    shell(spook_cmd)
+    print(on_complete)
+    shell(on_complete)
 
 onerror:
-    #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print("OnError")
     shell("printenv")
     shell("module list")
-    print(jobby_cmd)
-    shell(jobby_cmd)
-    print(spook_cmd)
-    shell(spook_cmd)
+    print(on_complete)
+    shell(on_complete)
