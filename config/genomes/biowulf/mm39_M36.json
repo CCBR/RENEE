@@ -1,0 +1,22 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/GRCm39.primary_assembly.genome.fa",
+            "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/GRCm39.primary_assembly.genome.fa",
+            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/gencode.vM36.primary_assembly.annotation.gtf.reformat.gtf",
+            "GENOME_STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/STAR/2.7.6a/genome",
+            "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/annotate.isoforms.txt",
+            "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/refFlat.txt",
+            "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/genes.ref.bed",
+            "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/geneinfo.bed",
+            "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/qualimap_info.txt",
+            "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/karyobeds/",
+            "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/rsemref/mm39_M36",
+            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/mm39_M36.rRNA_interval_list",
+            "ORGANISM": "mm39",
+            "TINREF": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm39_M36/transcripts.protein_coding_only.bed12"
+        }
+    }
+}
