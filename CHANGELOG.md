@@ -1,4 +1,4 @@
-## RENEE development version
+## RENEE 2.6.6
 
 - Minor documentation updates. (#198, @kelly-sovacool)
 
