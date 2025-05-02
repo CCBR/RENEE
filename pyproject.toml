@@ -35,7 +35,6 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "argparse",
     "biopython",
     "ccbr_tools@git+https://github.com/CCBR/Tools@v0.2",
     "Click >= 8.1.3",
