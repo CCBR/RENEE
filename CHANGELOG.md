@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Minor CLI fixes. (#202, #203, @kelly-sovacool)
+
 ## RENEE 2.6.6
 
 - Minor documentation updates. (#198, @kelly-sovacool)
