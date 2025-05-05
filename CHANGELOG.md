@@ -1,4 +1,4 @@
-## RENEE development version
+## RENEE 2.6.7
 
 - Minor CLI fixes. (#202, #203, @kelly-sovacool)
 
