@@ -1,6 +1,7 @@
 ## RENEE development version
 
 - Fix `--sif-cache` example in docs. (#207, @kelly-sovacool)
+- Add `mmul10_108` (rhesus macaque) to list of reference genomes. (#212, @kelly-sovacool)
 
 ## RENEE 2.6.7
 
