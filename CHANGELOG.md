@@ -2,6 +2,7 @@
 
 - Fix `--sif-cache` example in docs. (#207, @kelly-sovacool)
 - Add `mmul10_108` (rhesus macaque) to list of reference genomes. (#212, @kelly-sovacool)
+- Support the `mm39_M36` reference genome on biowulf. (#199, @kelly-sovacool)
 
 ## RENEE 2.6.7
 
