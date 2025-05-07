@@ -35,13 +35,12 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "argparse",
     "biopython",
-    "ccbr_tools@git+https://github.com/CCBR/Tools@v0.1",
+    "ccbr_tools@git+https://github.com/CCBR/Tools@v0.2",
     "Click >= 8.1.3",
     "HTSeq",
     "numpy",
-    "PySimpleGUI-4-foss",
+    "PySimpleGUI-4-foss < 5",
     "snakemake >= 7.32, < 8"
 ]
 

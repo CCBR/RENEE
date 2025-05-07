@@ -11,19 +11,20 @@ See details here: <https://github.com/CCBR/build-renee-refs>
 
 | **Genome**    | **Species**                                    | **Annotation Version**                                                                           | **Notes**                                |
 | ------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------- |
-| hg38_45       | Homo sapiens (human)                           | [Gencode Release 45](https://www.gencodegenes.org/human/release_45.html)                         | GRCh38, Annotation Release date: 03/2023 |
-| hg38_41       | Homo sapiens (human)                           | [Gencode Release 41](https://www.gencodegenes.org/human/release_41.html)                         | GRCh38, Annotation Release date: 07/2022 |
-| hg38_38       | Homo sapiens (human)                           | [Gencode Release 38](https://www.gencodegenes.org/human/release_38.html)                         | GRCh38, Annotation Release date: 05/2021 |
-| hg38_36       | Homo sapiens (human)                           | [Gencode Release 36](https://www.gencodegenes.org/human/release_36.html)                         | GRCh38, Annotation Release date: 05/2020 |
-| hg38_34       | Homo sapiens (human)                           | [Gencode Release 34](https://www.gencodegenes.org/human/release_34.html)                         | GRCh38, Annotation Release date: 04/2020 |
-| hg38_30       | Homo sapiens (human)                           | [Gencode Release 30](https://www.gencodegenes.org/human/release_30.html)                         | GRCh38, Annotation Release date: 11/2018 |
-| hg19_36       | Homo sapiens (human)                           | [Gencode Release 36-lift-37](https://www.gencodegenes.org/human/release_36lift37.html)           | GRCh37                                   |
-| hg19_19       | Homo sapiens (human)                           | [Gencode Release 19](https://www.gencodegenes.org/human/release_19.html)                         | GRCh37, Annotation Release date: 07/2013 |
-| mm39_M36      | Mus musculus (mouse)                           | [Gencode Release M36](https://www.gencodegenes.org/mouse/release_M36.html)                       | GRCm39, Annotation Release date: 10/2024 |
-| mm10_M25      | Mus musculus (mouse)                           | [Gencode Release M25](https://www.gencodegenes.org/mouse/release_M25.html)                       | GRCm38, Annotation Release date: 04/2020 |
-| mm10_M23      | Mus musculus (mouse)                           | [Gencode Release M23](https://www.gencodegenes.org/mouse/release_M23.html)                       | GRCm38, Annotation Release date: 09/2019 |
-| mm10_M21      | Mus musculus (mouse)                           | [Gencode Release M21](https://www.gencodegenes.org/mouse/release_M21.html)                       | GRCm38, Annotation Release date: 04/2019 |
-| mCalJac1_2021 | Callithrix jacchus (white-tufted-ear marmoset) | [Genome assembly mCalJa1.2.pat.X](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_011100555.1/) | Annotation release date: 04/2021         |
+| hg38_45       | _Homo sapiens_ (human)                           | [Gencode Release 45](https://www.gencodegenes.org/human/release_45.html)                         | GRCh38, Annotation Release date: 03/2023 |
+| hg38_41       | _Homo sapiens_ (human)                           | [Gencode Release 41](https://www.gencodegenes.org/human/release_41.html)                         | GRCh38, Annotation Release date: 07/2022 |
+| hg38_38       | _Homo sapiens_ (human)                           | [Gencode Release 38](https://www.gencodegenes.org/human/release_38.html)                         | GRCh38, Annotation Release date: 05/2021 |
+| hg38_36       | _Homo sapiens_ (human)                           | [Gencode Release 36](https://www.gencodegenes.org/human/release_36.html)                         | GRCh38, Annotation Release date: 05/2020 |
+| hg38_34       | _Homo sapiens_ (human)                           | [Gencode Release 34](https://www.gencodegenes.org/human/release_34.html)                         | GRCh38, Annotation Release date: 04/2020 |
+| hg38_30       | _Homo sapiens_ (human)                           | [Gencode Release 30](https://www.gencodegenes.org/human/release_30.html)                         | GRCh38, Annotation Release date: 11/2018 |
+| hg19_36       | _Homo sapiens_ (human)                           | [Gencode Release 36-lift-37](https://www.gencodegenes.org/human/release_36lift37.html)           | GRCh37                                   |
+| hg19_19       | _Homo sapiens_ (human)                           | [Gencode Release 19](https://www.gencodegenes.org/human/release_19.html)                         | GRCh37, Annotation Release date: 07/2013 |
+| mm39_M36      | _Mus musculus_ (mouse)                           | [Gencode Release M36](https://www.gencodegenes.org/mouse/release_M36.html)                       | GRCm39, Annotation Release date: 10/2024 |
+| mm10_M25      | _Mus musculus_ (mouse)                           | [Gencode Release M25](https://www.gencodegenes.org/mouse/release_M25.html)                       | GRCm38, Annotation Release date: 04/2020 |
+| mm10_M23      | _Mus musculus_ (mouse)                           | [Gencode Release M23](https://www.gencodegenes.org/mouse/release_M23.html)                       | GRCm38, Annotation Release date: 09/2019 |
+| mm10_M21      | _Mus musculus_ (mouse)                           | [Gencode Release M21](https://www.gencodegenes.org/mouse/release_M21.html)                       | GRCm38, Annotation Release date: 04/2019 |
+| mCalJac1_2021 | _Callithrix jacchus_ (white-tufted-ear marmoset) | [Genome assembly mCalJa1.2.pat.X](https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_011100555.1/) | Annotation release date: 04/2021         |
+| mmul10_108    | _Macaca mulatta_ (rhesus macaque)                | Ensemble 108: [fasta](https://ftp.ensembl.org/pub/release-108/fasta/macaca_mulatta/dna/Macaca_mulatta.Mmul_10.dna_rm.toplevel.fa.gz); [gtf](https://ftp.ensembl.org/pub/release-108/gtf/macaca_mulatta/Macaca_mulatta.Mmul_10.108.gtf.gz) | Annotation release date: 09/2022                                                                |
 
 You can run `renee run --help` to view the most up-to-date list of genome annotations available in your installation of RENEE.
 
