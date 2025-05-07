@@ -6,7 +6,7 @@
         "MINSAMPLES": "0.5",
         "annotation": "",
         "binset": "standard-bin",
-        "cluster": "resources/cluster.json",
+        "cluster": "config/cluster.json",
         "contrasts": {
             "rcontrasts": ""
         },

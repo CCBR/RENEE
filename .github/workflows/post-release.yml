@@ -1,0 +1,22 @@
+name: post-release
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: CCBR/actions/post-release@main
+        with:
+          github-token: ${{ github.token }}

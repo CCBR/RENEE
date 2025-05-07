@@ -4,7 +4,8 @@ exclude: |
   (?x)(
       ^assets/|
       ^docs/.*.html|
-      ^_extensions/
+      ^_extensions/|
+      ^tests/data/
    )
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -19,6 +20,10 @@ repos:
     rev: v2.2.4
     hooks:
       - id: codespell
+        exclude: >
+          (?x)^(
+              .*\.svg
+          )$
         # https://github.com/codespell-project/codespell/issues/1498
   # Python formatting
   - repo: https://github.com/psf/black

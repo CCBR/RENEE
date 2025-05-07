@@ -1,0 +1,25 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/GRCh37.p13.genome.d1.vd1.genome.fa",
+            "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/GRCh37.p13.genome.d1.vd1.genome.fa",
+            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/gencode.v36lift37.annotation.gtf",
+            "GENOME_STARDIR": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/STAR/2.7.6a/genome",
+            "ANNOTATE": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/annotate.isoforms.txt",
+            "REFFLAT": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/refFlat.txt",
+            "BEDREF": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/genes.ref.bed",
+            "GENEINFO": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/geneinfo.bed",
+            "QUALIMAP_INFO": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/qualimap_info.txt",
+            "KARYOBEDS": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/karyobeds/",
+            "KARYOPLOTER": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/rsemref/hg19_36lift37",
+            "RRNALIST": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/hg19_36lift37.rRNA_interval_list",
+            "ORGANISM": "hg19",
+            "TINREF": "/data/CCBR_Pipeliner/db/PipeDB/GDC_refs/hg19_36lift37/transcripts.protein_coding_only.bed12",
+            "FUSIONBLACKLIST": "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/blacklist_hg19_hs37d5_GRCh37_v2.4.0.tsv.gz",
+            "FUSIONCYTOBAND": "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/cytobands_hg19_hs37d5_GRCh37_v2.4.0.tsv",
+            "FUSIONPROTDOMAIN": "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/protein_domains_hg19_hs37d5_GRCh37_v2.4.0.gff3"
+        }
+    }
+}

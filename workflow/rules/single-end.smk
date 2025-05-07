@@ -1,6 +1,6 @@
 # Single-end snakemake rules imported in the main Snakefile.
 from scripts.common import (
-    abstract_location, 
+    abstract_location,
     allocated,
     references
 )
@@ -56,78 +56,60 @@ rule rawfastqc:
     fastqc {input.R1} -t {threads} -o {params.outdir};
     """
 
-if config['options']['small_rna']:
-    # Run STAR with ENCODE's recommendations for small RNA sequencing.
-    # Set the min read legth to 
-    rule trim_se:
-        """
-        Data-processing step to remove adapter sequences and perform quality trimming
-        prior to alignment the reference genome.  Adapters are composed of synthetic
-        sequences and should be removed prior to alignment.
-        @Input:
-            Raw FastQ file (scatter)
-        @Output:
-            Trimmed FastQ file
-        """
-        input:
-            infq=join(workpath,"{name}.R1.fastq.gz"),
-        output:
-            outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"))
-        params:
-            rname='pl:trim_se',
-            # Exposed Parameters: modify config/templates/tools.json to change defaults
-            fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
-            leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
-            trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
-            minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
-        threads: int(allocated("threads", "trim_se", cluster)),
-        envmodules: config['bin'][pfamily]['tool_versions']['CUTADAPTVER']
-        container: config['images']['cutadapt']
-        shell: """
-        cutadapt --nextseq-trim=2 --trim-n \
-            -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
-            -m 16 -b file:{params.fastawithadaptersetd} -j {threads} \
-            -o {output.outfq} {input.infq}
-        """
-else:
-    # Use default trimming rule for long RNAs
-    rule trim_se:
-        """
-        Data-processing step to remove adapter sequences and perform quality trimming
-        prior to alignment the reference genome.  Adapters are composed of synthetic
-        sequences and should be removed prior to alignment.
-        @Input:
-            Raw FastQ file (scatter)
-        @Output:
-            Trimmed FastQ file
-        """
-        input:
-            infq=join(workpath,"{name}.R1.fastq.gz"),
-        output:
-            outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"))
-        params:
-            rname='pl:trim_se',
-            # Exposed Parameters: modify config/templates/tools.json to change defaults
-            fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
-            leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
-            trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
-            minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
-        threads: int(allocated("threads", "trim_se", cluster)),
-        envmodules: config['bin'][pfamily]['tool_versions']['CUTADAPTVER']
-        container: config['images']['cutadapt']
-        shell: """
-        cutadapt --nextseq-trim=2 --trim-n \
-            -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
-            -m {params.minlen} -b file:{params.fastawithadaptersetd} -j {threads} \
-            -o {output.outfq} {input.infq}
-        """
+rule trim_se:
+    """
+    Data-processing step to remove adapter sequences and perform quality trimming
+    prior to alignment the reference genome.  Adapters are composed of synthetic
+    sequences and should be removed prior to alignment.
+
+    The minimum length is set in `config['bin'][pfamily]['tool_parameters']['MINLEN']`.
+    However, this is overridden if `config['options']['small_rna']` is `true`
+    (which occurs when the `--small-rna` flag is used with `renee run`),
+    then the minimum length is set to 16.
+
+    @Input:
+        Raw FastQ file (scatter)
+    @Output:
+        Trimmed FastQ file
+    """
+    input:
+        infq=join(workpath,"{name}.R1.fastq.gz"),
+    output:
+        outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"))
+    log:
+        stdout=join(workpath,'logfiles','trim','{name}.cutadapt.out'),
+        stderr=join(workpath,'logfiles','trim','{name}.cutadapt.err')
+    params:
+        rname='pl:trim_se',
+        # Exposed Parameters: modify config/templates/tools.json to change defaults
+        fastawithadaptersetd=config['bin'][pfamily]['tool_parameters']['FASTAWITHADAPTERSETD'],
+        leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
+        trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
+        minlen=16 if config['options']['small_rna'] else config['bin'][pfamily]['tool_parameters']['MINLEN'],
+        min_reads=config['bin'][pfamily]['tool_parameters']['CUTADAPT_MIN_READS'],
+    threads: int(allocated("threads", "trim_se", cluster)),
+    envmodules: config['bin'][pfamily]['tool_versions']['CUTADAPTVER']
+    container: config['images']['cutadapt']
+    shell: """
+    cutadapt --nextseq-trim=2 --trim-n \
+        -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
+        -m {params.minlen} -b file:{params.fastawithadaptersetd} -j {threads} \
+        -o {output.outfq} {input.infq} \
+        > {log.stdout} 2> {log.stderr}
+    npassed=$(grep "passing filters" {log.stdout} | awk '{{print $5}}' | sed -s 's/,//g')
+    echo "number of reads passing filters: $npassed"
+    if [ $npassed -lt {params.min_reads} ]; then
+        echo "ERROR: too few reads are left after trimming."
+        exit 1
+    fi
+    """
 
 
 rule fastqc:
     """
     Quality-control step to assess sequencing quality of the raw data after removing
     adapter sequences. This step is run after trim_pe rule. FastQC is run after adapter
-    trimming to evalute if the adapter sequences were properly removed.
+    trimming to evaluate if the adapter sequences were properly removed.
     @Input:
         List of Trimmed FastQ files (gather)
     @Output:
@@ -204,7 +186,7 @@ rule kraken_se:
     @Input:
         Trimmed FastQ files (scatter)
     @Output:
-        Kraken logfile and interative krona report
+        Kraken logfile and interactive krona report
     """
     input:
         fq=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
@@ -224,14 +206,14 @@ rule kraken_se:
     container: config['images']['kraken']
     shell: """
     # Setups temporary directory for
-    # intermediate files with built-in 
+    # intermediate files with built-in
     # mechanism for deletion on exit
     if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
     tmp=$(mktemp -d -p "{params.tmpdir}")
     trap 'rm -rf "${{tmp}}"' EXIT
 
-    # Copy kraken2 db to /lscratch or temp 
-    # location to reduce filesytem strain
+    # Copy kraken2 db to /lscratch or temp
+    # location to reduce filesystem strain
     cp -rv {params.bacdb}/* ${{tmp}}/
     kraken2 --db ${{tmp}} \
         --threads {threads} --report {output.krakentaxa} \
@@ -253,7 +235,7 @@ if config['options']['star_2_pass_basic']:
         Data processing step to align reads against reference genome using STAR in
         per sample two-pass basic mode. STAR will perform the 1st pass mapping, then
         it will automatically extract splice junctions, insert them into the genome
-        index, and, finally, re-map all reads in the 2nd mapping pass. Agian, Splice
+        index, and, finally, re-map all reads in the 2nd mapping pass. Again, Splice
         junctions are detected at a per sample level.
         @Input:
             Trimmed FastQ files (scatter)
@@ -299,7 +281,7 @@ if config['options']['star_2_pass_basic']:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -346,7 +328,7 @@ elif config['options']['small_rna']:
     rule star_small:
         """
         Data processing step to align reads against reference genome using STAR using
-        ENCODE's recommendations for small RNA. 
+        ENCODE's recommendations for small RNA.
         Please see this links for more information:
         https://www.encodeproject.org/pipelines/ENCPL337CSA/
         https://github.com/ENCODE-DCC/long-rna-seq-pipeline/tree/master/dnanexus/small-rna
@@ -393,7 +375,7 @@ elif config['options']['small_rna']:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -479,7 +461,7 @@ else:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -592,7 +574,7 @@ else:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -664,7 +646,7 @@ rule rsem:
     container: config['images']['rsem']
     shell: """
     # Setups temporary directory for
-    # intermediate files with built-in 
+    # intermediate files with built-in
     # mechanism for deletion on exit
     if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
     tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -724,7 +706,7 @@ rule rnaseq_multiqc:
     Reporting step to aggregate sample statistics and quality-control information
     across all samples. This will be one of the last steps of the pipeline. The inputs
     listed here are to ensure that this step runs last. During runtime, MultiQC will
-    recurively crawl through the working directory and parse files that it supports.
+    recursively crawl through the working directory and parse files that it supports.
     @Input:
         List of files to ensure this step runs last (gather)
     @Output:

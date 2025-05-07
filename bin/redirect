@@ -1,21 +1,10 @@
 #!/usr/bin/env bash
-
-# This is a wrapper for spook python script
+# This is a wrapper for the pipeline script
 # It:
-# - loads require modules
+# - loads require modules and conda environments
 # - parses the variables directly to the python script
 
-
-function load_module_if_needed {
-	module_name=$1
-	x=$(type -P $module_name)
-	if [[ -z $x ]];then
-		module load $module_name
-	fi
-}
-
-SCRIPTNAME="$BASH_SOURCE"
-SCRIPTDIRNAME=$(readlink -f $(dirname "$SCRIPTNAME"))
+SCRIPTDIRNAME=$(readlink -f $(dirname "$BASH_SOURCE"))
 
 # add "bin" to PATH
 if [[ ":$PATH:" != *":${SCRIPTDIRNAME}:"* ]];then
@@ -23,57 +12,21 @@ if [[ ":$PATH:" != *":${SCRIPTDIRNAME}:"* ]];then
 fi
 
 TOOLDIR=$(dirname "$SCRIPTDIRNAME")
-TOOLNAME=$(basename "$SCRIPTNAME")
-# echo $TOOLNAME
 
 # find out if you are running on biowulf or frce
-nbiowulf=$(scontrol show config | grep -i -c biowulf)
-if [[ "$nbiowulf" > 0 ]];then ISBIOWULF=true; else ISBIOWULF=false;fi
-nfrce=$(scontrol show config | grep -i -c fsitgl)
-if [[ "$nfrce" > 0 ]];then ISFRCE=true; else ISFRCE=false;fi
-
+hpc_name=$(scontrol show config | grep ClusterName | sed "s/^.*= //")
 # load conda
-if [[ $ISBIOWULF == true ]];then
-       . "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh"
-	conda activate py311
-elif [[ $ISFRCE == true ]];then
-       . "/mnt/projects/CCBR-Pipelines/resources/miniconda3/etc/profile.d/conda.sh"
-	conda activate py311
+if [[ $hpc_name == biowulf ]]; then
+	module load singularity snakemake/7
+elif [[ $hpc_name == fnlcr ]]; then
+	module load singularity
+	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
 else
 	echo "You are NOT running on BIOWULF or on FRCE"
-	echo "Please make sure that:"
-	echo "  - py311 conda environment is activated"
-	echo "  - singularity is in PATH"
-	echo "  - snakemake is in PATH"
-fi
-# if not on biowulf or frce then
-# use py311.environment.yml in resources folder to create the py311 conda environment
-# and load py311
-
-# load required modules
-# if running somewhere other than biowulf or frce, then ensure that
-#   - singularity
-#   - snakemake
-# are in PATH
-if [[ $ISBIOWULF == true ]];then
-	# module purge
-	load_module_if_needed singularity
-	load_module_if_needed snakemake
-elif [[ $ISFRCE == true ]];then
-# snakemake module on FRCE does not work as expected
-# use the conda installed version of snakemake instead
-	# module purge
-	load_module_if_needed load singularity
-	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
+	echo "Please make sure that the following tools are available:"
+	echo "  - python >= 3.11"
+	echo "  - singularity "
+	echo "  - snakemake = 7"
 fi
 
-# check if singularity, snakemake are in PATH
-for tool in singularity snakemake;do
-	x=$(type -P $tool)
-	if [[ -z $x ]]; then # is $x blank
-		echo "$tool is not it path! Exiting."
-		exit
-	fi
-done
-
-${TOOLDIR}/${TOOLNAME} "$@" || true
+${TOOLDIR}/main.py "$@" || true

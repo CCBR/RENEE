@@ -80,6 +80,9 @@ rule trim_pe:
         #out2=temp(join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"))
         out1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
         out2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz")
+    log:
+        stdout=join(workpath,'logfiles','trim','{name}.cutadapt.out'),
+        stderr=join(workpath,'logfiles','trim','{name}.cutadapt.err')
     params:
         rname='pl:trim_pe',
         # Exposed Parameters: modify config/templates/tools.json to change defaults
@@ -87,6 +90,7 @@ rule trim_pe:
         leadingquality=config['bin'][pfamily]['tool_parameters']['LEADINGQUALITY'],
         trailingquality=config['bin'][pfamily]['tool_parameters']['TRAILINGQUALITY'],
         minlen=config['bin'][pfamily]['tool_parameters']['MINLEN'],
+        min_reads=config['bin'][pfamily]['tool_parameters']['CUTADAPT_MIN_READS'],
     threads: int(allocated("threads", "trim_pe", cluster)),
     envmodules: config['bin'][pfamily]['tool_versions']['CUTADAPTVER']
     container: config['images']['cutadapt']
@@ -95,7 +99,15 @@ rule trim_pe:
         -n 5 -O 5 -q {params.leadingquality},{params.trailingquality} \
         -m {params.minlen}:{params.minlen} \
         -b file:{params.fastawithadaptersetd} -B file:{params.fastawithadaptersetd} \
-        -j {threads} -o {output.out1} -p {output.out2} {input.file1} {input.file2}
+        -j {threads} -o {output.out1} -p {output.out2} \
+        {input.file1} {input.file2} \
+        > {log.stdout} 2> {log.stderr}
+    npassed=$(grep "passing filters" {log.stdout} | awk '{{print $5}}' | sed -s 's/,//g')
+    echo "number of reads passing filters: $npassed"
+    if [ $npassed -lt {params.min_reads} ]; then
+        echo "ERROR: too few reads are left after trimming."
+        exit 1
+    fi
     """
 
 
@@ -916,9 +928,8 @@ rule rna_report:
         html=join(workpath,"Reports","RNA_Report.html")
     params:
         rname='pl:rna_report',
-        rwrapper=join("workflow", "scripts", "rNA.R"),
-        rmarkdown=join("workflow", "scripts", "rNA_flowcells.Rmd"),
-        odir=join(workpath,"Reports"),
+        rwrapper=join(workpath,"workflow", "scripts", "rNA.R"),
+        rmarkdown=join(workpath,"workflow", "scripts", "rNA_flowcells.Rmd"),
     envmodules:
         config['bin'][pfamily]['tool_versions']['RVER']
     container: config['images']['rna']
@@ -932,6 +943,5 @@ rule rna_report:
         -r {input.counts} \
         -t {input.tins} \
         -q {input.qc} \
-        -o {params.odir} \
-        -f RNA_Report.html
+        -f {output.html}
     """

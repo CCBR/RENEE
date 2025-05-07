@@ -1,0 +1,130 @@
+{
+    "__default__": {
+        "gres": "lscratch:128",
+        "mem": "8g",
+        "partition": "norm",
+        "threads": "1",
+        "time": "4:00:00",
+        "name": "{rule}.{wildcards}",
+        "output": "logfiles/slurmfiles/${{SLURM_JOBID}}.%j.{rule}.{wildcards}.out",
+        "error": "logfiles/slurmfiles/${{SLURM_JOBID}}.%j.{rule}.{wildcards}.err"
+    },
+    "bbmerge": {
+        "mem": "64g",
+        "time": "1-00:00:00"
+    },
+    "fastqc": {
+        "threads": "32",
+        "time": "1-00:00:00"
+    },
+    "rawfastqc": {
+        "threads": "32",
+        "time": "1-00:00:00"
+    },
+    "fastq_screen": {
+        "threads": "32",
+        "time": "2-00:00:00",
+        "mem": "12g"
+    },
+    "kraken_pe": {
+        "cpus-per-task": "32",
+        "gres": "lscratch:256",
+        "mem": "110g",
+        "time": "1-00:00:00"
+    },
+    "kraken_se": {
+        "cpus-per-task": "32",
+        "gres": "lscratch:256",
+        "mem": "110g",
+        "time": "1-00:00:00"
+    },
+    "pca": {
+        "mem": "110g",
+        "threads": "2"
+    },
+    "picard": {
+        "gres": "lscratch:256",
+        "mem": "110g",
+        "threads": "6"
+    },
+    "qualibam": {
+        "threads": "16",
+        "time": "1-00:00:00"
+    },
+    "qualimapinfo": {
+        "mem": "20g",
+        "time": "1:00:00"
+    },
+    "rsem": {
+        "gres": "lscratch:500",
+        "mem": "48g",
+        "threads": "32",
+        "time": "1-00:00:00"
+    },
+    "star1p": {
+        "gres": "lscratch:256",
+        "mem": "110g",
+        "threads": "32",
+        "time": "2-00:00:00"
+    },
+    "star2p": {
+        "gres": "lscratch:256",
+        "mem": "110g",
+        "threads": "32",
+        "time": "2-00:00:00"
+    },
+    "star_basic": {
+        "gres": "lscratch:256",
+        "mem": "110g",
+        "threads": "32",
+        "time": "3-00:00:00"
+    },
+    "star_small": {
+        "mem": "110g",
+        "threads": "32",
+        "time": "2-00:00:00"
+    },
+    "star_rl": {
+        "mem": "48g",
+        "gres": "lscratch:128",
+        "threads": "32",
+        "time": "12:00:00"
+    },
+    "star_genome": {
+        "mem": "48g",
+        "gres": "lscratch:128",
+        "threads": "32",
+        "time": "12:00:00"
+    },
+    "arriba": {
+        "gres": "lscratch:256",
+        "mem": "110g",
+        "threads": "32",
+        "time": "2-00:00:00"
+    },
+    "stats": {
+        "gres": "lscratch:256",
+        "mem": "110g",
+        "threads": "4"
+    },
+    "subread": {
+        "gres": "lscratch:500",
+        "threads": "16",
+        "time": "1-00:00:00"
+    },
+    "subreadoverlap": {
+        "gres": "lscratch:500",
+        "threads": "16",
+        "time": "1-00:00:00"
+    },
+    "trim_pe": {
+        "threads": "32"
+    },
+    "trim_se": {
+        "threads": "32"
+    },
+    "reformat_gtf": {
+        "mem": "20g",
+        "time": "1:00:00"
+    }
+}

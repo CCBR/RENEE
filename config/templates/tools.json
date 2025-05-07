@@ -21,7 +21,7 @@
                 "PYTHONVER": "python/3.5",
                 "QUALIMAPVER": "qualimap/2.2.1",
                 "RSEMVER": "rsem/1.3.0",
-                "RSEQCVER": "rseqc/2.6.4",
+                "RSEQCVER": "rseqc/4.0.0",
                 "RVER": "R/3.5",
                 "SAMTOOLSVER": "samtools/1.6",
                 "STARVER": "STAR/2.7.6a",
@@ -32,11 +32,12 @@
                 "FASTAWITHADAPTERSETD": "resources/TruSeq_and_nextera_adapters.consolidated.fa",
                 "FASTQ_SCREEN_CONFIG": "resources/fastq_screen.conf",
                 "FASTQ_SCREEN_CONFIG2": "resources/fastq_screen_2.conf",
-                "KRAKENBACDB": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/shared_resources/20180907_standard_kraken2",
+                "KRAKENBACDB": "shared_resources/20180907_standard_kraken2",
                 "Trimsettings": "---------------------------- TRIMMOMATIC parameters ----------------------------------------------------------",
                 "LEADINGQUALITY": 10,
                 "TRAILINGQUALITY": 10,
-                "MINLEN": 35
+                "MINLEN": 35,
+                "CUTADAPT_MIN_READS": 100
             },
             "ADAPTER1": "-",
             "ADAPTER2": "",
@@ -58,7 +59,8 @@
             "SAMSTRANDFIELD": "None",
             "STARSTRANDCOL": 4,
             "WIGSTRAND": "Stranded",
-            "WIGTYPE": "None"
+            "WIGTYPE": "None",
+            "ccbr_tools_path": "/data/CCBR_Pipeliner/Tools/ccbr_tools/v0.2/bin/"
         }
     }
 }

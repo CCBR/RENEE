@@ -22,13 +22,13 @@ samples  = config['project']['groups']['rsamps'] # sample basenames
 pfamily  = config['project']['pfamily']          # rnaseq
 workpath = config['project']['workpath']         # Parent Output directory
 tmpdir   = config['options']['tmp_dir']          # Temporary directory
-
+version  = config['project']['version']         # Workflow version
 # Read in resource information,
 # containing information about
 # threads, mem, walltimes, etc.
 # TODO: Add handler for when the
 # mode is set to local.
-with open(join('resources', 'cluster.json')) as fh:
+with open(join('config', 'cluster.json')) as fh:
     cluster = json.load(fh)
 
 # Check for SE or PE FastQ files:
@@ -139,12 +139,8 @@ if paired_end:
             expand(join(workpath,degall_dir,"{name}.RSEM.isoforms.results"),name=samples),
             join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
             join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-            #join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
-            #join(workpath,star_dir,"sampletable.txt"),
-
-            # PCA Reports
-            # expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
-
+            join(workpath, degall_dir, "RSEM.genes.expected_counts.all_samples.matrix"),
+            join(workpath, degall_dir, "RSEM.isoforms.expected_counts.all_samples.matrix"),
             # MultiQC
             join(workpath,"Reports","multiqc_report.html"),
 
@@ -202,11 +198,8 @@ elif not paired_end:
             expand(join(workpath,degall_dir,"{name}.RSEM.isoforms.results"),name=samples),
             join(workpath,degall_dir,"RSEM.genes.FPKM.all_samples.txt"),
             join(workpath,degall_dir,"RSEM.isoforms.FPKM.all_samples.txt"),
-            #join(workpath,degall_dir,"RawCountFile_RSEM_genes_filtered.txt"),
-            #join(workpath,star_dir,"sampletable.txt"),
-
-            # PCA Report
-            # expand(join(workpath,degall_dir,"PcaReport_{dtype}.html"),dtype=dtypes),
+            join(workpath, degall_dir, "RSEM.genes.expected_counts.all_samples.matrix"),
+            join(workpath, degall_dir, "RSEM.isoforms.expected_counts.all_samples.matrix"),
 
             # MultiQC
             join(workpath,"Reports","multiqc_report.html"),
@@ -228,26 +221,26 @@ include: "rules/group-info.smk"
 if config['options']['create_nidap_folder']:
     include: "rules/nidap.smk"
 
-# create jobby tables
-jobby_cmd = "run_jobby_on_snakemake_log " + join('logfiles', 'snakemake.log') + " | tee " + join('logfiles', 'snakemake.log.jobby') + " | cut -f2,3,18 > " + join('logfiles', 'snakemake.log.jobby.short')
-spook_cmd = "spooker " + workpath + " RENEE | tee " + join('logfiles', 'spooker.log')
+on_complete = f"""
+for cmd in spooker run_jobby_on_snakemake_log; do
+    if ! command -v $cmd 2>&1 >/dev/null; then
+        export PATH="$PATH:{config['bin']['rnaseq']['ccbr_tools_path']}"
+    fi
+done
+run_jobby_on_snakemake_log logfiles/snakemake.log | tee logfiles/snakemake.log.jobby | cut -f2,3,18 > logfiles/snakemake.log.jobby.short
+spooker {workpath} RENEE {version} | tee logfiles/spooker.log
+"""
 
 onsuccess:
-    #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print("OnSuccess")
     shell("printenv")
     shell("module list")
-    print(jobby_cmd)
-    shell(jobby_cmd)
-    print(spook_cmd)
-    shell(spook_cmd)
+    print(on_complete)
+    shell(on_complete)
 
 onerror:
-    #subprocess.run(shlex.split(jobby_cmd),capture_output=False,shell=False,text=True)
     print("OnError")
     shell("printenv")
     shell("module list")
-    print(jobby_cmd)
-    shell(jobby_cmd)
-    print(spook_cmd)
-    shell(spook_cmd)
+    print(on_complete)
+    shell(on_complete)

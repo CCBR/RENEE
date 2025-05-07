@@ -11,7 +11,7 @@ rule nidap:
         outdir=join(workpath,"NIDAP")
     shell:"""
 set -exo pipefail
-if [ -d {params.outdir} ];then rm -rf {params.outdir};fi 
+if [ -d {params.outdir} ];then rm -rf {params.outdir};fi
 mkdir -p {params.outdir}
 cd {params.outdir}
 for input in {input};do

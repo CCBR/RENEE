@@ -4,7 +4,7 @@ set -euo pipefail
 __VERSION__="1.3.0"
 
 function usage() { cat << EOF
-download_dme_files: a utility for dowloading file(s) from HPC DME.
+download_dme_files: a utility for downloading file(s) from HPC DME.
 
 Usage:
   $ download_dme_files [-h] [-v] \\
@@ -17,12 +17,12 @@ Usage:
 Synopsis:
   This script provides a high level wrapper to the HPC DME API.
 Given a list of input dme file paths and an API token, it will
-download those files locally to the user provided output path. 
+download those files locally to the user provided output path.
 
 Required Arguments:
-  -f, --files  FILE   [Type: Str]  Files to download from DME. 
+  -f, --files  FILE   [Type: Str]  Files to download from DME.
                                      One or more dme file paths can
-                                     be provided. Multiple files can 
+                                     be provided. Multiple files can
                                      be downloaded at once by providing
                                      a quoted space separated list of files.
   -o, --output OUTPUT [Type: Path] Path to an output directory.
@@ -30,23 +30,23 @@ Required Arguments:
                                      downloaded. If the provided output
                                      directory does not exist, it will be
                                      initialized automatically.
-  -t, --token  TOKEN  [Type: Str]  API token for HPC DME. A text file 
+  -t, --token  TOKEN  [Type: Str]  API token for HPC DME. A text file
                                      containing an API token for DME
-                                     can be provided, or the API token 
+                                     can be provided, or the API token
                                      can be provided as a string.
 Options:
-  -r, --rid    RID    [Type: Str]  Request Identifer. This is an optional 
-                                     string to help track a given request. 
-                                     This identifer is appended to any log 
-                                     files. If a request identifer is not 
-                                     provided, a request identifer will be 
-                                     generated from an MD5 checksum based 
-                                     on the time of the request and the 
-                                     other user provided options. 
-  -p, --proxy PROXY   [Type: Str]  HTTPS Proxy. This option can be used to 
+  -r, --rid    RID    [Type: Str]  Request identifier. This is an optional
+                                     string to help track a given request.
+                                     This identifier is appended to any log
+                                     files. If a request identifier is not
+                                     provided, a request identifier will be
+                                     generated from an MD5 checksum based
+                                     on the time of the request and the
+                                     other user provided options.
+  -p, --proxy PROXY   [Type: Str]  HTTPS Proxy. This option can be used to
                                      set or override the following environment
-                                     variable: https_proxy. By default, a 
-                                     https proxy will not be utilized unless 
+                                     variable: https_proxy. By default, a
+                                     https proxy will not be utilized unless
                                      it is inherited from a parent shell.
   -h, --help          [Type: Bool] Displays usage and help information.
   -v, --version       [Type: Bool] Displays version information.
@@ -85,8 +85,8 @@ function parser() {
       -f  | --files)  provided "$key" "${2:-}"; Arguments["f"]="$2"; shift; shift;;
       -o  | --output) provided "$key" "${2:-}"; Arguments["o"]="$2"; shift; shift;;
       -t  | --token)  provided "$key" "${2:-}"; Arguments["t"]="$2"; shift; shift;;
-      -r  | --rid)    provided "$key" "${2:-}"; Arguments["r"]="$2"; shift; shift;;  
-      -p  | --proxy)  provided "$key" "${2:-}"; Arguments["p"]="$2"; shift; shift;; 
+      -r  | --rid)    provided "$key" "${2:-}"; Arguments["r"]="$2"; shift; shift;;
+      -p  | --proxy)  provided "$key" "${2:-}"; Arguments["p"]="$2"; shift; shift;;
       -*  | --*) err "Error: Failed to parse unsupported argument: '${key}'."; usage && exit 1;;
       *) err "Error: Failed to parse unrecognized argument: '${key}'. Do any of your inputs have spaces?"; usage && exit 1;;
     esac
@@ -128,9 +128,9 @@ function check(){
 function grab(){
   # Grabs the contents of a file
   # else returns input that was provided
-  # to allow for flexiable API token input 
-  # so a user can directly provide a token 
-  # as a string or point to a file containing 
+  # to allow for flexiable API token input
+  # so a user can directly provide a token
+  # as a string or point to a file containing
   # the token
   # INPUT $1 = token file or string
 
@@ -148,11 +148,11 @@ function grab(){
 
 
 function retry() {
-  # Tries to run a cmd 5 times before failing 
+  # Tries to run a cmd 5 times before failing
   # If a command is successful, it will break out of attempt loop
-  # Failed attempts are padding with the following exponential 
+  # Failed attempts are padding with the following exponential
   # back-off strategy {4, 16, 64, 256, 1024} in seconds
-  # @INPUTS "$@"" = cmd to run 
+  # @INPUTS "$@"" = cmd to run
   # @CALLS timestamp() to log time of encountered error
   # @CALLS err() to redirect logging information to stderr
   # @CALLS fatal() if command cannot be run in 5 attempts
@@ -161,9 +161,9 @@ function retry() {
   local max=5
   local attempt=true # flag for while loop
   while $attempt; do
-    # Attempt command and break if successful 
+    # Attempt command and break if successful
     "$@" && attempt=false || {
-      # Try again up to 5 times 
+      # Try again up to 5 times
       if [[ $n -le $max ]]; then
         err "[$(timestamp)] Command failed: $@"
         delay=$(( 4**$n ))
@@ -180,15 +180,15 @@ function retry() {
 
 function require(){
   # Requires an executable is in $PATH
-  # as a last resort it will attempt to load 
+  # as a last resort it will attempt to load
   # the executable as a module. If an exe is
   # not in $PATH raises fatal().
   # INPUT $1 = executable to check
 
   # Check if $1 in $PATH
   # If not, try to module load $1 as a last resort
-  command -V "$1" &> /dev/null || { 
-    command -V module &> /dev/null && 
+  command -V "$1" &> /dev/null || {
+    command -V module &> /dev/null &&
     module purge && module load "$1"
   } || fatal "Error: failed to find or load '$1', not installed on target system."
 
@@ -196,46 +196,46 @@ function require(){
 
 
 function _id(){
-  # Generates a default request identifer 
+  # Generates a default request identifier
   # if the -r or --rid option is not provided.
-  # The default identifer is generated by generating
-  # an md5 checksum of the required user inputs and 
+  # The default identifier is generated by generating
+  # an md5 checksum of the required user inputs and
   # the timestamp
-  
+
   # List of required arguments
   local features
-  local identifer
+  local identifier
   local required=("f" "o" "t" "$(timestamp)")
   for arg in "${required[@]}"; do
     value=${Arguments[${arg}]:-}
     features+="${value}"
   done
-  
-  identifer=$(md5sum <<< "${features}" | awk '{print $1}')
 
-  echo "${identifer}"
-} 
+  identifier=$(md5sum <<< "${features}" | awk '{print $1}')
+
+  echo "${identifier}"
+}
 
 
 function _download(){
-  # Downloads a file from HPC DME 
+  # Downloads a file from HPC DME
   # INPUT $1 = File to download from DME
   # INPUT $2 = Local output directory
   # INPUT $3 = DME API token
   # INPUT $4 = Request ID, see _id() for default
   # INPUT $5 = HTTPS Proxy, defaults to no proxy set
-  # @CALLS require() to enfore cURL installation
+  # @CALLS require() to enforce cURL installation
   # @CALLS timestamp() to log time of file download
-  # @CALLS fatal() if curl returns a non-200 http response 
+  # @CALLS fatal() if curl returns a non-200 http response
 
   # Require curl is installed
   require curl
 
   # Check if a proxy needs to be set
   if [[ ! -z "${5:-}" ]]; then export https_proxy="${5}"; fi
-  
+
   # Try to download each file from DME with 5 max attempts
-  for file in ${1// /$'\t'}; do 
+  for file in ${1// /$'\t'}; do
     local fname="$(basename "$file")"
     echo "[$(timestamp) @ ${4}] Downloading '${file}' from HPC DME to '$2/${fname}'"
     response=$(retry \
@@ -251,10 +251,10 @@ function _download(){
                   -w "%{http_code}"
     )
 
-    # Check http response code for any failures 
-    if [ $response != "200" ]; then 
+    # Check http response code for any failures
+    if [ $response != "200" ]; then
       fatal "Error: download request for '$file' failed with http response of '$response'!"
-    fi 
+    fi
 
   done
 }
@@ -278,11 +278,11 @@ function main(){
   requestid="${Arguments[r]:-$(_id)}"
   proxy="${Arguments[p]:-}"
 
-  # Download files from DME to local output directory 
+  # Download files from DME to local output directory
   # INPUT $1 = Files to download from DME
   # INPUT $2 = Local output directory
   # INPUT $3 = DME API token
-  # INPUT $4 = Request Identifer, see _id() for default
+  # INPUT $4 = Request identifier, see _id() for default
   # INPUT $5 = Optional HTTPS proxy server
   _download "${dmefiles}" "${outdir}" "${token}" "${requestid}" "${proxy}"
 

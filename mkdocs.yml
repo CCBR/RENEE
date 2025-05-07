@@ -3,7 +3,7 @@ site_name: RENEE Documentation
 site_author: CCBR
 site_description: >-
   RENEE is an open-source, reproducible, and scalable best
-  practices pipeline for analyzing RNA-sequencing data. 
+  practices pipeline for analyzing RNA-sequencing data.
 
 # Repository
 repo_name: CCBR/RENEE
@@ -11,38 +11,20 @@ repo_url: https://github.com/CCBR/RENEE
 edit_uri: https://github.com/CCBR/RENEE/edit/master/docs/
 
 # Copyright
-copyright: Copyright &copy; 2023 CCBR
+copyright: Copyright &copy; 2023-{{ now().year }} CCBR
 
 # Configuration
 theme:
-  name: material
-  features:
-    - navigation.tabs
-    - navigation.top
-    - toc.integrate 
-  palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/toggle-switch-off-outline
-        name: Switch to dark mode
-    - scheme: slate
-      primary: red
-      accent: red
-      toggle:
-        icon: material/toggle-switch
-        name: Switch to light mode
-  logo: assets/icons/doc-book.svg
-  favicon: assets/favicon/favicon.ico
-
+  name: readthedocs
+  locale: en
+  custom_dir: docs/overrides
+  #
 # Plugins
 plugins:
   - search
   - git-revision-date
   - minify:
       minify_html: true
-
 
 # Customization
 extra:
@@ -53,9 +35,13 @@ extra:
       link: https://github.com/CCBR
     - icon: fontawesome/brands/docker
       link: https://hub.docker.com/orgs/nciccbr/repositories
-  version:
-    provider: mike
+  # version:
+  #   provider: mike
 
+extra_css:
+  - css/custom.css
+extra_javascript:
+  - js/custom.js
 
 # Extensions
 markdown_extensions:
@@ -68,21 +54,12 @@ markdown_extensions:
       permalink: true
   - pymdownx.arithmatex:
       generic: true
-  - pymdownx.betterem:
-      smart_enable: all
   - pymdownx.caret
   - pymdownx.critic
   - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.highlight
   - pymdownx.inlinehilite
   - pymdownx.keys
-  - pymdownx.magiclink:
-      repo_url_shorthand: true
-      user: squidfunk
-      repo: mkdocs-material
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.snippets:
@@ -98,13 +75,16 @@ nav:
   - About: index.md
   - Theory: RNA-seq/Theory.md
   - Getting started: RNA-seq/TLDR-RNA-seq.md
-  - Usage: 
-    - run: RNA-seq/run.md
-    - build: RNA-seq/build.md
-    - cache: RNA-seq/cache.md
-    - unlock: RNA-seq/unlock.md
+  - Command Line:
+      - run: RNA-seq/run.md
+      - build: RNA-seq/build.md
+      - cache: RNA-seq/cache.md
+      - unlock: RNA-seq/unlock.md
+  - Graphical Interface: RNA-seq/gui.md
+  - Expected Output: RNA-seq/output.md
   - Resources: RNA-seq/Resources.md
   - FAQ:
-    - General Questions: general-questions.md 
-    - Troubleshooting: troubleshooting.md
+      - General Questions: general-questions.md
+      - Troubleshooting: troubleshooting.md
+      - How to contribute: contributing.md
   - License: license.md

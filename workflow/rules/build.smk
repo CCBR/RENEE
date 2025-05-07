@@ -3,26 +3,26 @@ import json
 
 # Helper Functions
 def allocated(resource, rule, lookup, default="__default__"):
-    """Pulls resource information for a given rule. If a rule does not have any information 
+    """Pulls resource information for a given rule. If a rule does not have any information
     for a given resource type, then it will pull from the default. Information is pulled from
-    definitions in the cluster.json (which is used a job submission). This ensures that any 
+    definitions in the cluster.json (which is used a job submission). This ensures that any
     resources used at runtime mirror the resources that were allocated.
     :param resource <str>: resource type to look in cluster.json (i.e. threads, mem, time, gres)
     :param rule <str>: rule to lookup its information
     :param lookup <dict>: Lookup containing allocation information (i.e. cluster.json)
     :param default <str>: default information to use if rule information cannot be found
-    :return allocation <str>: 
+    :return allocation <str>:
         allocation information for a given resource type for a given rule
     """
 
-    try: 
+    try:
         # Try to get allocation information
         # for a given rule
         allocation = lookup[rule][resource]
     except KeyError:
         # Use default allocation information
         allocation = lookup[default][resource]
-    
+
     return allocation
 
 
@@ -31,11 +31,11 @@ def provided(samplelist, condition):
     Determines if optional rules should run. If an empty list is provided to rule all,
     snakemake will not try to generate that set of target files. If a given condition
     is not met (i.e. False) then it will not try to run that rule.
-    """   
+    """
     if not str_bool(condition):
-        # If condition is False, 
-        # returns an empty list 
-        # to prevent rule from 
+        # If condition is False,
+        # returns an empty list
+        # to prevent rule from
         # running
         samplelist = []
     return samplelist
@@ -43,9 +43,9 @@ def provided(samplelist, condition):
 
 def str_bool(s):
     """Converts a string to boolean. It is dangerous to try to
-    typecast a string into a boolean value using the built-in 
+    typecast a string into a boolean value using the built-in
     `bool()` function. This function avoids any issues that can
-    arise when using `bool()`. 
+    arise when using `bool()`.
     Example:
       boolean('True') returns True
       boolean('False') returns False
@@ -64,35 +64,28 @@ def str_bool(s):
 
 
 # Global Workflow variables
-configfile:join("config","build.yml")
+configfile: join("config","build.yml")
 GENOME=config["GENOME"].strip().replace(' ', '')
 # READLENGTHS=config["READLENGTHS"]
 REFFA=config["REFFA"]
-GTFFILE=config["GTFFILE"]
 GTFVER=config["GTFVER"].strip().replace(' ', '')
 OUTDIR=config["OUTDIR"]
+GTFFILE = join(OUTDIR, basename(config["GTFFILE"]) + '.reformat.gtf')
 SCRIPTSDIR=config["SCRIPTSDIR"]
 tmpdir=config["TMP_DIR"]
 workdir:OUTDIR
 
 # Read in resource information,
-# containing information about 
+# containing information about
 # threads, mem, walltimes, etc.
 # TODO: Add handler for when the
 # mode is set to local.
-with open(join(OUTDIR, 'resources', 'build_cluster.json')) as fh:
+with open(join(OUTDIR, 'config', 'cluster.json')) as fh:
     cluster = json.load(fh)
 
-# Ensures backwards compatibility 
-try:
-    SMALL_GENOME=config["SMALL_GENOME"]
-except KeyError:
-    SMALL_GENOME="False"
-
-try:
-    SHARED_PATH=config["SHARED_RESOURCES"]
-except KeyError:
-    SHARED_PATH="None"
+# Ensures backwards compatibility
+SMALL_GENOME=config["SMALL_GENOME"] if "SMALL_GENOME" in config else "False"
+SHARED_PATH=config["SHARED_RESOURCES"] if "SHARED_RESOURCES" in config else "None"
 
 
 rule all:
@@ -134,6 +127,21 @@ rule all:
         # Kraken2 Database,
         # conditional runs with --shared-resources option
         provided(expand(join(SHARED_PATH, "20180907_standard_kraken2", "{ref}.k2d"), ref=["hash", "opts", "taxo"]), SHARED_PATH),
+
+
+rule reformat_gtf:
+    """
+    Repairs GTF file to ensure it is in a format that is compatible with qualimap.
+    All exons must have a gene_type or gene_biotype column.
+    """
+    input:
+        gtf = config["GTFFILE"]
+    output:
+        gtf = GTFFILE
+    container: config['images']['build_gtf']
+    script:
+        join(SCRIPTSDIR, "repair_gtf.py")
+
 
 
 rule rsem:
@@ -236,7 +244,7 @@ rule star_rl:
     container: config['images']['arriba']
     shell: """
     # Setups temporary directory for
-    # intermediate files with built-in 
+    # intermediate files with built-in
     # mechanism for deletion on exit
     if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
     tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -258,28 +266,28 @@ rule star_rl:
 
 
 if SMALL_GENOME == "True":
-    # Build a index that is optimized for 
-    # small genomes. For small genomes, the 
-    # parameter --genomeSAindexNbases must 
-    # to be scaled down, with a typical value 
-    # of min(14, log2(GenomeLength)/2 - 1). 
-    # For example, for 1 megaBase genome, this 
-    # is equal to 9, for 100 kiloBase genome, 
+    # Build a index that is optimized for
+    # small genomes. For small genomes, the
+    # parameter --genomeSAindexNbases must
+    # to be scaled down, with a typical value
+    # of min(14, log2(GenomeLength)/2 - 1).
+    # For example, for 1 megaBase genome, this
+    # is equal to 9, for 100 kiloBase genome,
     # this is equal to 7. Using this guidance
     # from the author of STAR, we will dynamically
-    # determine what the optimal value should be 
+    # determine what the optimal value should be
     # based on the provided reference genome size.
     rule star_genome:
         """
         Builds STAR Index to align reads against reference genome without the
         GTF or readlength provided. This index only contain information pertaining
-        to the asssembly or reference genome in FASTA format. This indice represents a
+        to the assembly or reference genome in FASTA format. This indice represents a
         base index from which processing annotations from a GTF and insert junctions
         on the fly. This has the advantage of saving diskspace as an index will not be
         created for a list of predefined readlengths. This rule replaces star_rl above.
-        This rule dynamically determine the optimal --genomeSAindexNbases value before 
-        running STAR generateGenome based on the size of the provided reference. This is 
-        needed for very small reference genomes. 
+        This rule dynamically determine the optimal --genomeSAindexNbases value before
+        running STAR generateGenome based on the size of the provided reference. This is
+        needed for very small reference genomes.
         @Input:
             Genomic FASTA file
         @Output:
@@ -301,7 +309,7 @@ if SMALL_GENOME == "True":
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -332,7 +340,7 @@ else:
         """
         Builds STAR Index to align reads against reference genome without the
         GTF or readlength provided. This index only contain information pertaining
-        to the asssembly or reference genome in FASTA format. This indice represents a
+        to the assembly or reference genome in FASTA format. This indice represents a
         base index from which processing annotations from a GTF and insert junctions
         on the fly. This has the advantage of saving diskspace as an index will not be
         created for a list of predefined readlengths. This rule replaces star_rl above.
@@ -357,7 +365,7 @@ else:
         container: config['images']['arriba']
         shell: """
         # Setups temporary directory for
-        # intermediate files with built-in 
+        # intermediate files with built-in
         # mechanism for deletion on exit
         if [ ! -d "{params.tmpdir}" ]; then mkdir -p "{params.tmpdir}"; fi
         tmp=$(mktemp -d -p "{params.tmpdir}")
@@ -379,7 +387,7 @@ rule rRNA_list:
     estimate rRNA content or abundance. rRNA can make up a significant proportion
     of an RNA-seq library if not properly depleted either through poly-selection
     or ribosomal depletion. Samples with very high rRNA content could signal an issue
-    occured with library prepartion.
+    occurred with library preparation.
     @Input:
         Genomic FASTA file
         Annotation file in GTF format
@@ -450,7 +458,7 @@ rule karyo_beds:
 
 rule tin_ref:
     """
-    Builds RSeQC tin.py reference file containing all canocical protein coding genes.
+    Builds RSeQC tin.py reference file containing all canonical protein coding genes.
     @Input:
         Annotation file in GTF format
     @Output:
@@ -512,23 +520,25 @@ rule qualimapinfo:
         gtf=GTFFILE,
     output:
         "qualimap_info.txt",
+    log:
+        stderr="qualimap_error.log",
     params:
         rname='bl:qualimapinfo',
         generate_qualimap=join(SCRIPTSDIR, "generate_qualimap_ref.py"),
-    container: config['images']['build_rnaseq']
+    container: config['images']['build_gtf']
     shell: """
     python3 {params.generate_qualimap} \\
         -g {input.gtf} \\
         -f {input.fa} \\
         -o {output} \\
-        --ignore-strange-chrom 2> qualimap_error.log
+        --ignore-strange-chrom 2> {log.stderr}
     """
 
 
 rule fqscreen_db1:
     """
     Downloads fastq screen bowtie2 databases from the OpenOmics public resource bundle.
-    Currently, there are fastq screen indices for the following organisms: hg19, mm9, 
+    Currently, there are fastq screen indices for the following organisms: hg19, mm9,
     bateria, fungi, virus, univec vector sequences, and rRNA.
 
     @Input:
@@ -564,7 +574,7 @@ rule fqscreen_db1:
 rule fqscreen_db2:
     """
     Downloads fastq screen bowtie2 databases from the OpenOmics public resource bundle.
-    Currently, there are fastq screen indices for the following organisms: hg19, mm9, 
+    Currently, there are fastq screen indices for the following organisms: hg19, mm9,
     bateria, fungi, virus, univec vector sequences, and rRNA.
 
     @Input:
@@ -729,4 +739,3 @@ rule jsonmaker:
 
         with open(output.json, 'w') as fp:
             json.dump(refdict, fp, indent=4)
-
