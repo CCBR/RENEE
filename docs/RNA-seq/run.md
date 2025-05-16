@@ -160,7 +160,7 @@ Each of the following arguments are optional and do not need to be provided.
 >
 > Uses a local cache of SIFs on the filesystem. This SIF cache can be shared across users if permissions are set correctly. If a SIF does not exist in the SIF cache, the image will be pulled from Dockerhub and a warning message will be displayed. The `renee cache` subcommand can be used to create a local SIF cache. Please see `renee cache` for more information. This command is extremely useful for avoiding DockerHub pull rate limits. It also remove any potential errors that could occur due to network issues or DockerHub being temporarily unavailable. We recommend running RENEE with this option when ever possible.
 >
-> **_Example:_** `--singularity-cache /data/$USER/SIFs`
+> **_Example:_** `--sif-cache /data/$USER/SIFs`
 
 ---
 
