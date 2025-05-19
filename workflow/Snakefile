@@ -228,7 +228,6 @@ for cmd in spooker run_jobby_on_snakemake_log; do
     fi
 done
 jobby logfiles/snakemake.log --tsv | tee logfiles/snakemake.log.jobby.tsv | cut -f2,3,18 > logfiles/snakemake.log.jobby.short.tsv
-jobby logfiles/snakemake.log --outerr --json > logfiles/snakemake.log.jobby.json
 spooker {workpath} RENEE {version} {config["project"]["pipelinehome"]} | tee logfiles/spooker.log
 """
 
