@@ -17,18 +17,16 @@ TOOLDIR=$(dirname "$SCRIPTDIRNAME")
 hpc_name=$(scontrol show config | grep ClusterName | sed "s/^.*= //")
 # load conda
 if [[ $hpc_name == biowulf ]]; then
-	. "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh" && conda activate py311
 	module load singularity snakemake/7
 elif [[ $hpc_name == fnlcr ]]; then
-	. "/mnt/projects/CCBR-Pipelines/resources/miniconda3/etc/profile.d/conda.sh" && conda activate py311
 	module load singularity
 	export PATH="/mnt/projects/CCBR-Pipelines/bin:$PATH"
 else
 	echo "You are NOT running on BIOWULF or on FRCE"
-	echo "Please make sure that:"
-	echo "  - py311 conda environment is activated"
-	echo "  - singularity is in PATH"
-	echo "  - snakemake is in PATH"
+	echo "Please make sure that the following tools are available:"
+	echo "  - python >= 3.11"
+	echo "  - singularity "
+	echo "  - snakemake = 7"
 fi
 
 ${TOOLDIR}/main.py "$@" || true

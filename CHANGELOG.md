@@ -1,5 +1,16 @@
 ## RENEE development version
 
+- Add `mmul10_108` (rhesus macaque) to list of reference genomes. (#212, @kelly-sovacool)
+- Added support for new reference genomes on biowulf:
+  - `mm39_M36` (#199, @kelly-sovacool)
+  - `mm39_M37` (#220, @kelly-sovacool)
+  - `hg38_48` (#220, @kelly-sovacool)
+- Fix `--sif-cache` example in docs. (#207, @kelly-sovacool)
+
+## RENEE 2.6.7
+
+- Minor CLI fixes. (#202, #203, @kelly-sovacool)
+
 ## RENEE 2.6.6
 
 - Minor documentation updates. (#198, @kelly-sovacool)
