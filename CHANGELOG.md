@@ -1,5 +1,7 @@
 ## RENEE development version
 
+## RENEE 2.7.0
+
 - RENEE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#207, @kelly-sovacool)
 - Add `mmul10_108` (rhesus macaque) to list of reference genomes. (#212, @kelly-sovacool)
 - Added support for new reference genomes on biowulf:
