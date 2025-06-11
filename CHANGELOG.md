@@ -1,6 +1,8 @@
 ## RENEE development version
 
-- Increase default memory for fastq validator. (#224, @kelly-sovacool)
+- Improvements for fastq validator: (#224, @kelly-sovacool)
+  - Increase default memory.
+  - Capture stdout in a log file so the output is not deleted on failure.
 
 ## RENEE 2.7.0
 
