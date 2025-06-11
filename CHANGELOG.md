@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Increase default memory for fastq validator. (#224, @kelly-sovacool)
+
 ## RENEE 2.7.0
 
 - RENEE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#207, @kelly-sovacool)
