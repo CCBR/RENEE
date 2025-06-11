@@ -123,6 +123,9 @@
     "trim_se": {
         "threads": "32"
     },
+    "validator": {
+        "mem": "16g"
+    },
     "reformat_gtf": {
         "mem": "20g",
         "time": "1:00:00"
