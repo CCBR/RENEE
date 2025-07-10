@@ -1,4 +1,4 @@
-## RENEE development version
+## RENEE 2.7.1
 
 - Improvements for fastq validator: (#224, @kelly-sovacool)
   - Increase default memory.
