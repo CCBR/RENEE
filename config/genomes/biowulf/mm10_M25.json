@@ -1,9 +1,9 @@
 {
     "references": {
         "rnaseq": {
-            "GENOMEFILE": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M25/mm10.fa",
-            "GENOME": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M25/mm10.fa",
-            "GTFFILE": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M25/M25.gtf",
+            "GENOMEFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.fa",
+            "GENOME": "/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.fa",
+            "GTFFILE": "/data/CCBR_Pipeliner/db/PipeDB/Indices/GTFs/mm10/gencode.vM25.annotation.gtf",
             "GENOME_STARDIR": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M25/STAR/2.7.6a/genome",
             "ANNOTATE": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M25/annotate.genes.txt",
             "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mm10/M25/annotate.isoforms.txt",
