@@ -3,6 +3,7 @@
 - Improvements for fastq validator: (#224, @kelly-sovacool)
   - Increase default memory.
   - Capture stdout in a log file so the output is not deleted on failure.
+- Fix broken symlinks on biowulf. (#226, @kelly-sovacool)
 
 ## RENEE 2.7.0
 
