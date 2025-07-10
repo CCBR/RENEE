@@ -13,6 +13,10 @@ on:
       - .github/workflows/docs-mkdocs.yml
       - mkdocs.yml
 
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   mkdocs:
     runs-on: ubuntu-latest
@@ -20,6 +24,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: CCBR/actions/mkdocs-mike@main
+      - uses: CCBR/actions/mkdocs-mike@v0.2
         with:
           github-token: ${{ github.token }}

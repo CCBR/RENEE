@@ -134,7 +134,7 @@ def run(sub_args):
 def resolve_additional_bind_paths(search_paths):
     """Finds additional singularity bind paths from a list of random paths. Paths are
     indexed with a compostite key containing the first two directories of an absolute
-    file path to avoid issues related to shared names across the /gpfs shared network
+    file path to avoid issues related to shared names across the shared network
     filesystem. For each indexed list of file paths, a common path is found. Assumes
     that the paths provided are absolute paths, the renee build sub command creates
     resource file index with absolute filenames.
@@ -166,7 +166,7 @@ def resolve_additional_bind_paths(search_paths):
             path_list = os.path.abspath(r).split(os.sep)
 
             try:  # Create composite index from first two directories
-                # Avoids issues created by shared /gpfs/ PATHS
+                # Avoids issues created by shared PATHS
                 index = path_list[1:3]
                 index = tuple(index)
             except IndexError:

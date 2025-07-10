@@ -18,17 +18,17 @@ rule validator:
     """
     input:
         R1=join(workpath,"{name}.R1.fastq.gz"),
-    output:
-        out1=join(workpath,"rawQC","{name}.validated.R1.fastq.log"),
+    log:
+        join(workpath,"rawQC","{name}.validated.R1.fastq.log"),
     priority: 2
     params:
         rname='pl:validator',
         outdir=join(workpath,"rawQC"),
     container: config['images']['fastqvalidator']
-    shell: """
-    mkdir -p {params.outdir}
-    fastQValidator --noeof --minReadLen 2 --file {input.R1} > {output.out1}
-    """
+    shell:
+        """
+        fastQValidator --noeof --minReadLen 2 --file {input.R1} > {log}
+        """
 
 
 rule rawfastqc:

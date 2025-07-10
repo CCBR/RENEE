@@ -227,8 +227,13 @@ for cmd in spooker run_jobby_on_snakemake_log; do
         export PATH="$PATH:{config['bin']['rnaseq']['ccbr_tools_path']}"
     fi
 done
-run_jobby_on_snakemake_log logfiles/snakemake.log | tee logfiles/snakemake.log.jobby | cut -f2,3,18 > logfiles/snakemake.log.jobby.short
-spooker {workpath} RENEE {version} | tee logfiles/spooker.log
+jobby logfiles/snakemake.log --tsv | tee logfiles/snakemake.log.jobby.tsv | cut -f2,3,18 > logfiles/snakemake.log.jobby.short.tsv
+spooker \
+    --outdir {workpath} \
+    --name RENEE \
+    --version {version} \
+    --path {config["project"]["pipelinehome"]} \
+    > logfiles/spooker.log 2>&1
 """
 
 onsuccess:

@@ -1,0 +1,21 @@
+name: label-issues-repo-name
+
+on:
+  issues:
+    types:
+      - opened
+  pull_request:
+    types:
+      - opened
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  add-label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CCBR/actions/label-issue-repo-name@main
+        with:
+          github-token: ${{ github.token }}
