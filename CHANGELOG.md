@@ -3,7 +3,7 @@
 - Improvements for fastq validator: (#224, @kelly-sovacool)
   - Increase default memory.
   - Capture stdout in a log file so the output is not deleted on failure.
-- Fix broken symlinks on biowulf. (#226, @kelly-sovacool)
+- Fix broken symlinks for genome reference files on biowulf. (#226, @kelly-sovacool)
 
 ## RENEE 2.7.0
 
@@ -14,6 +14,10 @@
   - `mm39_M37` (#220, @kelly-sovacool)
   - `hg38_48` (#220, @kelly-sovacool)
 - Fix `--sif-cache` example in docs. (#208, @kelly-sovacool)
+
+## RENEE 2.6.8
+
+- Fix broken symlinks for genome reference files on biowulf. (#226, @kelly-sovacool)
 
 ## RENEE 2.6.7
 
