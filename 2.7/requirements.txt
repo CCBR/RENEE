@@ -1,0 +1,13 @@
+mkdocs
+#https://pypi.org/project/mkdocs-git-revision-date-localized-plugin/
+mkdocs-git-revision-date-localized-plugin
+#https://pypi.org/project/mkdocs-minify-plugin/
+mkdocs-minify-plugin
+#https://pypi.org/project/mkdocs-git-revision-date-plugin/
+mkdocs-git-revision-date-plugin
+#https://pypi.org/project/mkdocs-material/
+mkdocs-material
+#https://pypi.org/project/mkdocs-material-extensions/
+mkdocs-material-extensions
+#https://github.com/jimporter/mike
+mike

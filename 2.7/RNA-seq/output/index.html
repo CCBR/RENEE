@@ -1,0 +1,131 @@
+<!DOCTYPE html><html class=writer-html5 lang=en> <head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width, initial-scale=1.0"><meta name=author content=CCBR><link rel="shortcut icon" href=../../img/favicon.ico><title>Expected Output - RENEE Documentation</title><link rel=stylesheet href=../../css/theme.css><link rel=stylesheet href=../../css/theme_extra.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css><link href=../../css/custom.css rel=stylesheet><link href=../../css/version-select.css rel=stylesheet><script>
+        // Current page data
+        var mkdocs_page_name = "Expected Output";
+        var mkdocs_page_input_path = "RNA-seq/output.md";
+        var mkdocs_page_url = null;
+      </script><!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]--><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js></script><script>hljs.highlightAll();</script></head> <body class=wy-body-for-nav role=document> <div class=wy-grid-for-nav> <nav data-toggle=wy-nav-shift class="wy-nav-side stickynav"> <div class=wy-side-scroll> <div class=wy-side-nav-search> <a href=../.. class="icon icon-home"> RENEE Documentation </a><div role=search> <form id=rtd-search-form class=wy-form action=../../search.html method=get> <input type=text name=q placeholder="Search docs" aria-label="Search docs" title="Type search term here"> </form> </div> </div> <div class="wy-menu wy-menu-vertical" data-spy=affix role=navigation aria-label="Navigation menu"> <ul> <li class=toctree-l1><a class="reference internal" href=../..>About</a> </li> </ul> <ul> <li class=toctree-l1><a href=../Theory/ class="reference internal">Theory</a> </li> </ul> <ul> <li class=toctree-l1><a href=../TLDR-RNA-seq/ class="reference internal">Getting started</a> </li> </ul> <p class=caption><span class=caption-text>Command Line</span></p> <ul> <li class=toctree-l1><a href=../run/ class="reference internal">run</a> </li> <li class=toctree-l1><a href=../build/ class="reference internal">build</a> </li> <li class=toctree-l1><a href=../cache/ class="reference internal">cache</a> </li> <li class=toctree-l1><a href=../unlock/ class="reference internal">unlock</a> </li> </ul> <ul> <li class=toctree-l1><a href=../gui/ class="reference internal">Graphical Interface</a> </li> </ul> <ul class=current> <li class="toctree-l1 current"><a class="reference internal current" href=#>Expected Output</a> <ul class=current> <li class=toctree-l2><a class="reference internal" href=#1-bams>1. bams</a> </li> <li class=toctree-l2><a class="reference internal" href=#2-config>2. config</a> </li> <li class=toctree-l2><a class="reference internal" href=#3-deg_all>3. DEG_ALL</a> </li> <li class=toctree-l2><a class="reference internal" href=#4-fqscreen-and-fqscreen2>4. FQScreen and FQScreen2</a> </li> <li class=toctree-l2><a class="reference internal" href=#5-fusions>5. fusions</a> </li> <li class=toctree-l2><a class="reference internal" href=#6-kraken>6. kraken</a> </li> <li class=toctree-l2><a class="reference internal" href=#7-logfiles>7. logfiles</a> </li> <li class=toctree-l2><a class="reference internal" href=#8-nciccbr>8. nciccbr</a> </li> <li class=toctree-l2><a class="reference internal" href=#9-preseq>9. preseq</a> </li> <li class=toctree-l2><a class="reference internal" href=#10-qc-and-rawqc>10. QC and rawQC</a> </li> <li class=toctree-l2><a class="reference internal" href=#11-qualimap>11. QualiMap</a> </li> <li class=toctree-l2><a class="reference internal" href=#12-reports>12. Reports</a> </li> <li class=toctree-l2><a class="reference internal" href=#13-resources>13. resources</a> </li> <li class=toctree-l2><a class="reference internal" href=#14-rseqc>14. RSeQC</a> </li> <li class=toctree-l2><a class="reference internal" href=#15-star_files>15. STAR_files</a> </li> <li class=toctree-l2><a class="reference internal" href=#16-trim>16. trim</a> </li> <li class=toctree-l2><a class="reference internal" href=#17-workflow>17. workflow</a> </li> </ul> </li> </ul> <ul> <li class=toctree-l1><a href=../Resources/ class="reference internal">Resources</a> </li> </ul> <p class=caption><span class=caption-text>FAQ</span></p> <ul> <li class=toctree-l1><a href=../../general-questions/ class="reference internal">General Questions</a> </li> <li class=toctree-l1><a href=../../troubleshooting/ class="reference internal">Troubleshooting</a> </li> <li class=toctree-l1><a href=../../contributing/ class="reference internal">How to contribute</a> </li> </ul> <ul> <li class=toctree-l1><a href=../../license/ class="reference internal">License</a> </li> </ul> </div> </div> </nav> <section data-toggle=wy-nav-shift class=wy-nav-content-wrap> <nav class=wy-nav-top role=navigation aria-label="Mobile navigation menu"> <i data-toggle=wy-nav-top class="fa fa-bars"></i> <a href=../..>RENEE Documentation</a> </nav> <div class=wy-nav-content> <div class=rst-content><div role=navigation aria-label="breadcrumbs navigation"> <ul class=wy-breadcrumbs> <li><a href=../.. class="icon icon-home" aria-label=Docs></a></li> <li class="breadcrumb-item active">Expected Output</li> <li class=wy-breadcrumbs-aside> <a href=https://github.com/CCBR/RENEE/edit/master/docs/RNA-seq/output.md>Edit on CCBR/RENEE</a> </li> </ul> <hr> </div> <div role=main class=document itemscope=itemscope itemtype=http://schema.org/Article> <div class=section itemprop=articleBody> <p>After a successful <code>renee</code> run execution for multisample paired-end data, the following files and folders are created in the output folder.</p> <div class=highlight><pre><span></span><code>renee_output/
+├──<span class=w> </span>bams
+├──<span class=w> </span>config<span class=w> </span>
+├──<span class=w> </span>config.json<span class=w> </span><span class=c1># Contains the configuration and parameters used for this specific RENEE run</span>
+├──<span class=w> </span>DEG_ALL
+├──<span class=w> </span>dryrun.<span class=o>{</span>datetime<span class=o>}</span>.log<span class=w> </span><span class=c1># Output from the dry-run of the pipeline</span>
+├──<span class=w> </span>FQscreen
+├──<span class=w> </span>FQscreen2
+├──<span class=w> </span>fusions
+├──<span class=w> </span>kraken
+├──<span class=w> </span>logfiles<span class=w> </span>
+├──<span class=w> </span>nciccbr<span class=w> </span>
+├──<span class=w> </span>preseq<span class=w> </span>
+├──<span class=w> </span>QC
+├──<span class=w> </span>QualiMap
+├──<span class=w> </span>rawQC
+├──<span class=w> </span>Reports
+├──<span class=w> </span>resources
+├──<span class=w> </span>RSeQC
+├──<span class=w> </span>sample1.R1.fastq.gz<span class=w> </span>-&gt;<span class=w> </span>/path/to/input/fastq/files/sample1.R1.fastq.gz
+├──<span class=w> </span>sample1.R2.fastq.gz<span class=w> </span>-&gt;<span class=w> </span>/path/to/input/fastq/files/sample1.R2.fastq.gz
+...
+..
+.
+├──<span class=w> </span>sampleN.R1.fastq.gz<span class=w> </span>-&gt;<span class=w> </span>/path/to/input/fastq/files/sampleN.R1.fastq.gz
+├──<span class=w> </span>sampleN.R2.fastq.gz<span class=w> </span>-&gt;<span class=w> </span>/path/to/input/fastq/files/sampleN.R2.fastq.gz
+├──<span class=w> </span>STAR_files
+├──<span class=w> </span>trim
+└──<span class=w> </span>workflow
+</code></pre></div> <h2 id=folder-details-and-file-descriptions>Folder details and file descriptions<a class=headerlink href=#folder-details-and-file-descriptions title="Permanent link">&para;</a></h2> <h3 id=1-bams>1. <code>bams</code><a class=headerlink href=#1-bams title="Permanent link">&para;</a></h3> <p>Contains the STAR aligned reads for each sample analyzed in the run.</p> <div class=highlight><pre><span></span><code>/bams/
+├──<span class=w> </span>sample1.fwd.bw<span class=w> </span><span class=c1># forward strand bigwig files suitable for a genomic track viewer like IGV</span>
+├──<span class=w> </span>sample1.rev.bw<span class=w> </span><span class=c1># reverse strand bigwig files </span>
+├──<span class=w> </span>sample1.p2.Aligned.toTranscriptome.out.bam<span class=w> </span><span class=c1># BAM alignments to transcriptome using STAR in two-pass mode</span>
+├──<span class=w> </span>sample1.star_rg_added.sorted.dmark.bam<span class=w> </span><span class=c1># Read groups added and duplicates marked genomic BAM file (using STAR in two-pass mode)</span>
+├──<span class=w> </span>sample1.star_rg_added.sorted.dmark.bam.bai
+...
+..
+.
+</code></pre></div> <h3 id=2-config>2. <code>config</code><a class=headerlink href=#2-config title="Permanent link">&para;</a></h3> <p>Contains config files for the pipeline.</p> <h3 id=3-deg_all>3. <code>DEG_ALL</code><a class=headerlink href=#3-deg_all title="Permanent link">&para;</a></h3> <p>Contains the output from RSEM estimating gene and isoform expression levels for each sample and also combined data matrix with all samples.</p> <div class=highlight><pre><span></span><code>/DEG_ALL/
+├──<span class=w> </span>combined_TIN.tsv<span class=w> </span><span class=c1># RSeQC logfiles containing transcript integrity number information for all samples</span>
+├──<span class=w> </span>RSEM.genes.expected_count.all_samples.txt<span class=w> </span><span class=c1># Expected gene counts matrix for all samples (useful for downstream differential expression analysis)</span>
+├──<span class=w> </span>RSEM.genes.expected_counts.all_samples.reformatted.tsv<span class=w> </span><span class=c1># Expected gene counts matrix for all samples with reformatted gene symbols (format: ENSEMBLID | GeneName)</span>
+├──<span class=w> </span>RSEM.genes.FPKM.all_samples.txt<span class=w> </span><span class=c1># FPKM Normalized expected gene counts matrix for all samples </span>
+├──<span class=w> </span>RSEM.genes.TPM.all_samples.txt<span class=w> </span><span class=c1># TPM Normalized expected gene counts matrix for all samples</span>
+├──<span class=w> </span>RSEM.isoforms.expected_count.all_samples.txt<span class=w> </span><span class=c1># File containing isoform level expression estimates for all samples.</span>
+├──<span class=w> </span>RSEM.isoforms.FPKM.all_samples.txt<span class=w> </span><span class=c1># FPKM Normalized expected isoform counts matrix for all samples </span>
+├──<span class=w> </span>RSEM.isoforms.TPM.all_samples.txt<span class=w> </span><span class=c1># TPM Normalized expected isoform counts matrix for all samples</span>
+├──<span class=w> </span>sample1.RSEM.genes.results<span class=w> </span><span class=c1># Expected gene counts for sample 1</span>
+├──<span class=w> </span>sample1.RSEM.isoforms.results<span class=w> </span><span class=c1># Expected isoform counts for sample 1</span>
+├──<span class=w> </span>sample1.RSEM.stat<span class=w> </span><span class=c1># RSEM stats for sample 1</span>
+│<span class=w>   </span>├──<span class=w> </span>sample1.RSEM.cnt<span class=w> </span>
+│<span class=w>   </span>├──<span class=w> </span>sample1.RSEM.model
+│<span class=w>   </span>└──<span class=w> </span>sample1.RSEM.theta
+├──<span class=w> </span>sample1.RSEM.time<span class=w> </span><span class=c1># Run time log for sample 1</span>
+...
+..
+.
+├──<span class=w> </span>sampleN.RSEM.genes.results
+├──<span class=w> </span>sampleN.RSEM.isoforms.results
+├──<span class=w> </span>sampleN.RSEM.stat
+│<span class=w>   </span>├──<span class=w> </span>sampleN.RSEM.cnt
+│<span class=w>   </span>├──<span class=w> </span>sampleN.RSEM.model
+│<span class=w>   </span>└──<span class=w> </span>sampleN.RSEM.theta
+└──<span class=w> </span>sampleN.RSEM.time
+</code></pre></div> <h3 id=4-fqscreen-and-fqscreen2>4. <code>FQScreen</code> and <code>FQScreen2</code><a class=headerlink href=#4-fqscreen-and-fqscreen2 title="Permanent link">&para;</a></h3> <p>These folders contain results from quality-control step to screen for different sources of contamination. FastQ Screen compares your sequencing data to a set of different reference genomes to determine if there is contamination. It allows a user to see if the composition of your library matches what you expect. These results are plotted in the multiQC report.</p> <h3 id=5-fusions>5. <code>fusions</code><a class=headerlink href=#5-fusions title="Permanent link">&para;</a></h3> <p>Contains gene fusions output for each sample.</p> <div class=highlight><pre><span></span><code>fusions/
+├──<span class=w> </span>sample1_fusions.arriba.pdf
+├──<span class=w> </span>sample1_fusions.discarded.tsv<span class=w> </span><span class=c1># Contains all events that Arriba classified as an artifact or that are also observed in healthy tissue. </span>
+├──<span class=w> </span>sample1_fusions.tsv<span class=w> </span><span class=c1># Contains fusions for sample 1 which pass all of Arriba&#39;s filters. The predictions are listed from highest to lowest confidence. </span>
+├──<span class=w> </span>sample1.p2.arriba.Aligned.sortedByCoord.out.bam<span class=w> </span><span class=c1># Sorted BAM file for Arriba&#39;s Visualization</span>
+├──<span class=w> </span>sample1.p2.arriba.Aligned.sortedByCoord.out.bam.bai
+├──<span class=w> </span>sample1.p2.Log.final.out<span class=w> </span><span class=c1># STAR final log file</span>
+├──<span class=w> </span>sample1.p2.Log.out<span class=w> </span><span class=c1># STAR runtime log file</span>
+├──<span class=w> </span>sample1.p2.Log.progress.out<span class=w> </span><span class=c1># log files</span>
+├──<span class=w> </span>sample1.p2.Log.std.out<span class=w> </span><span class=c1># STAR runtime output log</span>
+├──<span class=w> </span>sample1.p2.SJ.out.tab<span class=w> </span><span class=c1>#  Summarizes the high confidence splice junctions for sample 1</span>
+├──<span class=w> </span>sample1.p2._STARgenome<span class=w> </span><span class=c1># Extra files generated during STAR aligner </span>
+│<span class=w>   </span>├──<span class=w> </span>exonGeTrInfo.tab
+│<span class=w>   </span>├──<span class=w> </span>.
+│<span class=w>   </span>├──<span class=w> </span>.
+│<span class=w>   </span>└──<span class=w> </span>transcriptInfo.tab<span class=w> </span>
+├──<span class=w> </span>sample1.p2._STARpass1<span class=w> </span><span class=c1># Extra files generated during STAR first pass </span>
+│<span class=w>   </span>├──<span class=w> </span>.
+│<span class=w>   </span>└──<span class=w> </span>.
+...
+..
+.
+</code></pre></div> <h3 id=6-kraken>6. <code>kraken</code><a class=headerlink href=#6-kraken title="Permanent link">&para;</a></h3> <p>Contains per sample kraken output files which is a Quality-control step to assess for potential sources of microbial contamination. Kraken is used in conjunction with Krona to produce an interactive reports stored in <code>.krona.html</code> files. These results are present in the multiQC report.</p> <h3 id=7-logfiles>7. <code>logfiles</code><a class=headerlink href=#7-logfiles title="Permanent link">&para;</a></h3> <p>Contains logfiles for the entire RENEE run, job error/output files for each individual job that was submitted to SLURM, and some other stats generated by different software. Important to diagnose errors if the pipeline fails. The per sample stats information is present in the mulitQC report. </p> <div class=highlight><pre><span></span><code>/logfiles/
+├──<span class=w> </span>master.log<span class=w> </span><span class=c1># Logfile for the main (master) RENEE job</span>
+├──<span class=w> </span>mjobid.log<span class=w> </span><span class=c1># SLURM JOBID for the master RENEE job</span>
+├──<span class=w> </span>runtime_statistics.json<span class=w> </span><span class=c1># Runtime statistics for each rule in the RENEE run</span>
+├──<span class=w> </span>sample1.flagstat.concord.txt<span class=w> </span><span class=c1># sample mapping stats</span>
+├──<span class=w> </span>sample1.p2.Log.final.out<span class=w> </span><span class=c1># sample STAR alignment stats</span>
+├──<span class=w> </span>sample1.RnaSeqMetrics.txt<span class=w> </span><span class=c1># sample stats collected by Picard CollectRnaSeqMetrics</span>
+├──<span class=w> </span>sample1.star.duplic<span class=w> </span><span class=c1># Mark duplicate metrics</span>
+...
+..
+.
+├──<span class=w> </span>slurmfiles
+│<span class=w>   </span>├──<span class=w> </span><span class=o>{</span>MASTER_JOBID<span class=o>}</span>.<span class=o>{</span>JOBID<span class=o>}</span>.<span class=o>{</span>rule<span class=o>}</span>.<span class=o>{</span>wildcards<span class=o>}</span>.out
+│<span class=w>   </span>├──<span class=w> </span><span class=o>{</span>MASTER_JOBID<span class=o>}</span>.<span class=o>{</span>JOBID<span class=o>}</span>.<span class=o>{</span>rule<span class=o>}</span>.<span class=o>{</span>wildcards<span class=o>}</span>.err
+│<span class=w>   </span>...
+│<span class=w>   </span>..
+│<span class=w>   </span>.
+├──<span class=w> </span>snakemake.log<span class=w> </span><span class=c1># The snakemake log file which documents the entire pipeline log</span>
+├──<span class=w> </span>snakemake.log.jobby<span class=w> </span><span class=c1># Detailed summary report for each individual job. </span>
+└──<span class=w> </span>snakemake.log.jobby.short<span class=w> </span><span class=c1># Short summary report for each individual job. </span>
+</code></pre></div> <h3 id=8-nciccbr>8. <code>nciccbr</code><a class=headerlink href=#8-nciccbr title="Permanent link">&para;</a></h3> <p>Contain Arriba resources for gene fusion estimation. Manually curated and only exist for a few reference genomes (mm10, hg38, hg19).</p> <h3 id=9-preseq>9. <code>preseq</code><a class=headerlink href=#9-preseq title="Permanent link">&para;</a></h3> <p>Contains library complexity curves for each sample. These results are part of the multiQC report.</p> <h3 id=10-qc-and-rawqc>10. <code>QC</code> and <code>rawQC</code><a class=headerlink href=#10-qc-and-rawqc title="Permanent link">&para;</a></h3> <p>Contains per sample output from FastQC for raw and adapter trimmed fastq files with insert size estimates. These results are part of the multiQC report.</p> <h3 id=11-qualimap>11. <code>QualiMap</code><a class=headerlink href=#11-qualimap title="Permanent link">&para;</a></h3> <p>Contains per sample output for Quality-control step to assess various post-alignment metrics and a secondary method to calculate insert size. These results are part of the multiQC report.</p> <h3 id=12-reports>12. <code>Reports</code><a class=headerlink href=#12-reports title="Permanent link">&para;</a></h3> <p>Contains the multiQC report which visually summarizes the quality control metrics and other statistics for each sample (<code>multiqc_report.html</code>). All the data tables used to generate the multiQC report is available in the <code>multiqc_data</code> folder. The <code>RNA_report.html</code> file is an interactive report the aggregates sample quality-control metrics across all samples. This interactive report to allow users to identify problematic samples prior to downstream analysis. It uses flowcell and lane information from the FastQ file.</p> <h3 id=13-resources>13. <code>resources</code><a class=headerlink href=#13-resources title="Permanent link">&para;</a></h3> <p>Contains resources necessary to run the RENEE pipeline.</p> <h3 id=14-rseqc>14. <code>RSeQC</code><a class=headerlink href=#14-rseqc title="Permanent link">&para;</a></h3> <p>Contains various QC metrics for each sample collected by RSeQC. These results are part of the multiQC report.</p> <h3 id=15-star_files>15. <code>STAR_files</code><a class=headerlink href=#15-star_files title="Permanent link">&para;</a></h3> <p>Contains log files, splice junction tab file (<code>SJ.out.tab</code>), and <code>ReadsPerGene.out.tab</code> file, and other various output files for each sample generated by STAR aligner.</p> <h3 id=16-trim>16. <code>trim</code><a class=headerlink href=#16-trim title="Permanent link">&para;</a></h3> <p>Contains adapter trimmed FASTQ files for each sample used for all the downstream analysis.</p> <div class=highlight><pre><span></span><code>trim
+├──<span class=w> </span>sample1.R1.trim.fastq.gz
+├──<span class=w> </span>sample1.R2.trim.fastq.gz
+...
+..
+.
+├──<span class=w> </span>sampleN.R1.trim.fastq.gz
+└──<span class=w> </span>sampleN.R2.trim.fastq.gz
+</code></pre></div> <h3 id=17-workflow>17. <code>workflow</code><a class=headerlink href=#17-workflow title="Permanent link">&para;</a></h3> <p>Contains the RENEE pipeline workflow.</p> </div> </div><script async src="https://www.googletagmanager.com/gtag/js?id=G-D3SL9V30KL"></script> <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-D3SL9V30KL'); // Replace with your tracking ID
+</script> </div> </div> </section> </div> <div class=rst-versions role=note aria-label=Versions> <span class=rst-current-version data-toggle=rst-current-version> <span> <a href=https://github.com/CCBR/RENEE class="fa fa-code-fork" style="color: #fcfcfc"> CCBR/RENEE</a> </span> <span><a href=../gui/ style="color: #fcfcfc">&laquo; Previous</a></span> <span><a href=../Resources/ style="color: #fcfcfc">Next &raquo;</a></span> </span> </div> <script src=../../js/jquery-3.6.0.min.js></script> <script>var base_url = "../..";</script> <script src=../../js/theme_extra.js></script> <script src=../../js/theme.js></script> <script src=../../js/custom.js></script> <script src=../../search/main.js></script> <script src=../../js/version-select.js></script> <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script> </body> </html> 

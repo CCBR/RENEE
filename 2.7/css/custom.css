@@ -1,0 +1,46 @@
+pre {
+    position: relative;
+}
+
+.copy-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 5px;
+}
+
+.copy-button:hover {
+    background: #e0e0e0;
+}
+
+/* Light blue background for notes */
+div.admonition.note {
+    background-color: #e3f2fd;
+    border-left: 5px solid #2196f3;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+/* Light grey background for info */
+div.admonition.info {
+    background-color: #f5f5f5;
+    border-left: 5px solid #9e9e9e;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+/* Orange warning box */
+div.admonition.warning {
+    background-color: #fff3e0;
+    border-left: 5px solid #ff9800;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
