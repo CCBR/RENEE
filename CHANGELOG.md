@@ -1,3 +1,7 @@
+## RENEE 2.6.8
+
+- Fix broken symlinks for genome reference files on biowulf. (#226, @kelly-sovacool)
+
 ## RENEE 2.6.7
 
 - Minor CLI fixes. (#202, #203, @kelly-sovacool)

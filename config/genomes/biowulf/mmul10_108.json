@@ -1,0 +1,22 @@
+{
+    "references": {
+        "rnaseq": {
+            "GENOMEFILE": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/mmul10.fa",
+            "GENOME": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/mmul10.fa",
+            "GTFFILE": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/mmul10_108.gtf",
+            "GENOME_STARDIR": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/STAR/2.7.6a/genome",
+            "ANNOTATE": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/annotate.genes.txt",
+            "ANNOTATEISOFORMS": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/annotate.isoforms.txt",
+            "REFFLAT": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/refFlat.txt",
+            "BEDREF": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/genes.ref.bed",
+            "GENEINFO": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/geneinfo.bed",
+            "QUALIMAP_INFO": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/qualimap_info.txt",
+            "KARYOBEDS": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/karyobeds/",
+            "KARYOPLOTER": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/karyoplot_gene_coordinates.txt",
+            "RSEMREF": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/rsemref/mmul10",
+            "RRNALIST": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/mmul10.rRNA_interval_list",
+            "ORGANISM": "mmul10",
+            "TINREF": "/data/CCBR_Pipeliner/Pipelines/RENEE/resources/mmul10/mmul10_108/transcripts.protein_coding_only.bed12"
+        }
+    }
+}
