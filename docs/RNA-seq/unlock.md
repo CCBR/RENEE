@@ -22,7 +22,7 @@ The synopsis for this command shows its parameters and their usage. Optional par
 
 A user **must** provide an output directory to unlock via `--output` argument. After running the unlock sub command, you can resume the build or run pipeline from where it left off by re-running it.
 
-Use you can always use the `-h` option for information on a specific command.
+You can always use the `-h` option for information on a specific command.
 
 ### 2.1 Required Arguments
 
