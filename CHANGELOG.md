@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Fix typos in documentation. (#240, @Ramlah7)
+
 ## RENEE 2.7.1
 
 - Improvements for fastq validator: (#224, @kelly-sovacool)
