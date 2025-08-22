@@ -6,9 +6,9 @@ The `renee` executable is composed of several inter-related sub commands. Please
 
 This part of the documentation describes options and concepts for <code>renee <b>unlock</b></code> sub command in more detail. With minimal configuration, the **`unlock`** sub command enables you to unlock a pipeline output directory.
 
-If the pipeline fails ungracefully, it maybe required to unlock the working directory before proceeding again. Snakemake will inform a user when it maybe necessary to unlock a working directory with an error message stating: `Error: Directory cannot be locked`.
+If the pipeline fails ungracefully, it may be required to unlock the working directory before proceeding again. Snakemake will inform a user when it maybe necessary to unlock a working directory with an error message stating: `Error: Directory cannot be locked`.
 
-Please verify that the pipeline is not running before running this command. If the pipeline is currently running, the workflow manager will report the working directory is locked. The is the default behavior of snakemake, and it is normal. Do NOT run this command if the pipeline is still running! Please kill the master job and it's child jobs prior to running this command.
+Please verify that the pipeline is not running before running this command. If the pipeline is currently running, the workflow manager will report the working directory is locked. This is the default behavior of snakemake, and it is normal. Do NOT run this command if the pipeline is still running! Please kill the master job and it's child jobs prior to running this command.
 
 Unlocking an RENEE pipeline output directory is fast and easy! In its most basic form, <code>renee <b>run</b></code> only has _one required inputs_.
 
@@ -22,7 +22,7 @@ The synopsis for this command shows its parameters and their usage. Optional par
 
 A user **must** provide an output directory to unlock via `--output` argument. After running the unlock sub command, you can resume the build or run pipeline from where it left off by re-running it.
 
-Use you can always use the `-h` option for information on a specific command.
+You can always use the `-h` option for information on a specific command.
 
 ### 2.1 Required Arguments
 
