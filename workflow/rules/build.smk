@@ -727,7 +727,7 @@ rule jsonmaker:
             refdict["references"]["rnaseq"]["FUSIONCYTOBAND"] = \
             "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/cytobands_hg38_GRCh38_v2.4.0.tsv"
             refdict["references"]["rnaseq"]["FUSIONPROTDOMAIN"] = \
-            "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/protein_domains_hg38_GRCh38_v2.4.0.gff3"scripts.protein_coding_only.bed12"
+            "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/protein_domains_hg38_GRCh38_v2.4.0.gff3"
         elif 'mm10' in params.genome.lower() or \
         'grcm38' in params.genome.lower():
             refdict["references"]["rnaseq"]["FUSIONBLACKLIST"] = \
@@ -735,7 +735,7 @@ rule jsonmaker:
             refdict["references"]["rnaseq"]["FUSIONCYTOBAND"] = \
             "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/cytobands_mm10_GRCm38_v2.4.0.tsv"
             refdict["references"]["rnaseq"]["FUSIONPROTDOMAIN"] = \
-            "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/protein_domains_mm10_GRCm38_v2.4.0.gff3""
+            "/data/CCBR_Pipeliner/db/PipeDB/arriba/arriba_v2.4.0/database/protein_domains_mm10_GRCm38_v2.4.0.gff3"
         elif 'mm39' in params.genome.lower() or \
         'grcm39' in params.genome.lower():
             refdict["references"]["rnaseq"]["FUSIONBLACKLIST"] = \
