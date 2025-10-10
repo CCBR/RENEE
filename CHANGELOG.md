@@ -1,6 +1,7 @@
 ## RENEE development version
 
 - Fix typos in documentation. (#240, @Ramlah7)
+- Fix bug in `renee build` that caused dry run & run to fail with a syntax error. (#244, @kelly-sovacool)
 
 ## RENEE 2.7.1
 
