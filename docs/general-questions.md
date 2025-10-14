@@ -4,7 +4,7 @@ We have compiled this FAQ from the most common questions. If you have a question
 
 ## Contribute
 
-**Q. I would like to contribute to RNA-seek. How do I get involved?**
+**Q. I would like to contribute to RENEE. How do I get involved?**
 
 **A.** There are several ways you can get involved with the project.
 
