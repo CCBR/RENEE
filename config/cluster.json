@@ -24,7 +24,7 @@
     "fastq_screen": {
         "threads": "32",
         "time": "2-00:00:00",
-        "mem": "12g"
+        "mem": "32g"
     },
     "kraken_pe": {
         "cpus-per-task": "32",
