@@ -20,10 +20,10 @@ rule validator:
         R1=join(workpath,"{name}.R1.fastq.gz"),
         R2=join(workpath,"{name}.R2.fastq.gz"),
     output:
-        f"{workpath}/{{name}}.is_valid.txt"
+        f"{workpath}/rawQC/{{name}}.fastQValidator.txt"
     log:
-        out1=join(workpath,"rawQC","{name}.validated.R1.fastq.log"),
-        out2=join(workpath,"rawQC","{name}.validated.R2.fastq.log"),
+        out1=join(workpath,"rawQC","{name}.fastQValidator.R1.fastq.log"),
+        out2=join(workpath,"rawQC","{name}.fastQValidator.R2.fastq.log"),
     priority: 2
     params:
         rname='pl:validator',

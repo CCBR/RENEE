@@ -76,8 +76,8 @@ if paired_end:
             batch='--time=168:00:00',
         input:
             # FastQValidator
-            expand(join(workpath,"rawQC","{name}.validated.R1.fastq.log"), name=provided(samples, wf_api.use_singularity)),
-            expand(join(workpath,"rawQC","{name}.validated.R2.fastq.log"), name=provided(samples, wf_api.use_singularity)),
+            expand(join(workpath,"rawQC","{name}.fastQValidator.R1.fastq.log"), name=provided(samples, wf_api.use_singularity)),
+            expand(join(workpath,"rawQC","{name}.fastQValidator.R2.fastq.log"), name=provided(samples, wf_api.use_singularity)),
 
             # Flowcell Lane information
             expand(join(workpath,"rawQC","{name}.fastq.info.txt"),name=samples),
@@ -157,7 +157,7 @@ elif not paired_end:
         params: batch='--time=168:00:00'
         input:
             # FastQValidator
-            expand(join(workpath,"rawQC","{name}.validated.R1.fastq.log"), name=provided(samples, wf_api.use_singularity)),
+            expand(join(workpath,"rawQC","{name}.fastQValidator.R1.fastq.log"), name=provided(samples, wf_api.use_singularity)),
 
             # Flowcell Lane information
             expand(join(workpath,"rawQC","{name}.fastq.info.txt"),name=samples),
