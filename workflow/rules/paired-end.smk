@@ -19,6 +19,8 @@ rule validator:
     input:
         R1=join(workpath,"{name}.R1.fastq.gz"),
         R2=join(workpath,"{name}.R2.fastq.gz"),
+    output:
+        f"{workpath}/{{name}}.is_valid.txt"
     log:
         out1=join(workpath,"rawQC","{name}.validated.R1.fastq.log"),
         out2=join(workpath,"rawQC","{name}.validated.R2.fastq.log"),
@@ -31,6 +33,7 @@ rule validator:
         """
         fastQValidator --noeof --minReadLen 2 --file {input.R1} > {log.out1}
         fastQValidator --noeof --minReadLen 2 --file {input.R2} > {log.out2}
+        cat {log.out1} {log.out2} > {output}
         """
 
 
@@ -75,9 +78,8 @@ rule trim_pe:
     input:
         file1=join(workpath,"{name}.R1.fastq.gz"),
         file2=join(workpath,"{name}.R2.fastq.gz"),
+        valid=rules.validator.output
     output:
-        #out1=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz")),
-        #out2=temp(join(workpath,trim_dir,"{name}.R2.trim.fastq.gz"))
         out1=join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"),
         out2=join(workpath,trim_dir,"{name}.R2.trim.fastq.gz")
     log:

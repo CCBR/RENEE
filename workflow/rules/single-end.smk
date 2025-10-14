@@ -18,6 +18,8 @@ rule validator:
     """
     input:
         R1=join(workpath,"{name}.R1.fastq.gz"),
+    output:
+        f"{workpath}/{{name}}.is_valid.txt"
     log:
         join(workpath,"rawQC","{name}.validated.R1.fastq.log"),
     priority: 2
@@ -28,6 +30,7 @@ rule validator:
     shell:
         """
         fastQValidator --noeof --minReadLen 2 --file {input.R1} > {log}
+        cat {log.out1} {log.out2} > {output}
         """
 
 
@@ -74,6 +77,7 @@ rule trim_se:
     """
     input:
         infq=join(workpath,"{name}.R1.fastq.gz"),
+        valid=rules.validator.output
     output:
         outfq=temp(join(workpath,trim_dir,"{name}.R1.trim.fastq.gz"))
     log:
