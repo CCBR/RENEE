@@ -19,9 +19,9 @@ rule validator:
     input:
         R1=join(workpath,"{name}.R1.fastq.gz"),
     output:
-        f"{workpath}/{{name}}.is_valid.txt"
+        f"{workpath}/rawQC/{{name}}.fastQValidator.txt"
     log:
-        join(workpath,"rawQC","{name}.validated.R1.fastq.log"),
+        join(workpath,"rawQC","{name}.fastQValidator.R1.fastq.log"),
     priority: 2
     params:
         rname='pl:validator',
@@ -30,7 +30,7 @@ rule validator:
     shell:
         """
         fastQValidator --noeof --minReadLen 2 --file {input.R1} > {log}
-        cat {log.out1} {log.out2} > {output}
+        cp {log} {output}
         """
 
 
