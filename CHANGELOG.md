@@ -1,5 +1,7 @@
 ## RENEE development version
 
+## RENEE 2.7.3
+
 - Bug fixes: (#246, @kelly-sovacool)
   - Increase memory for fastq screen.
   - Do not proceed to trimming if fastq validator fails.
