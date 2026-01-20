@@ -33,10 +33,20 @@ from ccbr_tools.pipeline.cache import get_sif_cache_dir, image_cache
 # local imports
 from .run import run
 from .dryrun import dryrun
-from .gui import launch_gui
 from .conditions import fatal
 from .util import renee_base, get_version
 from .orchestrate import orchestrate
+
+# Lazy import GUI to avoid hard dependency on tkinter during CLI-only usage/tests
+try:
+    from .gui import launch_gui
+except Exception as exc:
+
+    def launch_gui(*args, **kwargs):  # type: ignore
+        raise RuntimeError(
+            "GUI dependencies are missing (requires tkinter). Install tkinter to use the GUI."
+        ) from exc
+
 
 # Pipeline Metadata and globals
 RENEE_PATH = os.path.dirname(
