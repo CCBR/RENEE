@@ -46,6 +46,9 @@ Required Arguments:
                                  set to '/lscratch/\$SLURM_JOBID/'. On FRCE,
                                  this value should be set to the following:
                                  '/scratch/cluster_scratch/\$USER/'.
+  -p, --partition [Type: Str]    SLURM partition to submit jobs to.
+                                 If not provided, defaults to partition
+                                 specified in config/cluster.json
   -h, --hpc-name [Type: Str]     biowulf or frce or unknown
 OPTIONS:
   -o,  --outdir  [Type: Path]  Path to output directory. If not provided, the Path
@@ -88,6 +91,7 @@ function parser() {
       -t  | --tmp-dir) provided "$key" "${2:-}"; Arguments["t"]="$2"; shift; shift;;
       -o  | --outdir)  provided "$key" "${2:-}"; Arguments["o"]="$2"; shift; shift;;
       -c  | --cache)  provided "$key" "${2:-}"; Arguments["c"]="$2"; shift; shift;;
+      -p  | --partition) provided "$key" "${2:-}"; Arguments["p"]="$2"; shift; shift;;
       -n  | --hpc-name)  provided "$key" "${2:-}"; Arguments["h"]="$2"; shift; shift;;
       -w  | --wait)  Arguments["w"]="--wait"; shift;;
       -*  | --*) err "Error: Failed to parse unsupported argument: '${key}'."; usage && exit 1;;
@@ -138,6 +142,7 @@ function submit(){
   # INPUT $6 = Temporary directory for output files
   # INPUT $7 = Wait ("--wait") or no wait ("--nowait".. default)
   # INPUT $8 = HPC name... biowulf or frce or unknown
+  # INPUT $9 = SLURM partition (optional)
 
   # SLURM inherits the environment from which the job was launched
   # Try to purge modules all modules from environment
@@ -174,7 +179,12 @@ function submit(){
     slurm)
           # Create directory for logfiles
           mkdir -p "$3"/logfiles/slurmfiles/
-          CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}"
+          # If partition provided via CLI, override cluster.json partition
+          if [[ -n "${9:-}" ]]; then
+            CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -p $9 -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}"
+          else
+            CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}"
+          fi
           snakemakeVer=$(snakemake --version 2>/dev/null)
           verlte() {
     [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
@@ -285,7 +295,7 @@ function main(){
 
   # Step 1. Run pipeline and submit jobs to cluster using the defined executor
   mkdir -p "${Arguments[o]}/logfiles/"
-  job_id=$(submit "${Arguments[e]}" "${Arguments[j]}" "${Arguments[o]}" "${Arguments[b]}" "${Arguments[c]}" "${Arguments[t]}" "${Arguments[w]}" "${Arguments[h]}")
+  job_id=$(submit "${Arguments[e]}" "${Arguments[j]}" "${Arguments[o]}" "${Arguments[b]}" "${Arguments[c]}" "${Arguments[t]}" "${Arguments[w]}" "${Arguments[h]}" "${Arguments[p]:-}")
   echo -e "[$(date)] Pipeline submitted to cluster.\nMaster Job ID: $job_id"
   echo "${job_id}" > "${Arguments[o]}/logfiles/mjobid.log"
 

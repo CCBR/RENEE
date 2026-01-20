@@ -302,6 +302,27 @@ def configure_build(sub_args, git_repo, output_path):
         resources=["workflow", "resources", "config"],
         safe_mode=False,
     )
+    # If a partition was provided, update the copied cluster.json default partition
+    if hasattr(sub_args, "partition") and sub_args.partition:
+        cluster_json = os.path.join(output_path, "config", "cluster.json")
+        if not os.path.exists(cluster_json):
+            raise FileNotFoundError(
+                f"Expected cluster.json at '{cluster_json}' after build configuration"
+            )
+        with open(cluster_json, "r") as fh:
+            try:
+                cluster_cfg = json.load(fh)
+            except json.JSONDecodeError as e:
+                raise RuntimeError(
+                    f"Malformed JSON in cluster.json at '{cluster_json}'"
+                ) from e
+        if "__default__" not in cluster_cfg:
+            raise KeyError(
+                f"cluster.json missing '__default__' section at '{cluster_json}'"
+            )
+        cluster_cfg["__default__"]["partition"] = sub_args.partition
+        with open(cluster_json, "w") as fh:
+            json.dump(cluster_cfg, fh, indent=4, sort_keys=True)
     _reset_write_permission(target=output_path)
     _configure(
         sub_args=sub_args,
@@ -379,6 +400,7 @@ def build(sub_args):
         tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
         wait=wait,
         hpcname=hpcname,
+        partition=sub_args.partition,
     )
 
     masterjob.wait()
@@ -952,6 +974,15 @@ def parsed_arguments(name, description):
         help=argparse.SUPPRESS,
     )
 
+    # SLURM partition to submit jobs to
+    subparser_run.add_argument(
+        "--partition",
+        type=str,
+        required=False,
+        default=None,
+        help="SLURM partition to submit jobs to. If not provided, defaults to partition specified in config/cluster.json",
+    )
+
     # Number of threads for the
     # pipeline's main proceess
     # This is only applicable for
@@ -1250,6 +1281,15 @@ def parsed_arguments(name, description):
         required=False,
         default="/lscratch/$SLURM_JOBID/",
         help=argparse.SUPPRESS,
+    )
+
+    # SLURM partition to submit jobs to
+    subparser_build.add_argument(
+        "--partition",
+        type=str,
+        required=False,
+        default=None,
+        help="SLURM partition to submit jobs to. If not provided, defaults to partition specified in config/cluster.json",
     )
 
     # wait until master job finishes ... required for HPC API execution
