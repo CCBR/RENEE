@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- New `--partition` option for `renee run` and `renee build` to specify the SLURM partition. (#252, @kelly-sovacool)
+
 ## RENEE 2.7.3
 
 - Bug fixes: (#246, @kelly-sovacool)
