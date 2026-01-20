@@ -26,7 +26,7 @@ def test_run_init_partition_overrides_cluster_json():
     # Provide partition 'long' and verify it's written to cluster.json
     base_cmd = (
         "./main.py run --mode local --runmode init --dry-run "
-        "--input .tests/*.fastq.gz --partition long"
+        "--input .tests/*.fastq.gz --genome config/genomes/biowulf/hg38_38.json --partition long"
     )
     cluster = _run_cmd_in_tmp(base_cmd)
     assert (
