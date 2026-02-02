@@ -69,10 +69,13 @@ jobs:
         shell: micromamba-shell {0}
       - name: Test
         run: |
-          python -m pytest
+          python -m pytest --cov
         env:
           TMPDIR: ${{ runner.temp }}
         shell: micromamba-shell {0}
+      - uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   build-status: # https://github.com/orgs/community/discussions/4324#discussioncomment-3477871
     runs-on: ubuntu-latest
