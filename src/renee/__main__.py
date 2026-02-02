@@ -34,7 +34,7 @@ from ccbr_tools.pipeline.cache import get_sif_cache_dir, image_cache
 from .run import run
 from .dryrun import dryrun
 from .conditions import fatal
-from .util import renee_base, get_version
+from .util import renee_base, get_version, update_cluster_partition
 from .orchestrate import orchestrate
 
 # Lazy import GUI to avoid hard dependency on tkinter during CLI-only usage/tests
@@ -314,25 +314,11 @@ def configure_build(sub_args, git_repo, output_path):
     )
     # If a partition was provided, update the copied cluster.json default partition
     if hasattr(sub_args, "partition") and sub_args.partition:
-        cluster_json = os.path.join(output_path, "config", "cluster.json")
-        if not os.path.exists(cluster_json):
-            raise FileNotFoundError(
-                f"Expected cluster.json at '{cluster_json}' after build configuration"
-            )
-        with open(cluster_json, "r") as fh:
-            try:
-                cluster_cfg = json.load(fh)
-            except json.JSONDecodeError as e:
-                raise RuntimeError(
-                    f"Malformed JSON in cluster.json at '{cluster_json}'"
-                ) from e
-        if "__default__" not in cluster_cfg:
-            raise KeyError(
-                f"cluster.json missing '__default__' section at '{cluster_json}'"
-            )
-        cluster_cfg["__default__"]["partition"] = sub_args.partition
-        with open(cluster_json, "w") as fh:
-            json.dump(cluster_cfg, fh, indent=4, sort_keys=True)
+        update_cluster_partition(
+            output_path,
+            sub_args.partition,
+            context="after build configuration"
+        )
     _reset_write_permission(target=output_path)
     _configure(
         sub_args=sub_args,
