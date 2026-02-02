@@ -287,5 +287,6 @@ renee run --input .tests/*.R?.fastq.gz \
                --partition norm \
                --star-2-pass-basic \
                --shared-resources /data/shared/renee \
-               --tmp-dir /cluster_scratch/$USER/
+               --tmp-dir /cluster_scratch/$USER/ \
+               --dry-run
 ```
