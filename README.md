@@ -4,6 +4,7 @@
 
 [![build](https://github.com/CCBR/RENEE/actions/workflows/build.yml/badge.svg)](https://github.com/CCBR/RENEE/actions/workflows/build.yml)
 [![docs](https://github.com/CCBR/RENEE/actions/workflows/docs-mkdocs.yml/badge.svg)](https://ccbr.github.io/RENEE)
+[![codecov](https://codecov.io/gh/CCBR/RENEE/graph/badge.svg?token=XHO9G7FQAC)](https://codecov.io/gh/CCBR/RENEE)
 [![DOI](https://zenodo.org/badge/447297455.svg)](https://zenodo.org/doi/10.5281/zenodo.10553198)
 [![release](https://img.shields.io/github/v/release/CCBR/RENEE?color=blue&label=latest%20release)](https://github.com/CCBR/RENEE/releases/latest)
 
