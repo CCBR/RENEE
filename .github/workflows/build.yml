@@ -73,9 +73,10 @@ jobs:
         env:
           TMPDIR: ${{ runner.temp }}
         shell: micromamba-shell {0}
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          slug: ${{ github.repository }}
 
   build-status: # https://github.com/orgs/community/discussions/4324#discussioncomment-3477871
     runs-on: ubuntu-latest
