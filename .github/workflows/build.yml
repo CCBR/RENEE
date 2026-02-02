@@ -69,7 +69,7 @@ jobs:
         shell: micromamba-shell {0}
       - name: Test
         run: |
-          python -m pytest --cov
+          python -m pytest --cov --cov-report=xml
         env:
           TMPDIR: ${{ runner.temp }}
         shell: micromamba-shell {0}
