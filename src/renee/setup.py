@@ -87,6 +87,9 @@ def setup(sub_args, ifiles, repo_path, output_path):
     config["options"]["small_rna"] = sub_args.small_rna
     config["options"]["tmp_dir"] = get_tmp_dir(sub_args.tmp_dir, output_path)
     config["options"]["shared_resources"] = sub_args.shared_resources
+    # Record chosen partition for traceability
+    if hasattr(sub_args, "partition") and sub_args.partition:
+        config["options"]["partition"] = sub_args.partition
     if sub_args.wait:
         config["options"]["wait"] = "True"
     else:

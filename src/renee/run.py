@@ -96,6 +96,7 @@ def run(sub_args):
             tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
             wait=wait,
             hpcname=hpcname,
+            partition=sub_args.partition,
         )
 
         # Wait for subprocess to complete,

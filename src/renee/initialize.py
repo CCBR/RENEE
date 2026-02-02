@@ -1,8 +1,9 @@
 import os
-import re
 import sys
 
 from ccbr_tools.pipeline.util import _cp_r_safe_, _sym_safe_
+
+from .util import update_cluster_partition
 
 
 def initialize(sub_args, repo_path, output_path):
@@ -44,6 +45,14 @@ def initialize(sub_args, repo_path, output_path):
         target=output_path,
         resources=["workflow", "resources", "config"],
     )
+
+    # If a partition was provided, update the copied cluster.json default partition
+    if hasattr(sub_args, "partition") and sub_args.partition:
+        update_cluster_partition(
+            output_path,
+            sub_args.partition,
+            context="after initialization"
+        )
 
     # Create renamed symlinks to rawdata
     inputs = _sym_safe_(input_data=sub_args.input, target=output_path)

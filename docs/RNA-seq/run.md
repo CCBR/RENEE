@@ -14,6 +14,7 @@ Setting up the RENEE pipeline is fast and easy! In its most basic form, <code>re
 $ renee run [--help] \
             [--small-rna] [--star-2-pass-basic] \
             [--dry-run] [--mode {slurm, local}] \
+            [--partition PARTITION] \
             [--shared-resources SHARED_RESOURCES] \
             [--singularity-cache SINGULARITY_CACHE] \
             [--sif-cache SIF_CACHE] \
@@ -130,6 +131,17 @@ Each of the following arguments are optional and do not need to be provided.
 
 ---
 
+`--partition PARTITION`
+
+> **SLURM partition for job submission.**  
+> _type: string_
+>
+> Name of the SLURM partition to submit the pipeline job to. This option overrides the default partition specified in the cluster configuration file. This is useful when you want to submit jobs to a specific partition on your SLURM cluster. If not provided, the default partition from the cluster configuration will be used. This option is only applicable when using `--mode slurm`.
+>
+> **_Example:_** `--partition norm`
+
+---
+
 `--shared-resources SHARED_RESOURCES`
 
 > **Local path to shared resources.**  
@@ -227,7 +239,8 @@ renee run --input .tests/*.R?.fastq.gz \
                --output /data/$USER/RNA_hg38 \
                --genome hg38_36 \
                --mode slurm \
-                --sif-cache /data/OpenOmics/SIFs/ \
+               --sif-cache /data/OpenOmics/SIFs/ \
+               --partition norm \
                --star-2-pass-basic
 ```
 
@@ -271,6 +284,7 @@ renee run --input .tests/*.R?.fastq.gz \
                --genome /data/$USER/hg38_36/hg38_36.json \
                --mode slurm \
                --sif-cache /data/$USER/cache \
+               --partition norm \
                --star-2-pass-basic \
                --shared-resources /data/shared/renee \
                --tmp-dir /cluster_scratch/$USER/ \

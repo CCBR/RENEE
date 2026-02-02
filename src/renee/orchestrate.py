@@ -20,6 +20,7 @@ def orchestrate(
     tmp_dir=None,
     wait="",
     hpcname=get_hpcname(),
+    partition=None,
 ):
     """Runs RENEE pipeline via selected executor: local or slurm.
     If 'local' is selected, the pipeline is executed locally on a compute node/instance.
@@ -49,6 +50,8 @@ def orchestrate(
         "--wait" to wait for master job to finish. This waits when pipeline is called via NIDAP API
     @param hpcname <str>:
         "biowulf" if run on biowulf, "frce" if run on frce, blank otherwise. hpcname is determined in setup() function
+    @param partition <str>:
+        SLURM partition to submit jobs to. If not provided, defaults to partition in cluster.json
     @return masterjob <subprocess.Popen() object>:
     """
     # Add additional singularity bind PATHs
@@ -151,6 +154,9 @@ def orchestrate(
             "-t",
             str(tmp_dir),
         ]
+        if partition is not None and str(partition) != "":
+            cmdlist.append("-p")
+            cmdlist.append(str(partition))
         if str(wait) == "--wait":
             cmdlist.append("-w")
         if str(hpcname) != "":

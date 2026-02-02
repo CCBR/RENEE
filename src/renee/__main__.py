@@ -33,10 +33,20 @@ from ccbr_tools.pipeline.cache import get_sif_cache_dir, image_cache
 # local imports
 from .run import run
 from .dryrun import dryrun
-from .gui import launch_gui
 from .conditions import fatal
-from .util import renee_base, get_version
+from .util import renee_base, get_version, update_cluster_partition
 from .orchestrate import orchestrate
+
+# Lazy import GUI to avoid hard dependency on tkinter during CLI-only usage/tests
+try:
+    from .gui import launch_gui
+except Exception as exc:
+
+    def launch_gui(*args, **kwargs):  # type: ignore
+        raise RuntimeError(
+            "GUI dependencies are missing (requires tkinter). Install tkinter to use the GUI."
+        ) from exc
+
 
 # Pipeline Metadata and globals
 RENEE_PATH = os.path.dirname(
@@ -302,6 +312,13 @@ def configure_build(sub_args, git_repo, output_path):
         resources=["workflow", "resources", "config"],
         safe_mode=False,
     )
+    # If a partition was provided, update the copied cluster.json default partition
+    if hasattr(sub_args, "partition") and sub_args.partition:
+        update_cluster_partition(
+            output_path,
+            sub_args.partition,
+            context="after build configuration"
+        )
     _reset_write_permission(target=output_path)
     _configure(
         sub_args=sub_args,
@@ -379,6 +396,7 @@ def build(sub_args):
         tmp_dir=get_tmp_dir(sub_args.tmp_dir, sub_args.output),
         wait=wait,
         hpcname=hpcname,
+        partition=sub_args.partition,
     )
 
     masterjob.wait()
@@ -952,6 +970,15 @@ def parsed_arguments(name, description):
         help=argparse.SUPPRESS,
     )
 
+    # SLURM partition to submit jobs to
+    subparser_run.add_argument(
+        "--partition",
+        type=str,
+        required=False,
+        default=None,
+        help="SLURM partition to submit jobs to. If not provided, defaults to partition specified in config/cluster.json",
+    )
+
     # Number of threads for the
     # pipeline's main proceess
     # This is only applicable for
@@ -1250,6 +1277,15 @@ def parsed_arguments(name, description):
         required=False,
         default="/lscratch/$SLURM_JOBID/",
         help=argparse.SUPPRESS,
+    )
+
+    # SLURM partition to submit jobs to
+    subparser_build.add_argument(
+        "--partition",
+        type=str,
+        required=False,
+        default=None,
+        help="SLURM partition to submit jobs to. If not provided, defaults to partition specified in config/cluster.json",
     )
 
     # wait until master job finishes ... required for HPC API execution
