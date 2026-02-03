@@ -1,4 +1,4 @@
-## RENEE development version
+## RENEE 2.7.4
 
 - New `--partition` option for `renee run` and `renee build` to specify the SLURM partition. (#252, @kelly-sovacool)
   - This feature is necessary for users who do not have access to the `norm` partition on biowulf, such as students.
