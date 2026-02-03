@@ -1,6 +1,7 @@
 ## RENEE development version
 
 - New `--partition` option for `renee run` and `renee build` to specify the SLURM partition. (#252, @kelly-sovacool)
+  - This feature is necessary for users who do not have access to the `norm` partition on biowulf, such as students.
 - Fix bug in `phred_encoding.py` that incorrectly detected Phred+33 files as Phred+64, causing BBMerge to fail. (#257, @kelly-sovacool)
 
 ## RENEE 2.7.3
