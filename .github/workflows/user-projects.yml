@@ -1,4 +1,4 @@
-name: personal-projects
+name: user-projects
 
 on:
   issues:
@@ -11,9 +11,13 @@ on:
 permissions:
   issues: write
   pull-requests: write
-  contents: read
 
 jobs:
   add-to-project:
-    uses: CCBR/.github/.github/workflows/auto-add-user-project.yml@v0.1.0
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CCBR/actions/user-projects@main
+        with:
+          app-id: ${{ vars.CCBR_BOT_APP_ID }}
+          app-private-key: ${{ secrets.CCBR_BOT_PRIVATE_KEY }}
+          token-owner: "CCBR"
