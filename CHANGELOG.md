@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Fix RSEM failure with custom references containing short sequences (e.g., HPV-integrated genomes) by removing incompatible STAR alignment parameters (`--alignEndsProtrude` and `--peOverlapNbasesMin`), which caused reads to protrude beyond transcript boundaries.
+
 ## RENEE 2.7.4
 
 - New `--partition` option for `renee run` and `renee build` to specify the SLURM partition. (#252, @kelly-sovacool)
