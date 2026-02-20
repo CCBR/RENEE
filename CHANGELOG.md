@@ -1,6 +1,6 @@
 ## RENEE development version
 
-- Fix RSEM failure with custom references containing short sequences (e.g., HPV-integrated genomes) by removing incompatible STAR alignment parameters (`--alignEndsProtrude` and `--peOverlapNbasesMin`), which caused reads to protrude beyond transcript boundaries.
+- Fix RSEM failure with custom references containing short sequences (e.g., HPV-integrated genomes) by removing incompatible STAR alignment parameters (`--alignEndsProtrude` and `--peOverlapNbasesMin`), which caused reads to protrude beyond transcript boundaries. (#261, @kelly-sovacool)
 
 ## RENEE 2.7.4
 
