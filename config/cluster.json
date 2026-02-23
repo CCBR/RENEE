@@ -124,7 +124,7 @@
         "threads": "32"
     },
     "validator": {
-        "mem": "16g"
+        "mem": "50g"
     },
     "reformat_gtf": {
         "mem": "20g",
