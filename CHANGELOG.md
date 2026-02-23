@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Added more memory to rule `validator` (#263, @samarth8392)
+
 ## RENEE 2.7.4
 
 - New `--partition` option for `renee run` and `renee build` to specify the SLURM partition. (#252, @kelly-sovacool)
