@@ -9,7 +9,6 @@ from ccbr_tools.pipeline.util import get_hpcname
 from ccbr_tools.shell import shell_run
 from renee.workflow.scripts.builder.generate_qualimap_ref import write_qualimap_info
 
-
 qualimap_cmd = """workflow/scripts/builder/generate_qualimap_ref.py \
 -g {gtf} \
 -f {fasta} \

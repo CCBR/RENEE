@@ -16,7 +16,7 @@ ssh -Y $USER@biowulf.nih.gov
 
 ### 2.2 Grab an interactive node
 
-> **NOTE**: Make sure to add `--tunnel` flag to the sinteractive command for correct display settings. See details here: https://hpc.nih.gov/docs/tunneling/ 
+> **NOTE**: Make sure to add `--tunnel` flag to the sinteractive command for correct display settings. See details here: https://hpc.nih.gov/docs/tunneling/
 
 ```bash
 # Setup Step 2.) Please do not run RENEE on the head node!
@@ -37,7 +37,7 @@ module load ccbrpipeliner
 If the module was loaded correctly, the greetings message should be displayed.
 
 ```bash
-[+] Loading ccbrpipeliner  6  ... 
+[+] Loading ccbrpipeliner  6  ...
 ###########################################################################
 			CCBR Pipeliner release 6
 ###########################################################################
@@ -47,7 +47,7 @@ If the module was loaded correctly, the greetings message should be displayed.
 	Tools are available on BIOWULF, HELIX and FRCE.
 
 	The following pipelines/tools will be loaded in this module:
-	 
+
 	PIPELINES:
 	RENEE		v2.5		https://ccbr.github.io/RENEE/
 	XAVIER		v3.0		https://ccbr.github.io/XAVIER/
@@ -55,11 +55,11 @@ If the module was loaded correctly, the greetings message should be displayed.
 	CHAMPAGNE	v0.3		https://ccbr.github.io/CHAMPAGNE/
 	CRUISE		v0.1		https://ccbr.github.io/CRUISE/
 	ASPEN		v1.0		https://ccbr.github.io/ASPEN/
-	 
+
 	TOOLS:
 	spacesavers2	v0.12		https://ccbr.github.io/spacesavers2/
 	permfix		v0.6		https://github.com/ccbr/permfix/
-	
+
 ###########################################################################
 			Thank you for using CCBR Pipeliner
 			Comments/Questions/Requests:
@@ -97,14 +97,11 @@ or use the **Browse** tab to choose the input and output directories
 
 ![renee_browsePath](images/gui_browse.png)
 
-
 ![renee_enterPath](images/gui_path.png)
-
 
 Next, from the drop down menu select the reference genome (hg38/mm10)
 
 ![renee_genome](images/gui_genome.png)
-
 
 ### 3.3 Submit RENEE job
 
@@ -121,7 +118,6 @@ A dialogue box will popup to confirm submitting the job to slurm.
 Click **Yes**
 
 An email notification will be sent out when the pipeline starts and ends.
-
 
 ## 4. Special instructions regarding X11 Window System
 

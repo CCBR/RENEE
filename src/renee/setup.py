@@ -219,9 +219,7 @@ def get_nends(ifiles):
             not recommended either. If this is a priority for your project, please run
             paired-end samples and single-end samples separately (in two separate output directories).
             If you feel like this functionality should exist, feel free to open an issue on Github.
-            """.format(
-                    missing_mates, sys.argv[0]
-                )
+            """.format(missing_mates, sys.argv[0])
             )
 
     return nends_status

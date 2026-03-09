@@ -186,6 +186,6 @@ if __name__ == "__main__":
     inputName = args.inputName
     outputName = args.outputName
 
-    (header, inputData) = readGff3(inputName)
+    header, inputData = readGff3(inputName)
     GTF = makeGTF(header, inputData)
     writeGTF(GTF, outputName)
