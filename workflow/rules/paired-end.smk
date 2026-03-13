@@ -476,8 +476,6 @@ else:
             --runThreadN {threads} \
             --outFileNamePrefix {params.prefix}. \
             --outSAMtype BAM Unsorted \
-            --alignEndsProtrude 10 ConcordantPair \
-            --peOverlapNbasesMin 10 \
             --sjdbGTFfile {params.gtffile} \
             --outTmpDir=${{tmp}}/STARtmp_{wildcards.name} \
             --sjdbOverhang ${{readlength}}
@@ -604,8 +602,6 @@ else:
             --limitSjdbInsertNsj {params.nbjuncs} \
             --quantMode TranscriptomeSAM GeneCounts \
             --outSAMtype BAM Unsorted \
-            --alignEndsProtrude 10 ConcordantPair \
-            --peOverlapNbasesMin 10 \
             --outTmpDir=${{tmp}}/STARtmp_{wildcards.name} \
             --sjdbOverhang ${{readlength}}
 
