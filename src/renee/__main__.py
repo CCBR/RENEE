@@ -315,9 +315,7 @@ def configure_build(sub_args, git_repo, output_path):
     # If a partition was provided, update the copied cluster.json default partition
     if hasattr(sub_args, "partition") and sub_args.partition:
         update_cluster_partition(
-            output_path,
-            sub_args.partition,
-            context="after build configuration"
+            output_path, sub_args.partition, context="after build configuration"
         )
     _reset_write_permission(target=output_path)
     _configure(

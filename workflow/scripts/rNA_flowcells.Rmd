@@ -12,7 +12,7 @@ output:
     navbar:
       - { title: "Pipeline Documentation", href: "https://ccbr.github.io/pipeliner-docs/RNA-seq/Theory-and-practical-guide-for-RNA-seq/", align: right }
     source_code: "embed"
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -379,8 +379,8 @@ plot_pca_data <- function(dat, pca_max) {
       "</br> % UTR: ", pct_utr_bases,
       "</br> % Intronic: ", pct_intronic_bases,
       "</br></br> Sequence Range: ", sequence_length,
-      "</br> GC Content: ", gc_content, 
-      "</br> Inner Distance Maxima: ", inner_distance_maxima, 
+      "</br> GC Content: ", gc_content,
+      "</br> Inner Distance Maxima: ", inner_distance_maxima,
       "</br> Insert Size: ", median_insert_size
     )
       ))

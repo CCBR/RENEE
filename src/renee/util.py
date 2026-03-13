@@ -42,10 +42,10 @@ def get_shared_resources_dir(shared_dir, hpc=get_hpcname()):
 
 def update_cluster_partition(output_path, partition, context=""):
     """Update the default partition in cluster.json.
-    
+
     Reads cluster.json from the output directory, updates the __default__ partition,
     and writes it back with proper formatting.
-    
+
     @param output_path <str>:
         Path to the output directory containing config/cluster.json
     @param partition <str>:
@@ -58,12 +58,12 @@ def update_cluster_partition(output_path, partition, context=""):
     """
     cluster_json = os.path.join(output_path, "config", "cluster.json")
     context_msg = f" {context}" if context else ""
-    
+
     if not os.path.exists(cluster_json):
         raise FileNotFoundError(
             f"Expected cluster.json at '{cluster_json}'{context_msg}"
         )
-    
+
     with open(cluster_json, "r") as fh:
         try:
             cluster_cfg = json.load(fh)
@@ -71,13 +71,13 @@ def update_cluster_partition(output_path, partition, context=""):
             raise RuntimeError(
                 f"Malformed JSON in cluster.json at '{cluster_json}'"
             ) from e
-    
+
     if "__default__" not in cluster_cfg:
         raise KeyError(
             f"cluster.json missing '__default__' section at '{cluster_json}'"
         )
-    
+
     cluster_cfg["__default__"]["partition"] = partition
-    
+
     with open(cluster_json, "w") as fh:
         json.dump(cluster_cfg, fh, indent=4, sort_keys=True)

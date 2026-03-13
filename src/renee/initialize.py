@@ -49,9 +49,7 @@ def initialize(sub_args, repo_path, output_path):
     # If a partition was provided, update the copied cluster.json default partition
     if hasattr(sub_args, "partition") and sub_args.partition:
         update_cluster_partition(
-            output_path,
-            sub_args.partition,
-            context="after initialization"
+            output_path, sub_args.partition, context="after initialization"
         )
 
     # Create renamed symlinks to rawdata
