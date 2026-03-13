@@ -71,7 +71,7 @@ To reduce the possibility of introducing batch effects from sequencing, all samp
 | Control_rep_3   |  WT   |     1     |       2        |
 | Control_rep_4   |  WT   |     2     |       2        |
 
-> **Batch** = properly balanced batches, easily corrected :relaxed:  
+> **Batch** = properly balanced batches, easily corrected :relaxed:
 > <b>Batch\*</b> = groups and batch totally confounded, cannot be corrected :worried:
 
 That being said, some problems cannot be bioinformatically corrected. If your variable of interest is totally confounded with your batches, applying batch correction to fix the problem is not going to work, and will lead to undesired results (i.e. `Batch*` column). If batches must be introduced due to other constraining factors, please keep note which samples belong to each batch, and please put some thought into how to properly balance samples across your batches.

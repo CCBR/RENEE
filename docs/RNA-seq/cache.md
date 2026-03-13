@@ -29,7 +29,7 @@ Use you can always use the `-h` option for information on a specific command.
 
 `--sif-cache SIF_CACHE`
 
-> **Path where a local cache of SIFs will be stored.**  
+> **Path where a local cache of SIFs will be stored.**
 > _type: path_
 >
 > Any images defined in _config/containers/images.json_ will be pulled into the local filesystem. The path provided to this option can be passed to the `--sif-cache` option of the <code>renee <b>build</b></code> and <code>renee <b>run</b></code> subcomand. This allows for running the build and run pipelines in an offline mode where no requests are made to external sources. This is useful for avoiding network issues or DockerHub pull rate limits. Please see renee build and run for more information.
@@ -42,7 +42,7 @@ Each of the following arguments are optional and do not need to be provided.
 
 `-h, --help`
 
-> **Display Help.**  
+> **Display Help.**
 > _type: boolean_
 >
 > Shows command's synopsis, help message, and an example command
@@ -53,7 +53,7 @@ Each of the following arguments are optional and do not need to be provided.
 
 `--dry-run`
 
-> **Dry run the pipeline.**  
+> **Dry run the pipeline.**
 > _type: boolean_
 >
 > Displays what steps in the pipeline remain or will be run. Does not execute anything!

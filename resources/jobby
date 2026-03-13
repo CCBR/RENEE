@@ -619,14 +619,11 @@ def parsed_arguments(name, description):
 
           -v, --version         Displays version information and exits.
                                   @Example: --version
-        """.format(
-            styled_name, description, name, c.bold, c.url, c.end, c.italic, temp
-        )
+        """.format(styled_name, description, name, c.bold, c.url, c.end, c.italic, temp)
     )
 
     # Display example usage in epilog
-    run_epilog = textwrap.dedent(
-        """\
+    run_epilog = textwrap.dedent("""\
         {2}{3}Example:{4}
         # Please avoid running jobby
         # on a cluster's head node!
@@ -634,10 +631,7 @@ def parsed_arguments(name, description):
 
         {2}{3}Version:{4}
           {1}
-        """.format(
-            name, __version__, c.bold, c.url, c.end
-        )
-    )
+        """.format(name, __version__, c.bold, c.url, c.end))
 
     # Create a top-level parser
     parser = argparse.ArgumentParser(
