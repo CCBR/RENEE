@@ -49,26 +49,26 @@ cd RENEE
 
 - Install the python dependencies with pip
 
-  ```sh
-  pip install .
-  ```
+    ```sh
+    pip install .
+    ```
 
-  If you're developing on biowulf, you can use our shared conda environment which already has these dependencies installed
+    If you're developing on biowulf, you can use our shared conda environment which already has these dependencies installed
 
-  ```sh
-  . "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh"
-  conda activate py311
-  ```
+    ```sh
+    . "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh"
+    conda activate py311
+    ```
 
 - Install [`pre-commit`](https://pre-commit.com/#install) if you don't already
   have it. Then from the repo's root directory, run
 
-  ```sh
-  pre-commit install
-  ```
+    ```sh
+    pre-commit install
+    ```
 
-  This will install the repo's pre-commit hooks.
-  You'll only need to do this step the first time you clone the repo.
+    This will install the repo's pre-commit hooks.
+    You'll only need to do this step the first time you clone the repo.
 
 ### Create a branch
 

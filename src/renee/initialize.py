@@ -30,14 +30,10 @@ def initialize(sub_args, repo_path, output_path):
 
     elif os.path.exists(output_path) and os.path.isfile(output_path):
         # Provided Path for pipeline output directory exists as file
-        raise OSError(
-            """\n\tFatal: Failed to create provided pipeline output directory!
+        raise OSError("""\n\tFatal: Failed to create provided pipeline output directory!
         User provided --output PATH already exists on the filesystem as a file.
         Please run {} again with a different --output PATH.
-        """.format(
-                sys.argv[0]
-            )
-        )
+        """.format(sys.argv[0]))
 
     # Copy over templates are other required resources
     _cp_r_safe_(
