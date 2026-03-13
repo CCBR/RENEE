@@ -6,7 +6,7 @@ An highly reproducible and portable RNA-seq data analysis pipeline
 About:
     This is the main entry for the RENEE pipeline.
 USAGE:
-	$ renee <run|build|unlock|cache> [OPTIONS]
+        $ renee <run|build|unlock|cache> [OPTIONS]
 Example:
     $ renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg38_36 --mode slurm
 """
@@ -296,14 +296,10 @@ def configure_build(sub_args, git_repo, output_path):
 
     elif os.path.exists(output_path) and os.path.isfile(output_path):
         # Provided Path for pipeline output directory exists as file
-        raise OSError(
-            """\n\tFatal: Failed to create provided pipeline output directory!
+        raise OSError("""\n\tFatal: Failed to create provided pipeline output directory!
         User provided --output PATH already exists on the filesystem as a file.
         Please run {} again with a different --output PATH.
-        """.format(
-                sys.argv[0]
-            )
-        )
+        """.format(sys.argv[0]))
 
     # Copy over templates are other required resources, overwriting if they exist
     _cp_r_safe_(
@@ -315,9 +311,7 @@ def configure_build(sub_args, git_repo, output_path):
     # If a partition was provided, update the copied cluster.json default partition
     if hasattr(sub_args, "partition") and sub_args.partition:
         update_cluster_partition(
-            output_path,
-            sub_args.partition,
-            context="after build configuration"
+            output_path, sub_args.partition, context="after build configuration"
         )
     _reset_write_permission(target=output_path)
     _configure(
@@ -444,14 +438,10 @@ def cache(sub_args):
         os.makedirs(sif_cache)
     elif os.path.exists(sif_cache) and os.path.isfile(sif_cache):
         # Provided Path for pipeline output directory exists as file
-        raise OSError(
-            """\n\tFatal: Failed to create provided sif cache directory!
+        raise OSError("""\n\tFatal: Failed to create provided sif cache directory!
         User provided --sif-cache PATH already exists on the filesystem as a file.
         Please {} cache again with a different --sif-cache PATH.
-        """.format(
-                sys.argv[0]
-            )
-        )
+        """.format(sys.argv[0]))
 
     # Check if local SIFs already exist on the filesystem
     with open(images, "r") as fh:
@@ -524,15 +514,11 @@ def genome_options(parser, user_option, prebuilt):
     # a list of genomes (files) in config/genomes/*.json
     elif user_option not in prebuilt:
         # User did NOT provide a valid choice
-        parser.error(
-            """provided invalid choice, '{}', to --genome argument!\n
+        parser.error("""provided invalid choice, '{}', to --genome argument!\n
         Choose from one of the following pre-built genome options: \n
         \t{}\n
         or supply a custom reference genome JSON file generated from renee build.
-        """.format(
-                user_option, prebuilt
-            )
-        )
+        """.format(user_option, prebuilt))
 
     return user_option
 
@@ -572,8 +558,7 @@ def parsed_arguments(name, description):
     # Here is a work around to create more useful help message for named
     # options that are required! Please note: if a required arg is added the
     # description below should be updated (i.e. update usage and add new option)
-    required_run_options = textwrap.dedent(
-        """
+    required_run_options = textwrap.dedent("""
         {1}{0} {3}run{4}: {1} Runs the data-processing and quality-control pipeline.{4}
 
         {1}{2}Synopsis:{4}
@@ -749,10 +734,7 @@ def parsed_arguments(name, description):
         {1}{2}Misc Options:{4}
           -h, --help            Show usage information, help message, and exit.
                                   Example: --help
-        """.format(
-            "renee", c.bold, c.url, c.italic, c.end
-        )
-    )
+        """.format("renee", c.bold, c.url, c.italic, c.end))
 
     # Display example usage in epilog
     run_epilog = textwrap.dedent(
@@ -994,8 +976,7 @@ def parsed_arguments(name, description):
     # Here is a work around to create more useful help message for named
     # options that are required! Please note: if a required arg is added the
     # description below should be updated (i.e. update usage and add new option)
-    required_build_options = textwrap.dedent(
-        """
+    required_build_options = textwrap.dedent("""
         {1}{0} {3}build{4}: {1}Builds reference files for the pipeline.{4}
 
         {1}{2}Synopsis:{4}
@@ -1122,10 +1103,7 @@ def parsed_arguments(name, description):
         {1}{2}Misc Options:{4}
           -h, --help          Show usage information, help message, and exit.
                                 Example: --help
-        """.format(
-            "renee", c.bold, c.url, c.italic, c.end
-        )
-    )
+        """.format("renee", c.bold, c.url, c.italic, c.end))
 
     # Display example usage in epilog
     build_epilog = textwrap.dedent(
@@ -1306,8 +1284,7 @@ def parsed_arguments(name, description):
     # Here is a work around to create more useful help message for named
     # options that are required! Please note: if a required arg is added the
     # description below should be updated (i.e. update usage and add new option)
-    required_unlock_options = textwrap.dedent(
-        """\
+    required_unlock_options = textwrap.dedent("""\
         {1}{0} {3}unlock{4}: {1}Unlocks a previous output directory.{4}
 
         {1}{2}Synopsis:{4}
@@ -1336,14 +1313,10 @@ def parsed_arguments(name, description):
         {1}{2}Misc Options:{4}
           -h, --help            Show usage information and exit.
                                   Example: --help
-        """.format(
-            "renee", c.bold, c.url, c.italic, c.end
-        )
-    )
+        """.format("renee", c.bold, c.url, c.italic, c.end))
 
     # Display example usage in epilog
-    unlock_epilog = textwrap.dedent(
-        """\
+    unlock_epilog = textwrap.dedent("""\
         {2}{3}Example:{4}
           # Step 1.) Grab an interactive node,
           # do not run on head node and add
@@ -1357,10 +1330,7 @@ def parsed_arguments(name, description):
 
         {2}{3}Version:{4}
           {1}
-        """.format(
-            "renee", __version__, c.bold, c.url, c.end
-        )
-    )
+        """.format("renee", __version__, c.bold, c.url, c.end))
 
     # Suppressing help message of required args to overcome no sub-parser named groups
     subparser_unlock = subparsers.add_parser(
@@ -1388,8 +1358,7 @@ def parsed_arguments(name, description):
     # Here is a work around to create more useful help message for named
     # options that are required! Please note: if a required arg is added the
     # description below should be updated (i.e. update usage and add new option)
-    required_cache_options = textwrap.dedent(
-        """\
+    required_cache_options = textwrap.dedent("""\
         {1}{0} {3}cache{4}: {1}Cache software containers locally.{4}
 
         {1}{2}Synopsis:{4}
@@ -1430,14 +1399,10 @@ def parsed_arguments(name, description):
         {1}{2}Misc Options:{4}
           -h, --help            Show usage information and exits.
                                   Example: --help
-        """.format(
-            "renee", c.bold, c.url, c.italic, c.end
-        )
-    )
+        """.format("renee", c.bold, c.url, c.italic, c.end))
 
     # Display example usage in epilog
-    cache_epilog = textwrap.dedent(
-        """\
+    cache_epilog = textwrap.dedent("""\
         {2}Example:{3}
           # Step 1.) Grab an interactive node,
           # do not run on head node and add
@@ -1457,10 +1422,7 @@ def parsed_arguments(name, description):
 
         {2}Version:{3}
           {1}
-        """.format(
-            "renee", __version__, c.bold, c.end
-        )
-    )
+        """.format("renee", __version__, c.bold, c.end))
 
     # Suppressing help message of required args
     # to overcome no sub-parser named groups

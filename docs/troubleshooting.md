@@ -36,14 +36,13 @@ To check the status of each individual job submitted to the cluster, there are s
 
         Each job that RENEE submits to the cluster starts with the `pl:` prefix.
 
-
 **Q: What if the pipeline is finished running but I received a "FAILED" status? How do I identify failed jobs?**
 
 **A.** In case there was some error during the run, the easiest way to diagnose the problem is to go to logfiles folder within the RENEE output folder and look at the `snakemake.log.jobby.short` file. It contains three columns: jobname, state, and std_err. The jobs that completed successfully would have "COMPLETED" state and jobs that failed would have the FAILED state.
 
 !!! tldr "Find Failed Jobs"
-    === "SLURM output files"
-        
+=== "SLURM output files"
+
         All the failed jobs would be listed with absolute paths to the error file (with extension `.err`). Go through the error files corresponding to the FAILED jobs (std_err) to explore why the job failed.
 
         ```bash
@@ -53,7 +52,6 @@ To check the status of each individual job submitted to the cluster, there are s
         # List the files that failed
         grep "FAILED" snakemake.log.jobby.short | less
         ```
-    
 
 Many failures are caused by filesystem or network issues on Biowulf, and in such cases, simply re-starting the Pipeline should resolve the issue. Snakemake will dynamically determine which steps have been completed, and which steps still need to be run. If you are still running into problems after re-running the pipeline, there may be another issue. If that is the case, please feel free to [contact us](https://github.com/CCBR/RENEE/issues).
 

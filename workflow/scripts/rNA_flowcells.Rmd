@@ -12,7 +12,7 @@ output:
     navbar:
       - { title: "Pipeline Documentation", href: "https://ccbr.github.io/pipeliner-docs/RNA-seq/Theory-and-practical-guide-for-RNA-seq/", align: right }
     source_code: "embed"
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -335,25 +335,25 @@ Row {data-height=600}
 
 ```{r prep-plotly, echo=FALSE, include=FALSE}
 # Variance explained for PCs: 1, 2, 3
-define_pcs <- function(pca_in){
+define_pcs <- function(pca_in) {
   pc1 <<- round(pca_in$sdev[1]^2 / sum(pca_in$sdev^2) * 100, 2)
   pc2 <<- round(pca_in$sdev[2]^2 / sum(pca_in$sdev^2) * 100, 2)
   pc3 <<- round(pca_in$sdev[3]^2 / sum(pca_in$sdev^2) * 100, 2)
 }
 
 # set axis list
-define_axis<-function(){
-  axis_list<<-list(
-      xaxis = list(title = paste0("PC1 (", pc1, "%)")),
-      yaxis = list(title = paste0("PC2 (", pc2, "%)")),
-      zaxis = list(title = paste0("PC3 (", pc3, "%)")))[1:pca_max]
+define_axis <- function() {
+  axis_list <<- list(
+    xaxis = list(title = paste0("PC1 (", pc1, "%)")),
+    yaxis = list(title = paste0("PC2 (", pc2, "%)")),
+    zaxis = list(title = paste0("PC3 (", pc3, "%)"))
+  )[1:pca_max]
 }
 
 # set group info
 cgroups <- as.factor(multiQC$flowcell_lanes)
 cgroups <- addNA(cgroups)
 cpalette <- brewer.pal(nlevels(cgroups), "Paired")
-
 ```
 
 ```{r plotly-function, include=FALSE, echo=FALSE}
@@ -363,7 +363,7 @@ plot_pca_data <- function(dat, pca_max) {
     stop(glue::glue("Number of principle components must be 2 or 3, but is {pca_max}"))
   }
   pcs <- c(x = ~PC1, y = ~PC2, z = ~PC3)[1:pca_max]
-  args <-c(pcs, list(
+  args <- c(pcs, list(
     data = dat,
     hoverinfo = "text",
     marker = list(size = 8),
@@ -379,13 +379,13 @@ plot_pca_data <- function(dat, pca_max) {
       "</br> % UTR: ", pct_utr_bases,
       "</br> % Intronic: ", pct_intronic_bases,
       "</br></br> Sequence Range: ", sequence_length,
-      "</br> GC Content: ", gc_content, 
-      "</br> Inner Distance Maxima: ", inner_distance_maxima, 
+      "</br> GC Content: ", gc_content,
+      "</br> Inner Distance Maxima: ", inner_distance_maxima,
       "</br> Insert Size: ", median_insert_size
     )
-      ))
+  ))
   do.call(plot_ly, args) %>%
-    add_markers()%>%
+    add_markers() %>%
     layout(scene = axis_list)
 }
 ```
@@ -394,7 +394,7 @@ plot_pca_data <- function(dat, pca_max) {
 
 ```{r 3d-expression-pca}
 # set pca variables
-pca=prcomp(t(as.matrix(deg_voom$E)), scale. = T)
+pca <- prcomp(t(as.matrix(deg_voom$E)), scale. = T)
 define_pcs(pca)
 define_axis()
 
@@ -406,7 +406,7 @@ plot_pca_data(shared_metadata, pca_max)
 
 ```{r 3d-tin-pca}
 # set pca variables
-pca=prcomp(t(as.matrix(tincounts)), scale. = T)
+pca <- prcomp(t(as.matrix(tincounts)), scale. = T)
 define_pcs(pca)
 define_axis()
 

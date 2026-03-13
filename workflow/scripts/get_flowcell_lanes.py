@@ -4,7 +4,6 @@
 from __future__ import print_function, division
 import sys, gzip
 
-
 # USAGE
 # sys.argv[1] = sample_name.R1.fastq.gz
 # sys.argv[2] = sample_name (name without PATH and .R?.fastq.gz extension)

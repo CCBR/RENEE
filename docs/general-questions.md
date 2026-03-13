@@ -22,5 +22,5 @@ Also, feel free to like or :star: the project on Github!
 
 ## Additional Support
 
-**Q. I have a few questions about the pipeline. How can I reach you?**  
+**Q. I have a few questions about the pipeline. How can I reach you?**
 **A.** For general questions and/or support, please free to [open an issue](https://github.com/CCBR/RENEE/issues) on Github or send an email to [CCBR](mailto:CCBR_Pipeliner@nih.gov)
