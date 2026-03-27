@@ -173,6 +173,11 @@ function submit(){
   # unsetting XDG_RUNTIME_DIR to avoid some unsighly but harmless warnings
   unset XDG_RUNTIME_DIR
   wait="$7"
+  partition="${9:-}"
+  partition_opts=()
+  if [[ -n "$partition" ]]; then
+    partition_opts=("-p" "$partition")
+  fi
 
   # Run the workflow with specified executor
   case "$executor" in
@@ -220,7 +225,7 @@ function submit(){
           # echo "TRIGGEROPTIONS:${triggeroptions}"
           # Submit the master job to the cluster
           if [ "$wait" != "--wait" ];then
-            job_id=$(sbatch --parsable -J "$2" --time=4-00:00:00 --mail-type=BEGIN,END,FAIL \
+            job_id=$(sbatch --parsable -J "$2" --time=4-00:00:00 --mail-type=BEGIN,END,FAIL "${partition_opts[@]}" \
             --output "$3"/logfiles/snakemake.log --error "$3"/logfiles/snakemake.log \
             snakemake --latency-wait 120 -s "$3"/workflow/Snakefile -d "$3" \
               --use-singularity --singularity-args "'-B $4'" --configfile="$3"/config.json \
@@ -230,7 +235,7 @@ function submit(){
               --keep-going --restart-times 3 -j 500 --rerun-incomplete --stats "$3"/logfiles/runtime_statistics.json \
               --keep-remote 2>&1 | tee -a "$3"/logfiles/master.log)
           else
-            job_id=$(sbatch --wait --parsable -J "$2" --time=4-00:00:00 --mail-type=BEGIN,END,FAIL \
+            job_id=$(sbatch --wait --parsable -J "$2" --time=4-00:00:00 --mail-type=BEGIN,END,FAIL "${partition_opts[@]}" \
             --output "$3"/logfiles/snakemake.log --error "$3"/logfiles/snakemake.log \
             snakemake --latency-wait 120 -s "$3"/workflow/Snakefile -d "$3" \
               --use-singularity --singularity-args "'-B $4'" --configfile="$3"/config.json \
@@ -241,7 +246,7 @@ function submit(){
               --keep-remote 2>&1 | tee -a "$3"/logfiles/master.log)
           fi
           # Clean-up working directory after completion
-          cleanup_id=$(sbatch -J "pl:clean" --dependency=afterany:${job_id} "$3"/resources/cleanup "$3" "$job_id")
+          cleanup_id=$(sbatch -J "pl:clean" "${partition_opts[@]}" --dependency=afterany:${job_id} "$3"/resources/cleanup "$3" "$job_id")
         ;;
       *)  echo "${executor} is not available." && \
           fatal "Failed to provide valid execution backend: ${executor}. Please use slurm."
