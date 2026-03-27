@@ -11,7 +11,7 @@ acts as the pipeline's main controller or its main process. This main job dictat
 how subsequent jobs are submitted to the cluster via the SLURM job scheduler. Support
 for additional job schedulers (i.e. PBS, SGE, LSF, Tibanna) may be added in the future.
   The main entry point of the pipeline 'renee' calls this job submission wrapper script.
-As so, this script can be used to by-pass 'renee' for a previously failed run; meaning,
+As so, this script can be used to bypass 'renee' for a previously failed run; meaning,
 it can be used to re-run the pipeline to pick back off where the last failure occurred
 or re-start the pipeline.
   Please Note: it is highly recommended to use 'renee'; it is the main entry point
@@ -35,7 +35,7 @@ Required Arguments:
                                  as a comma-separated list. The main entry point
                                  of the pipeline internally collects and aggregates
                                  bindpaths to mount to the container's filesystem.
-                                 If you are manually running this script or by-passing
+                                 If you are manually running this script or bypassing
                                  renee, you will need to provide the bindpaths of
                                  the rawdata directory(s) along with the pipeline's
                                  output directory. Please see example usage below.
@@ -164,7 +164,7 @@ function submit(){
 
   # Goto Pipeline Output directory
   # Create a local singularity cache in output directory
-  # cache can be re-used instead of re-pulling from DockerHub every time
+  # cache can be reused instead of re-pulling from DockerHub every time
   cd "$3" && export SINGULARITY_CACHEDIR="${5}"
 
   # unsetting XDG_RUNTIME_DIR to avoid some unsighly but harmless warnings
@@ -245,7 +245,7 @@ function submit(){
         ;;
     esac
 
-  # Return exit-code of pipeline sumbission
+  # Return exit-code of pipeline submission
   echo "$job_id"
 }
 

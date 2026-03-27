@@ -666,7 +666,7 @@ def parsed_arguments(name, description):
 
           --shared-resources SHARED_RESOURCES
                                 Local path to shared resources. The pipeline uses a set
-                                of shared reference files that can be re-used across ref-
+                                of shared reference files that can be reused across ref-
                                 erence genomes. These currently include reference files
                                 for kraken and FQScreen. These reference files can be
                                 downloaded with the build sub command's --shared-resources
@@ -962,7 +962,7 @@ def parsed_arguments(name, description):
     )
 
     # Number of threads for the
-    # pipeline's main proceess
+    # pipeline's main process
     # This is only applicable for
     # local rules or when running
     # in local mode.
@@ -1037,7 +1037,7 @@ def parsed_arguments(name, description):
         {1}{2}Build options:{4}
           --shared-resources SHARED_RESOURCES
                               Path to download shared resources. The pipeline uses a
-                              set of shared reference files that can be re-used across
+                              set of shared reference files that can be reused across
                               reference genomes. These currently include reference files
                               for kraken and FQScreen. With that being said, these files
                               can be downloaded once in a shared or common location. If
