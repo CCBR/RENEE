@@ -1,6 +1,8 @@
 ## RENEE development version
 
 - Added more memory to rule `validator` (#263, @samarth8392)
+- New `--time` option for `renee run` and `renee build` to override the default SLURM walltime. (#269, @kelly-sovacool)
+  - Also fix bug where `--partition` was not being propagated to the sbatch call.
 
 ## RENEE 2.7.4
 

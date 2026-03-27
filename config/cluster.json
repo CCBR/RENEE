@@ -59,7 +59,7 @@
         "gres": "lscratch:500",
         "mem": "48g",
         "threads": "32",
-        "time": "1-00:00:00"
+        "time": "4:00:00"
     },
     "star1p": {
         "gres": "lscratch:256",
@@ -88,13 +88,13 @@
         "mem": "48g",
         "gres": "lscratch:128",
         "threads": "32",
-        "time": "12:00:00"
+        "time": "4:00:00"
     },
     "star_genome": {
         "mem": "48g",
         "gres": "lscratch:128",
         "threads": "32",
-        "time": "12:00:00"
+        "time": "4:00:00"
     },
     "arriba": {
         "gres": "lscratch:256",
