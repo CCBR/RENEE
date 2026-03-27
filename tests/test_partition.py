@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 
 # These tests exercise the lightweight path where resources are copied
-# and cluster.json is updated from the CLI --partition option.
+# and cluster.json is updated from the CLI --partition/--time options.
 
 
 def _run_cmd_in_tmp(command: str):
@@ -51,13 +51,39 @@ def test_build_partition_overrides_cluster_json():
     ), "cluster.json __default__.partition should be set to 'short' from CLI"
 
 
+def test_run_init_time_overrides_cluster_json():
+    base_cmd = (
+        "./main.py run --mode local --runmode init --dry-run "
+        "--input .tests/*.fastq.gz --genome config/genomes/biowulf/hg38_38.json --time 05:30:00"
+    )
+    cluster = _run_cmd_in_tmp(base_cmd)
+    assert (
+        cluster.get("__default__", {}).get("time") == "05:30:00"
+    ), "cluster.json __default__.time should be set to '05:30:00' from CLI"
+
+
+def test_build_time_overrides_cluster_json():
+    base_cmd = (
+        "./main.py build --dry-run "
+        "--ref-name test "
+        "--ref-fa .tests/KO_S3.R1.fastq.gz "
+        "--ref-gtf .tests/KO_S3.R1.fastq.gz "
+        "--gtf-ver 0 "
+        "--time 01:45:00"
+    )
+    cluster = _run_cmd_in_tmp(base_cmd)
+    assert (
+        cluster.get("__default__", {}).get("time") == "01:45:00"
+    ), "cluster.json __default__.time should be set to '01:45:00' from CLI"
+
+
 def _write_executable(path: pathlib.Path, content: str):
     path.write_text(content)
     path.chmod(0o755)
 
 
-def _run_wrapper_and_collect_sbatch(wrapper_name: str):
-    repo_root = pathlib.Path(__file__).resolve().parents[1]
+def _run_wrapper_and_collect_sbatch(wrapper_name: str, walltime: str | None = None):
+    repo_root = pathlib.Path.cwd()
     wrapper = repo_root / "resources" / wrapper_name
 
     with tempfile.TemporaryDirectory() as tmp_dir:
@@ -115,6 +141,8 @@ def _run_wrapper_and_collect_sbatch(wrapper_name: str):
             "-p",
             "student",
         ]
+        if walltime:
+            cmd.extend(["-T", walltime])
 
         subprocess.run(cmd, check=True, capture_output=True, text=True, env=env)
 
@@ -134,6 +162,15 @@ def _assert_partition_propagated(lines):
     ), "Cleanup sbatch command missing '-p student'"
 
 
+def _assert_time_propagated(lines, walltime):
+    master_calls = [line for line in lines if "--parsable" in line]
+
+    assert master_calls, "Expected at least one master sbatch submission"
+    assert (
+        f"--time={walltime}" in master_calls[0]
+    ), "Master sbatch command missing requested --time override"
+
+
 def test_runner_partition_propagated_to_sbatch_calls():
     calls = _run_wrapper_and_collect_sbatch("runner")
     _assert_partition_propagated(calls)
@@ -142,3 +179,13 @@ def test_runner_partition_propagated_to_sbatch_calls():
 def test_builder_partition_propagated_to_sbatch_calls():
     calls = _run_wrapper_and_collect_sbatch("builder")
     _assert_partition_propagated(calls)
+
+
+def test_runner_time_propagated_to_sbatch_calls():
+    calls = _run_wrapper_and_collect_sbatch("runner", walltime="03:00:00")
+    _assert_time_propagated(calls, "03:00:00")
+
+
+def test_builder_time_propagated_to_sbatch_calls():
+    calls = _run_wrapper_and_collect_sbatch("builder", walltime="00:45:00")
+    _assert_time_propagated(calls, "00:45:00")

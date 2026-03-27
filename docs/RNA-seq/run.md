@@ -15,6 +15,7 @@ $ renee run [--help] \
             [--small-rna] [--star-2-pass-basic] \
             [--dry-run] [--mode {slurm, local}] \
             [--partition PARTITION] \
+            [--time TIME] \
             [--shared-resources SHARED_RESOURCES] \
             [--singularity-cache SINGULARITY_CACHE] \
             [--sif-cache SIF_CACHE] \
@@ -142,6 +143,17 @@ Each of the following arguments are optional and do not need to be provided.
 
 ---
 
+`--time TIME`
+
+> **SLURM walltime for job submission.**
+> _type: string_
+>
+> Walltime to use when submitting the master job and downstream workflow jobs through SLURM. This option overrides the default `time` in the cluster configuration file. Common formats are `HH:MM:SS` and `D-HH:MM:SS`. This option is only applicable when using `--mode slurm`.
+>
+> **_Example:_** `--time 12:00:00`
+
+---
+
 `--shared-resources SHARED_RESOURCES`
 
 > **Local path to shared resources.**
@@ -241,6 +253,7 @@ renee run --input .tests/*.R?.fastq.gz \
                --mode slurm \
                --sif-cache /data/OpenOmics/SIFs/ \
                --partition norm \
+               --time 12:00:00 \
                --star-2-pass-basic
 ```
 
@@ -285,6 +298,7 @@ renee run --input .tests/*.R?.fastq.gz \
                --mode slurm \
                --sif-cache /data/$USER/cache \
                --partition norm \
+               --time 08:00:00 \
                --star-2-pass-basic \
                --shared-resources /data/shared/renee \
                --tmp-dir /cluster_scratch/$USER/ \

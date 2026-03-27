@@ -13,7 +13,7 @@ Setting up the RENEE build pipeline is fast and easy! In its most basic form, <c
 ```text
 $ renee build [--help] \
              [--shared-resources SHARED_RESOURCES] [--small-genome] \
-             [--dry-run] [--partition PARTITION] \
+             [--dry-run] [--partition PARTITION] [--time TIME] \
              [--singularity-cache SINGULARITY_CACHE] \
              [--sif-cache SIF_CACHE] [--tmp-dir TMP_DIR] \
              --ref-fa REF_FA \
@@ -134,6 +134,17 @@ Each of the following arguments are optional and do not need to be provided. If 
 > Name of the SLURM partition to submit the build job to. This option overrides the default partition specified in the cluster configuration file. This is useful when you want to submit jobs to a specific partition on your SLURM cluster. If not provided, the default partition from the cluster configuration will be used.
 >
 > **_Example:_** `--partition norm`
+
+---
+
+`--time TIME`
+
+> **SLURM walltime for job submission.**
+> _type: string_
+>
+> Walltime to use when submitting the build master job and downstream workflow jobs through SLURM. This option overrides the default `time` in the cluster configuration file. Common formats are `HH:MM:SS` and `D-HH:MM:SS`.
+>
+> **_Example:_** `--time 06:00:00`
 
 ---
 
@@ -267,7 +278,8 @@ renee build --ref-fa GRCm39.primary_assembly.genome.fa \
               --gtf-ver M26 \
               --output /data/$USER/refs/mm39_M26 \
               --sif-cache /data/CCBR_Pipeliner/SIFs/ \
-              --partition norm
+              --partition norm \
+              --time 06:00:00
 ```
 
 ### 5.2 Generic SLURM Cluster
@@ -311,5 +323,6 @@ renee build --ref-fa GRCm39.primary_assembly.genome.fa \
               --shared-resources /data/shared/renee \
               --tmp-dir /cluster_scratch/$USER/ \
               --sif-cache /data/$USER/cache \
-              --partition norm
+              --partition norm \
+              --time 06:00:00
 ```

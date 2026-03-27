@@ -97,6 +97,7 @@ def run(sub_args):
             wait=wait,
             hpcname=hpcname,
             partition=sub_args.partition,
+            walltime=sub_args.time,
         )
 
         # Wait for subprocess to complete,
@@ -122,7 +123,7 @@ def run(sub_args):
                 jobid = file.read().strip()
 
             if int(masterjob.returncode) == 0:
-                print("Successfully submitted master job: ", end="")
+                print("Submitted master job: ", end="")
             else:
                 fatal(
                     "Error occurred when submitting the master job. Error code = {}".format(
