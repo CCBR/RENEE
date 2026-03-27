@@ -184,4 +184,4 @@
 - `resources/gff3togtf.py`, `resources/jobby` and `resources/run_jobby_on_snakemake_log` added.
 - adding `jobby` related commands to `onsuccess` and `onerror` blocks in `Snakefile`.
 - **fastQValidator**: `-minReadLen 2` added to command line.
-- GTF now parsed at STAR command line. GTF-agnostic STAR index can be re-used saving significant disk space in the "resources" folder.
+- GTF now parsed at STAR command line. GTF-agnostic STAR index can be reused saving significant disk space in the "resources" folder.

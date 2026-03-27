@@ -55,7 +55,7 @@ The accuracy of the downstream interpretations made from transcriptomic data are
 
 [_Picard_<sup>10</sup>](https://broadinstitute.github.io/picard/) can be used to estimate the duplication rate, and it has another particularly useful sub-command called CollectRNAseqMetrics which reports the number and percentage of reads that align to various regions: such as coding, intronic, UTR, intergenic and ribosomal regions. This is particularly useful as you would expect a library constructed with ploy(A)-selection to have a high percentage of reads that map to coding regions. Picard CollectRNAseqMetrics will also report the uniformity of coverage across all genes, which is useful for determining whether a sample has a 3' bias (observed in ploy(A)-selection libraries containing degraded RNA).
 
-[_RSeQC_<sup>9</sup>](http://rseqc.sourceforge.net/) is another particularity useful package that is tailored for RNA-seq data. It is used to calculate the inner distance between paired-end reads and calculate TIN values for a set of canonical protein-coding transcripts. A median TIN value is calucated for each sample, which analogous to a computationally derived RIN.
+[_RSeQC_<sup>9</sup>](http://rseqc.sourceforge.net/) is another particularity useful package that is tailored for RNA-seq data. It is used to calculate the inner distance between paired-end reads and calculate TIN values for a set of canonical protein-coding transcripts. A median TIN value is calculated for each sample, which analogous to a computationally derived RIN.
 
 [MultiQC<sup>11</sup>](https://multiqc.info/) is used to aggregate the results of each tool into a single interactive report.
 
@@ -118,7 +118,7 @@ renee run --input .tests/*.R?.fastq.gz --output /data/$USER/RNA_hg38 --genome hg
 
 # @slurm: uses slurm and singularity execution method
 # The slurm MODE will submit jobs to the cluster.
-# The --sif-cache flag will re-use singularity containers from a shared location.
+# The --sif-cache flag will reuse singularity containers from a shared location.
 # It is recommended running RENEE in this mode.
 module load ccbrpipeliner
 renee run \

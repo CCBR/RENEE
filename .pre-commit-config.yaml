@@ -5,7 +5,8 @@ exclude: |
       ^assets/|
       ^docs/.*.html|
       ^_extensions/|
-      ^tests/data/
+      ^tests/data/|
+      ^.*\.svg
    )
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -20,14 +21,10 @@ repos:
     rev: v2.4.2
     hooks:
       - id: codespell
-        exclude: >
-          (?x)^(
-              .*\.svg
-          )$
-        # https://github.com/codespell-project/codespell/issues/1498
+        args: ["--ignore-words=.github/WORDLIST.txt"]
   # Python formatting
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.3.0
+    rev: 26.3.1
     hooks:
       - id: black
   # R formatting
