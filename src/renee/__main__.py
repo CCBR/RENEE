@@ -34,7 +34,7 @@ from ccbr_tools.pipeline.cache import get_sif_cache_dir, image_cache
 from .run import run
 from .dryrun import dryrun
 from .conditions import fatal
-from .util import renee_base, get_version, update_cluster_partition
+from .util import renee_base, get_version, update_cluster_partition, update_cluster_time
 from .orchestrate import orchestrate
 
 # Lazy import GUI to avoid hard dependency on tkinter during CLI-only usage/tests
@@ -313,6 +313,10 @@ def configure_build(sub_args, git_repo, output_path):
         update_cluster_partition(
             output_path, sub_args.partition, context="after build configuration"
         )
+    if hasattr(sub_args, "time") and sub_args.time:
+        update_cluster_time(
+            output_path, sub_args.time, context="after build configuration"
+        )
     _reset_write_permission(target=output_path)
     _configure(
         sub_args=sub_args,
@@ -391,6 +395,7 @@ def build(sub_args):
         wait=wait,
         hpcname=hpcname,
         partition=sub_args.partition,
+        walltime=sub_args.time,
     )
 
     masterjob.wait()
@@ -415,7 +420,7 @@ def build(sub_args):
             jobid = infile.read().strip()
 
         if int(masterjob.returncode) == 0:
-            print("Successfully submitted master job: ", end="")
+            print("Submitted master job: ", end="")
         else:
             fatal("Error occurred when submitting the master job.")
         print(jobid)
@@ -565,6 +570,8 @@ def parsed_arguments(name, description):
           $ {0} run [--help] \\
                               [--small-rna] [--star-2-pass-basic] \\
                               [--dry-run] [--mode {{slurm, local}}] \\
+                              [--partition PARTITION] \
+                              [--time TIME] \
                               [--shared-resources SHARED_RESOURCES] \\
                               [--singularity-cache SINGULARITY_CACHE] \\
                               [--sif-cache SIF_CACHE] \\
@@ -704,6 +711,17 @@ def parsed_arguments(name, description):
                                 the job is submitted using HPC API. If not provided
                                 the API may interpret submission of master job as
                                 completion of the pipeline!
+
+                    --partition PARTITION
+                                                                SLURM partition to submit jobs to. If not provided,
+                                                                defaults to partition specified in config/cluster.json.
+                                                                    Example: --partition norm
+
+                    --time TIME
+                                                                SLURM walltime for submitted jobs. If not provided,
+                                                                defaults to time specified in config/cluster.json.
+                                                                Common formats include HH:MM:SS and D-HH:MM:SS.
+                                                                    Example: --time 12:00:00
 
           --create-nidap-folder
                                 Create folder called "NIDAP" with file to-be-moved back to NIDAP
@@ -961,6 +979,15 @@ def parsed_arguments(name, description):
         help="SLURM partition to submit jobs to. If not provided, defaults to partition specified in config/cluster.json",
     )
 
+    # SLURM walltime to submit jobs with
+    subparser_run.add_argument(
+        "--time",
+        type=str,
+        required=False,
+        default=None,
+        help="SLURM walltime (for example: 4-00:00:00 or 12:00:00). If not provided, defaults to time specified in config/cluster.json",
+    )
+
     # Number of threads for the
     # pipeline's main process
     # This is only applicable for
@@ -982,6 +1009,7 @@ def parsed_arguments(name, description):
         {1}{2}Synopsis:{4}
           $ {0} build [--help] \\
                                 [--shared-resources SHARED_RESOURCES] [--small-genome] \\
+                                [--partition PARTITION] [--time TIME] \
                                 [--dry-run] [--singularity-cache SINGULARITY_CACHE] \\
                                 [--sif-cache SIF_CACHE] [--tmp-dir TMP_DIR] \\
                                 --ref-fa REF_FA \\
@@ -1093,6 +1121,17 @@ def parsed_arguments(name, description):
                             variable into this string that should NOT be expanded,
                             please quote this options value in single quotes.
                                 Example: --tmp-dir '/cluster_scratch/$USER/'
+
+                    --partition PARTITION
+                                                            SLURM partition to submit jobs to. If not provided,
+                                                            defaults to partition specified in config/cluster.json.
+                                                                Example: --partition norm
+
+                    --time TIME
+                                                            SLURM walltime for submitted jobs. If not provided,
+                                                            defaults to time specified in config/cluster.json.
+                                                            Common formats include HH:MM:SS and D-HH:MM:SS.
+                                                                Example: --time 06:00:00
 
           --wait
                                 Wait until master job completes. This is required if
@@ -1264,6 +1303,15 @@ def parsed_arguments(name, description):
         required=False,
         default=None,
         help="SLURM partition to submit jobs to. If not provided, defaults to partition specified in config/cluster.json",
+    )
+
+    # SLURM walltime to submit jobs with
+    subparser_build.add_argument(
+        "--time",
+        type=str,
+        required=False,
+        default=None,
+        help="SLURM walltime (for example: 4-00:00:00 or 12:00:00). If not provided, defaults to time specified in config/cluster.json",
     )
 
     # wait until master job finishes ... required for HPC API execution

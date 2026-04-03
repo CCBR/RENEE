@@ -92,6 +92,7 @@ function parser() {
       -o  | --outdir)  provided "$key" "${2:-}"; Arguments["o"]="$2"; shift; shift;;
       -c  | --cache)  provided "$key" "${2:-}"; Arguments["c"]="$2"; shift; shift;;
       -p  | --partition) provided "$key" "${2:-}"; Arguments["p"]="$2"; shift; shift;;
+      -T  | --time) provided "$key" "${2:-}"; Arguments["T"]="$2"; shift; shift;;
       -n  | --hpc-name)  provided "$key" "${2:-}"; Arguments["h"]="$2"; shift; shift;;
       -w  | --wait)  Arguments["w"]="--wait"; shift;;
       -*  | --*) err "Error: Failed to parse unsupported argument: '${key}'."; usage && exit 1;;
@@ -143,6 +144,7 @@ function submit(){
   # INPUT $7 = Wait ("--wait") or no wait ("--nowait".. default)
   # INPUT $8 = HPC name... biowulf or frce or unknown
   # INPUT $9 = SLURM partition (optional)
+  # INPUT ${10} = SLURM walltime (optional)
 
   # SLURM inherits the environment from which the job was launched
   # Try to purge modules all modules from environment
@@ -173,6 +175,16 @@ function submit(){
   # unsetting XDG_RUNTIME_DIR to avoid some unsighly but harmless warnings
   unset XDG_RUNTIME_DIR
   wait="$7"
+  partition="${9:-}"
+  walltime="${10:-}"
+  partition_opts=()
+  if [[ -n "$partition" ]]; then
+    partition_opts=("-p" "$partition")
+  fi
+  walltime_opts=("--time=4-00:00:00")
+  if [[ -n "$walltime" ]]; then
+    walltime_opts=("--time=$walltime")
+  fi
 
   # Run the workflow with specified executor
   case "$executor" in
@@ -180,8 +192,12 @@ function submit(){
           # Create directory for logfiles
           mkdir -p "$3"/logfiles/slurmfiles/
           # If partition provided via CLI, override cluster.json partition
-          if [[ -n "${9:-}" ]]; then
-            CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -p $9 -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}"
+          if [[ -n "$partition" ]] && [[ -n "$walltime" ]]; then
+            CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -p $partition -t $walltime --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}"
+          elif [[ -n "$partition" ]]; then
+            CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -p $partition -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}"
+          elif [[ -n "$walltime" ]]; then
+            CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -p {cluster.partition} -t $walltime --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}"
           else
             CLUSTER_OPTS="sbatch --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name {cluster.name} --output {cluster.output} --error {cluster.error}"
           fi
@@ -220,7 +236,7 @@ function submit(){
           # echo "TRIGGEROPTIONS:${triggeroptions}"
           # Submit the master job to the cluster
           if [ "$wait" != "--wait" ];then
-            job_id=$(sbatch --parsable -J "$2" --time=4-00:00:00 --mail-type=BEGIN,END,FAIL \
+            job_id=$(sbatch --parsable -J "$2" "${walltime_opts[@]}" --mail-type=BEGIN,END,FAIL "${partition_opts[@]}" \
             --output "$3"/logfiles/snakemake.log --error "$3"/logfiles/snakemake.log \
             snakemake --latency-wait 120 -s "$3"/workflow/Snakefile -d "$3" \
               --use-singularity --singularity-args "'-B $4'" --configfile="$3"/config.json \
@@ -230,7 +246,7 @@ function submit(){
               --keep-going --restart-times 3 -j 500 --rerun-incomplete --stats "$3"/logfiles/runtime_statistics.json \
               --keep-remote 2>&1 | tee -a "$3"/logfiles/master.log)
           else
-            job_id=$(sbatch --wait --parsable -J "$2" --time=4-00:00:00 --mail-type=BEGIN,END,FAIL \
+            job_id=$(sbatch --wait --parsable -J "$2" "${walltime_opts[@]}" --mail-type=BEGIN,END,FAIL "${partition_opts[@]}" \
             --output "$3"/logfiles/snakemake.log --error "$3"/logfiles/snakemake.log \
             snakemake --latency-wait 120 -s "$3"/workflow/Snakefile -d "$3" \
               --use-singularity --singularity-args "'-B $4'" --configfile="$3"/config.json \
@@ -241,7 +257,7 @@ function submit(){
               --keep-remote 2>&1 | tee -a "$3"/logfiles/master.log)
           fi
           # Clean-up working directory after completion
-          cleanup_id=$(sbatch -J "pl:clean" --dependency=afterany:${job_id} "$3"/resources/cleanup "$3" "$job_id")
+          cleanup_id=$(sbatch -J "pl:clean" "${partition_opts[@]}" --dependency=afterany:${job_id} "$3"/resources/cleanup "$3" "$job_id")
         ;;
       *)  echo "${executor} is not available." && \
           fatal "Failed to provide valid execution backend: ${executor}. Please use slurm."
@@ -295,7 +311,7 @@ function main(){
 
   # Step 1. Run pipeline and submit jobs to cluster using the defined executor
   mkdir -p "${Arguments[o]}/logfiles/"
-  job_id=$(submit "${Arguments[e]}" "${Arguments[j]}" "${Arguments[o]}" "${Arguments[b]}" "${Arguments[c]}" "${Arguments[t]}" "${Arguments[w]}" "${Arguments[h]}" "${Arguments[p]:-}")
+  job_id=$(submit "${Arguments[e]}" "${Arguments[j]}" "${Arguments[o]}" "${Arguments[b]}" "${Arguments[c]}" "${Arguments[t]}" "${Arguments[w]}" "${Arguments[h]}" "${Arguments[p]:-}" "${Arguments[T]:-}")
   echo -e "[$(date)] Pipeline submitted to cluster.\nMaster Job ID: $job_id"
   echo "${job_id}" > "${Arguments[o]}/logfiles/mjobid.log"
 

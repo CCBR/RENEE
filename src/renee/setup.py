@@ -90,6 +90,8 @@ def setup(sub_args, ifiles, repo_path, output_path):
     # Record chosen partition for traceability
     if hasattr(sub_args, "partition") and sub_args.partition:
         config["options"]["partition"] = sub_args.partition
+    if hasattr(sub_args, "time") and sub_args.time:
+        config["options"]["time"] = sub_args.time
     if sub_args.wait:
         config["options"]["wait"] = "True"
     else:
