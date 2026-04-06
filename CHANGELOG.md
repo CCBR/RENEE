@@ -1,5 +1,7 @@
 ## RENEE development version
 
+- Fix `ResourceWarning: unclosed <socket>` from PySimpleGUI being imported at module level. (#276, @kelly-sovacool, @copilot)
+
 ## RENEE 2.7.5
 
 - Added more memory to rule `validator`. (#263, @samarth8392)
