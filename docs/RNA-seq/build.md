@@ -45,7 +45,9 @@ Each of the following arguments are required. Failure to provide a required argu
 >
 > This file represents the genome sequence of the reference assembly in FASTA format. If you are downloading this from GENCODE, you should select the _PRI_ genomic FASTA file. This file will contain the primary genomic assembly (contains chromosomes and scaffolds). This input file should not be compressed. Sequence identifiers in this file must match with sequence identifiers in the GTF file provided to `--ref-gtf`.
 >
-> **_Example:_** > `--ref-fa GRCh38.primary_assembly.genome.fa`
+> **_Example:_**
+>
+> `--ref-fa GRCh38.primary_assembly.genome.fa`
 
 ---
 
