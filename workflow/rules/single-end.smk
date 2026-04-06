@@ -319,8 +319,6 @@ if config['options']['star_2_pass_basic']:
             --limitSjdbInsertNsj {params.nbjuncs} \
             --quantMode TranscriptomeSAM GeneCounts \
             --outSAMtype BAM SortedByCoordinate \
-            --alignEndsProtrude 10 ConcordantPair \
-            --peOverlapNbasesMin 10 \
             --outTmpDir=${{tmp}}/STARtmp_{wildcards.name} \
             --sjdbOverhang ${{readlength}}
 
