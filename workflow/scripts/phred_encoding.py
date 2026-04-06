@@ -89,7 +89,6 @@ def main(filename):
         str: "33" for Phred+33 encoding, "64" for Phred+64 encoding
     """
     handle = reader(filename)
-    encoding = None
     min_ascii_seen = None
     quality_lines_checked = 0
 

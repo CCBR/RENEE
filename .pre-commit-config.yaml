@@ -22,21 +22,25 @@ repos:
     hooks:
       - id: codespell
         args: ["--ignore-words=.github/WORDLIST.txt"]
-  # Python formatting
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.3.1
-    hooks:
-      - id: black
-  # R formatting
-  - repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.4.3.9021
-    hooks:
-      - id: style-files
   # general linting
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
+        additional_dependencies:
+          - prettier@3.4.0
+  # Python formatting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.8
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+  # R formatting
+  - repo: https://github.com/posit-dev/air-pre-commit
+    rev: 0.8.2
+    hooks:
+      - id: air-format
   # enforce commit format
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v4.4.0

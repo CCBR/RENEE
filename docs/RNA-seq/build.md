@@ -40,17 +40,21 @@ Each of the following arguments are required. Failure to provide a required argu
 `--ref-fa REF_FA`
 
 > **Genomic FASTA file of the reference genome.**
+>
 > _type: file_
 >
 > This file represents the genome sequence of the reference assembly in FASTA format. If you are downloading this from GENCODE, you should select the _PRI_ genomic FASTA file. This file will contain the primary genomic assembly (contains chromosomes and scaffolds). This input file should not be compressed. Sequence identifiers in this file must match with sequence identifiers in the GTF file provided to `--ref-gtf`.
 >
-> **_Example:_** > `--ref-fa GRCh38.primary_assembly.genome.fa`
+> **_Example:_**
+>
+> `--ref-fa GRCh38.primary_assembly.genome.fa`
 
 ---
 
 `--ref-name REF_NAME`
 
 > **Name of the reference genome.**
+>
 > _type: string_
 >
 > Name or alias for the reference genome. This can be the common name for the reference genome. Here is a list of common examples for different model organisms: mm10, hg38, rn6, danRer11, dm6, canFam3, sacCer3, ce11. If the provided values contains one of the following sub-strings (hg19, hs37d, grch37, hg38, hs38d, grch38, mm10, grcm38), then Arriba will run with its corresponding blacklist.
@@ -62,6 +66,7 @@ Each of the following arguments are required. Failure to provide a required argu
 `--ref-gtf REF_GTF`
 
 > **Gene annotation or GTF file for the reference genome.**
+>
 > _type: file_
 >
 > This file represents the reference genome's gene annotation in GTF format. If you are downloading this from GENCODE, you should select the 'PRI' GTF file. This file contains gene annotations for the primary assembly (contains chromosomes and scaffolds). This input file should not be compressed. Sequence identifiers (column 1) in this file must match with sequence identifiers in the FASTA file provided to `--ref-fa`.
@@ -72,6 +77,7 @@ Each of the following arguments are required. Failure to provide a required argu
 `--gtf-ver GTF_VER`
 
 > **Version of the gene annotation or GTF file provided.**
+>
 > _type: string or int_
 >
 > This is the version of the supplied gene annotation or GTF file. If you are using a GTF file from GENCODE, use the release number or version (i.e. _M25_ for mouse or _37_ for human). Visit gencodegenes.org for more details.
@@ -82,6 +88,7 @@ Each of the following arguments are required. Failure to provide a required argu
 `--output OUTPUT`
 
 > **Path to an output directory.**
+>
 > _type: path_
 >
 > This location is where the build pipeline will create all of its output files. If the user-provided working directory has not been initialized, it will automatically be created. Note: by default, any files in `config`, `resources,` or `workflow` in the output directory may be overwritten by `renee build`.
@@ -94,6 +101,7 @@ Each of the following arguments are optional and do not need to be provided. If 
 `--shared-resources SHARED_RESOURCES`
 
 > **Local path to shared resources.**
+>
 > _type: path_
 >
 > The pipeline uses a set of shared reference files that can be reused across reference genomes. These currently include reference files for kraken and FQScreen. These reference files can be downloaded with the build sub command's `--shared-resources` option. With that being said, these files only need to be downloaded once. We recommend storing this files in a shared location on the filesystem that other people can access. If you are running the pipeline on Biowulf, you do NOT need to download these reference files! They already exist on the filesystem in a location that anyone can access; however, if you are running the pipeline on another cluster or target system, you will need to download the shared resources with the build sub command, and you will need to provide this option every time you run the pipeline. Please provide the same path that was provided to the build sub command's --shared-resources option. Again, if you are running the pipeline on Biowulf, you do NOT need to provide this option. For more information about how to download shared resources, please reference the build sub command's `--shared-resources` option.
@@ -105,6 +113,7 @@ Each of the following arguments are optional and do not need to be provided. If 
 `--small-genome`
 
 > **Builds a small genome index.**
+>
 > _type: boolean_
 >
 > For small genomes, it is recommended running STAR with a scaled down `--genomeSAindexNbases` value. This option runs the build pipeline in a mode where it dynamically finds the optimal value for this option using the following formula: `min(14, log2(GenomeSize)/2 - 1)`. Generally speaking, this option is not really applicable for most mammalian reference genomes, i.e. human and mouse; however, researcher working with very small reference genomes, like S. cerevisiae ~ 12Mb, should provide this option.
@@ -118,6 +127,7 @@ Each of the following arguments are optional and do not need to be provided. If 
 `--dry-run`
 
 > **Dry run the build pipeline.**
+>
 > _type: boolean_
 >
 > Displays what steps in the build pipeline remain or will be run. Does not execute anything!
@@ -129,6 +139,7 @@ Each of the following arguments are optional and do not need to be provided. If 
 `--partition PARTITION`
 
 > **SLURM partition for job submission.**
+>
 > _type: string_
 >
 > Name of the SLURM partition to submit the build job to. This option overrides the default partition specified in the cluster configuration file. This is useful when you want to submit jobs to a specific partition on your SLURM cluster. If not provided, the default partition from the cluster configuration will be used.
@@ -140,6 +151,7 @@ Each of the following arguments are optional and do not need to be provided. If 
 `--time TIME`
 
 > **SLURM walltime for job submission.**
+>
 > _type: string_
 >
 > Walltime to use when submitting the build master job and downstream workflow jobs through SLURM. This option overrides the default `time` in the cluster configuration file. Common formats are `HH:MM:SS` and `D-HH:MM:SS`.
@@ -151,7 +163,9 @@ Each of the following arguments are optional and do not need to be provided. If 
 `--singularity-cache SINGULARITY_CACHE`
 
 > **Overrides the $SINGULARITY_CACHEDIR environment variable.**
+>
 > _type: path_
+>
 > _default: `--output OUTPUT/.singularity`_
 >
 > Singularity will cache image layers pulled from remote registries. This ultimately speeds up the process of pull an image from DockerHub if an image layer already exists in the singularity cache directory. By default, the cache is set to the value provided to the `--output` argument. Please note that this cache cannot be shared across users. Singularity strictly enforces you own the cache directory and will return a non-zero exit code if you do not own the cache directory! See the `--sif-cache` option to create a shareable resource.
@@ -163,6 +177,7 @@ Each of the following arguments are optional and do not need to be provided. If 
 `--sif-cache SIF_CACHE`
 
 > **Path where a local cache of SIFs are stored.**
+>
 > _type: path_
 >
 > Uses a local cache of SIFs on the filesystem. This SIF cache can be shared across users if permissions are set correctly. If a SIF does not exist in the SIF cache, the image will be pulled from Dockerhub and a warning message will be displayed. The `renee cache` subcommand can be used to create a local SIF cache. Please see `renee cache` for more information. This command is extremely useful for avoiding DockerHub pull rate limits. It also remove any potential errors that could occur due to network issues or DockerHub being temporarily unavailable. We recommend running RENEE with this option when ever possible.
@@ -174,8 +189,10 @@ Each of the following arguments are optional and do not need to be provided. If 
 `--tmp-dir TMP_DIR`
 
 > **Path on the file system for writing temporary files.**
+>
 > _type: path_
-> _default: `/lscratch/$SLURM_JOBID`_
+>
+> _default: `/lscratch/$SLURM_JOBID` on Biowulf_
 >
 > Path on the file system for writing temporary output files. By default, the temporary directory is set to '/lscratch/$SLURM_JOBID' on NIH's Biowulf cluster and 'OUTPUT' on the FRCE cluster. However, if you are running the pipeline on another cluster, this option will need to be specified. Ideally, this path should point to a dedicated location on the filesystem for writing tmp files. On many systems, this location is set to somewhere in /scratch. If you need to inject avariable into this string that should NOT be expanded,please quote this options value in single quotes.
 >
@@ -188,6 +205,7 @@ Each of the following arguments are optional and do not need to be provided.
 `-h, --help`
 
 > **Display Help.**
+>
 > _type: boolean_
 >
 > Shows command's synopsis, help message, and an example command
@@ -203,13 +221,13 @@ We recommend creating an artificial chromosome for the non-host sequence. The se
 Please ensure the non-host annotation contains the following features and/or constraints:
 
 - for a given `gene` feature
-    - each `gene` entry has at least one `transcript` feature
-    - and each `transcript` entry has at least one `exon` feature
-    - `gene_id`, `gene_name` and `gene_biotype` are required
+  - each `gene` entry has at least one `transcript` feature
+  - and each `transcript` entry has at least one `exon` feature
+  - `gene_id`, `gene_name` and `gene_biotype` are required
 - for a given `transcipt` feature
-    - along with `gene_id`, `gene_name` and `gene_biotype` ... `transcript_id` is also required
+  - along with `gene_id`, `gene_name` and `gene_biotype` ... `transcript_id` is also required
 - for a given `exon` feature
-    - `gene_id`, `gene_name`, `gene_biotype`, `transcript_id` are required
+  - `gene_id`, `gene_name`, `gene_biotype`, `transcript_id` are required
 
 If not, the GTF file may need to be manually curated until these conditions are satisfied.
 
@@ -225,9 +243,9 @@ In this tab-delimited example above,
 
 - **_line 1:_** the `gene` feature has 3 required attributes in column 9: `gene_id` and `gene_name` and `gene_biotype`
 - **_line 2:_** the `transcript` entry for the above `gene` repeats the same attributes with following required fields: `transcript_id ` and `transcript_name`
-    - _Please note:_ `transcript_type` is _optional_
+  - _Please note:_ `transcript_type` is _optional_
 - **_line 3:_** the `exon` entry for the above `transcript` has 3 required attributes: `gene_id` and `transcript_id` and `gene_biotype`
-    - _Please note:_ `transcript_type` is _optional_
+  - _Please note:_ `transcript_type` is _optional_
 
 For a given gene, the combination of the `gene_id` AND `gene_name` should form a unique string. There should be no instances where two different genes share the same `gene_id` AND `gene_name`.
 

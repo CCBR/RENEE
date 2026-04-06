@@ -2,7 +2,6 @@
 from __future__ import print_function
 from Bio import SeqIO
 from Bio.Seq import Seq
-import sys
 import argparse
 import collections
 import gzip
@@ -54,13 +53,12 @@ def write_qualimap_info(args):
     with open_func(gtfFileName) as gtf_file:
         gtf_file = HTSeq.GFF_Reader(gtf_file)
         exons_dict = collections.defaultdict(list)
-        other_features = []
         for feature in gtf_file:
             if feature.type == "exon":
                 geneName = feature.attr["gene_id"]
                 exons_dict[geneName].append(feature)
     outFile = open(outFileName, "w")
-    outFile.write(f'"biotypes"\t"length"\t"gc"\n')
+    outFile.write('"biotypes"\t"length"\t"gc"\n')
 
     for geneId, exons in exons_dict.items():
         print("Processing %s" % geneId)

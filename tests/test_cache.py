@@ -1,7 +1,6 @@
 import tempfile
 import json
 import os.path
-import subprocess
 
 from ccbr_tools.pipeline.cache import get_sif_cache_dir, get_singularity_cachedir
 from ccbr_tools.shell import shell_run
@@ -46,21 +45,19 @@ def test_cache_nosif():
 
 
 def test_get_sif_cache_dir():
-    assertions = [
-        "'CCBR_Pipeliner/SIFs' in get_sif_cache_dir('biowulf')",
-        "'CCBR-Pipelines/SIFs' in get_sif_cache_dir('frce')",
-    ]
-    errors = [assertion for assertion in assertions if not eval(assertion)]
-    assert not errors, "errors occurred:\n{}".format("\n".join(errors))
+    biowulf_cache_dir = get_sif_cache_dir("biowulf")
+    frce_cache_dir = get_sif_cache_dir("frce")
+
+    assert "CCBR_Pipeliner/SIFs" in biowulf_cache_dir
+    assert "CCBR-Pipelines/SIFs" in frce_cache_dir
 
 
 def test_get_singularity_cachedir():
-    assertions = [
-        "get_singularity_cachedir('outdir') == 'outdir/.singularity'",
-        "get_singularity_cachedir('outdir', 'cache') == 'cache'",
-    ]
-    errors = [assertion for assertion in assertions if not eval(assertion)]
-    assert not errors, "errors occurred:\n{}".format("\n".join(errors))
+    default_cache_dir = get_singularity_cachedir("outdir")
+    custom_cache_dir = get_singularity_cachedir("outdir", "cache")
+
+    assert default_cache_dir == "outdir/.singularity"
+    assert custom_cache_dir == "cache"
 
 
 def test_cache_in_temp():

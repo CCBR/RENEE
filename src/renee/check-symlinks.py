@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import json
-import os
 import pathlib
 import sys
 
@@ -25,9 +24,9 @@ def check_path(fp, repair=False):
             target_new = str(target).replace(
                 "/gpfs/gsfs10/users/CCBR_Pipeliner/", "/data/CCBR_Pipeliner/"
             )
-            assert pathlib.Path(
-                target_new
-            ).exists(), f"\tNew target path does not exist: {target_new}"
+            assert pathlib.Path(target_new).exists(), (
+                f"\tNew target path does not exist: {target_new}"
+            )
             if repair:
                 path.unlink()
                 path.symlink_to(target_new)

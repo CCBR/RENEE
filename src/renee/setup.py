@@ -310,7 +310,7 @@ def get_repo_git_commit_hash(repo_path):
         # Typecast to fix python3 TypeError (Object of type bytes is not JSON serializable)
         # subprocess.check_output() returns a byte string
         githash = str(githash)
-    except Exception as e:
+    except Exception:
         # Github releases are missing the .git directory,
         # meaning you cannot get a commit hash, set the
         # commit hash to indicate its from a GH release

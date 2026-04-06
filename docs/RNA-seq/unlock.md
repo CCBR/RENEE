@@ -29,6 +29,7 @@ You can always use the `-h` option for information on a specific command.
 `--output OUTPUT`
 
 > **Output directory to unlock.**
+>
 > _type: path_
 >
 > Path to a previous run's output directory to unlock. This will remove a lock on the working directory. Please verify that the pipeline is not running before running this command.
@@ -41,6 +42,7 @@ Each of the following arguments are optional and do not need to be provided.
 `-h, --help`
 
 > **Display Help.**
+>
 > _type: boolean_
 >
 > Shows command's synopsis, help message, and an example command

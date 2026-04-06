@@ -334,7 +334,7 @@ class TestUsageFunction:
     def test_usage_custom_message(self):
         """Test usage function displays custom message."""
         with pytest.raises(SystemExit) as exc_info:
-            with patch("sys.stdout") as mock_stdout:
+            with patch("sys.stdout"):
                 usage("Custom error")
         # Exit code should be 0 (default)
         assert exc_info.value.code == 0

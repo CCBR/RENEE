@@ -1,6 +1,5 @@
 import argparse
 import filecmp
-import hashlib
 import HTSeq
 import tempfile
 import time

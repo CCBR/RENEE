@@ -82,6 +82,7 @@ you can prepare it with the `renee build` command. See docs here:
 **Requires:** `singularity>=3.5` `snakemake>=6.0`
 
 > **NOTE:**
+>
 > <ins>Biowulf users</ins>:
 > Both, singularity and snakemake, modules are already installed and available for all Biowulf users. Please skip this step as `module load ccbrpipeliner` will preload singularity and snakemake.
 

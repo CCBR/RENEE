@@ -11,7 +11,7 @@ annotate_genes = {
     )
 }
 
-for l in list(
+for line in list(
     filter(
         lambda x: x[2] == "gene",
         filter(
@@ -21,11 +21,11 @@ for l in list(
     )
 ):
     newl = []
-    newl.append(l[0])
-    newl.append(l[3])
-    newl.append(l[4])
-    newl.append(l[6])
-    col9 = l[8].split(" ")
+    newl.append(line[0])
+    newl.append(line[3])
+    newl.append(line[4])
+    newl.append(line[6])
+    col9 = line[8].split(" ")
     gene_id_index = col9.index("gene_id")
     gene_id = col9[gene_id_index + 1].strip(";").strip('"')
     newl.append(gene_id)

@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 import sys
-import collections
 import gzip
 import HTSeq
 import functools
-import sys
 
 
 def get_open_func(filename):
@@ -84,8 +82,8 @@ def repair_gtf(in_filename, out_filename, debug=False):
 
 if __name__ == "__main__":
     if "snakemake" in locals() or "snakemake" in globals():
-        in_filename = snakemake.input.gtf
-        out_filename = snakemake.output.gtf
+        in_filename = snakemake.input.gtf  # noqa: F821
+        out_filename = snakemake.output.gtf  # noqa: F821
     else:
         in_filename = sys.argv[1]
         out_filename = sys.argv[2]

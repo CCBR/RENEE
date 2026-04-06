@@ -41,11 +41,12 @@ from .orchestrate import orchestrate
 try:
     from .gui import launch_gui
 except Exception as exc:
+    _gui_import_error = exc
 
     def launch_gui(*args, **kwargs):  # type: ignore
         raise RuntimeError(
             "GUI dependencies are missing (requires tkinter). Install tkinter to use the GUI."
-        ) from exc
+        ) from _gui_import_error
 
 
 # Pipeline Metadata and globals
@@ -139,9 +140,7 @@ def check_cache(parser, cache, *args, **kwargs):
             """\n\t\x1b[6;37;41mFatal: Failed to provided a valid singularity cache!\x1b[0m
         The provided --singularity-cache already exists on the filesystem as a file.
         Please run {} again with a different --singularity-cache location.
-        """.format(
-                sys.argv[0]
-            )
+        """.format(sys.argv[0])
         )
     elif os.path.isdir(cache):
         # Provide cache exists as directory
@@ -157,9 +156,7 @@ def check_cache(parser, cache, *args, **kwargs):
                 The provided --singularity-cache already exists on the filesystem with a different owner.
                 Singularity strictly enforces that the cache directory is not shared across users.
                 Please run {} again with a different --singularity-cache location.
-                """.format(
-                    sys.argv[0]
-                )
+                """.format(sys.argv[0])
             )
 
     return cache
@@ -177,7 +174,7 @@ def unlock(sub_args):
     outdir = sub_args.output
 
     try:
-        unlock_output = subprocess.check_output(
+        subprocess.check_output(
             ["snakemake", "--unlock", "--cores", "1", "--configfile=config.json"],
             cwd=outdir,
             stderr=subprocess.STDOUT,
@@ -296,10 +293,12 @@ def configure_build(sub_args, git_repo, output_path):
 
     elif os.path.exists(output_path) and os.path.isfile(output_path):
         # Provided Path for pipeline output directory exists as file
-        raise OSError("""\n\tFatal: Failed to create provided pipeline output directory!
+        raise OSError(
+            """\n\tFatal: Failed to create provided pipeline output directory!
         User provided --output PATH already exists on the filesystem as a file.
         Please run {} again with a different --output PATH.
-        """.format(sys.argv[0]))
+        """.format(sys.argv[0])
+        )
 
     # Copy over templates are other required resources, overwriting if they exist
     _cp_r_safe_(
@@ -355,7 +354,7 @@ def build(sub_args):
     if sub_args.shared_resources:
         # Check if shared resource path
         # needs to be added to bindlist
-        if not sub_args.shared_resources in additional_bind_paths:
+        if sub_args.shared_resources not in additional_bind_paths:
             additional_bind_paths.append(sub_args.shared_resources)
 
     additional_bind_paths = ",".join(additional_bind_paths)
@@ -443,10 +442,12 @@ def cache(sub_args):
         os.makedirs(sif_cache)
     elif os.path.exists(sif_cache) and os.path.isfile(sif_cache):
         # Provided Path for pipeline output directory exists as file
-        raise OSError("""\n\tFatal: Failed to create provided sif cache directory!
+        raise OSError(
+            """\n\tFatal: Failed to create provided sif cache directory!
         User provided --sif-cache PATH already exists on the filesystem as a file.
         Please {} cache again with a different --sif-cache PATH.
-        """.format(sys.argv[0]))
+        """.format(sys.argv[0])
+        )
 
     # Check if local SIFs already exist on the filesystem
     with open(images, "r") as fh:
@@ -519,11 +520,13 @@ def genome_options(parser, user_option, prebuilt):
     # a list of genomes (files) in config/genomes/*.json
     elif user_option not in prebuilt:
         # User did NOT provide a valid choice
-        parser.error("""provided invalid choice, '{}', to --genome argument!\n
+        parser.error(
+            """provided invalid choice, '{}', to --genome argument!\n
         Choose from one of the following pre-built genome options: \n
         \t{}\n
         or supply a custom reference genome JSON file generated from renee build.
-        """.format(user_option, prebuilt))
+        """.format(user_option, prebuilt)
+        )
 
     return user_option
 
@@ -544,7 +547,6 @@ def parsed_arguments(name, description):
     """
     # Add styled name and description
     c = Colors
-    styled_name = "{0}RENEE{1}".format(c.bold, c.end)
     description = "{0}{1}{2}".format(c.bold, description, c.end)
 
     # Create a top-level parser
@@ -563,7 +565,8 @@ def parsed_arguments(name, description):
     # Here is a work around to create more useful help message for named
     # options that are required! Please note: if a required arg is added the
     # description below should be updated (i.e. update usage and add new option)
-    required_run_options = textwrap.dedent("""
+    required_run_options = textwrap.dedent(
+        """
         {1}{0} {3}run{4}: {1} Runs the data-processing and quality-control pipeline.{4}
 
         {1}{2}Synopsis:{4}
@@ -752,7 +755,8 @@ def parsed_arguments(name, description):
         {1}{2}Misc Options:{4}
           -h, --help            Show usage information, help message, and exit.
                                   Example: --help
-        """.format("renee", c.bold, c.url, c.italic, c.end))
+        """.format("renee", c.bold, c.url, c.italic, c.end)
+    )
 
     # Display example usage in epilog
     run_epilog = textwrap.dedent(
@@ -1003,7 +1007,8 @@ def parsed_arguments(name, description):
     # Here is a work around to create more useful help message for named
     # options that are required! Please note: if a required arg is added the
     # description below should be updated (i.e. update usage and add new option)
-    required_build_options = textwrap.dedent("""
+    required_build_options = textwrap.dedent(
+        """
         {1}{0} {3}build{4}: {1}Builds reference files for the pipeline.{4}
 
         {1}{2}Synopsis:{4}
@@ -1142,7 +1147,8 @@ def parsed_arguments(name, description):
         {1}{2}Misc Options:{4}
           -h, --help          Show usage information, help message, and exit.
                                 Example: --help
-        """.format("renee", c.bold, c.url, c.italic, c.end))
+        """.format("renee", c.bold, c.url, c.italic, c.end)
+    )
 
     # Display example usage in epilog
     build_epilog = textwrap.dedent(
@@ -1332,7 +1338,8 @@ def parsed_arguments(name, description):
     # Here is a work around to create more useful help message for named
     # options that are required! Please note: if a required arg is added the
     # description below should be updated (i.e. update usage and add new option)
-    required_unlock_options = textwrap.dedent("""\
+    required_unlock_options = textwrap.dedent(
+        """\
         {1}{0} {3}unlock{4}: {1}Unlocks a previous output directory.{4}
 
         {1}{2}Synopsis:{4}
@@ -1361,10 +1368,12 @@ def parsed_arguments(name, description):
         {1}{2}Misc Options:{4}
           -h, --help            Show usage information and exit.
                                   Example: --help
-        """.format("renee", c.bold, c.url, c.italic, c.end))
+        """.format("renee", c.bold, c.url, c.italic, c.end)
+    )
 
     # Display example usage in epilog
-    unlock_epilog = textwrap.dedent("""\
+    unlock_epilog = textwrap.dedent(
+        """\
         {2}{3}Example:{4}
           # Step 1.) Grab an interactive node,
           # do not run on head node and add
@@ -1378,7 +1387,8 @@ def parsed_arguments(name, description):
 
         {2}{3}Version:{4}
           {1}
-        """.format("renee", __version__, c.bold, c.url, c.end))
+        """.format("renee", __version__, c.bold, c.url, c.end)
+    )
 
     # Suppressing help message of required args to overcome no sub-parser named groups
     subparser_unlock = subparsers.add_parser(
@@ -1406,7 +1416,8 @@ def parsed_arguments(name, description):
     # Here is a work around to create more useful help message for named
     # options that are required! Please note: if a required arg is added the
     # description below should be updated (i.e. update usage and add new option)
-    required_cache_options = textwrap.dedent("""\
+    required_cache_options = textwrap.dedent(
+        """\
         {1}{0} {3}cache{4}: {1}Cache software containers locally.{4}
 
         {1}{2}Synopsis:{4}
@@ -1447,10 +1458,12 @@ def parsed_arguments(name, description):
         {1}{2}Misc Options:{4}
           -h, --help            Show usage information and exits.
                                   Example: --help
-        """.format("renee", c.bold, c.url, c.italic, c.end))
+        """.format("renee", c.bold, c.url, c.italic, c.end)
+    )
 
     # Display example usage in epilog
-    cache_epilog = textwrap.dedent("""\
+    cache_epilog = textwrap.dedent(
+        """\
         {2}Example:{3}
           # Step 1.) Grab an interactive node,
           # do not run on head node and add
@@ -1470,7 +1483,8 @@ def parsed_arguments(name, description):
 
         {2}Version:{3}
           {1}
-        """.format("renee", __version__, c.bold, c.end))
+        """.format("renee", __version__, c.bold, c.end)
+    )
 
     # Suppressing help message of required args
     # to overcome no sub-parser named groups

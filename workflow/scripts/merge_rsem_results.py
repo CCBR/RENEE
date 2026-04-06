@@ -1,7 +1,8 @@
 from __future__ import print_function
 from os.path import join
 from functools import reduce
-import os, sys
+import os
+import sys
 import pandas as pd
 
 

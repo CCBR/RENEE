@@ -2,7 +2,8 @@
 
 # Python standard library
 from __future__ import print_function
-import sys, re, csv
+import sys
+import re
 
 _help = """clean_gtf.py: Takes a gtf file from agat_convert_sp_gff2gtf.pl
 to add extra required fields in the 9th column containing key,

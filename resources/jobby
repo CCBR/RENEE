@@ -46,7 +46,11 @@ EXAMPLE:
 
 # Python standard library
 from __future__ import print_function, division
-import sys, os, subprocess, math, re
+import sys
+import os
+import subprocess
+import math
+import re
 from subprocess import PIPE
 import argparse  # added in python/3.5
 import textwrap  # added in python/3.5
@@ -164,8 +168,7 @@ def get_toolkit(tool_list):
     if not best_choice:
         err("Error: Did not find any tools to get job information!")
         fatal(
-            "Expected one of the following tools to be in $PATH:"
-            "\t{0}".format(tool_list)
+            "Expected one of the following tools to be in $PATH:\t{0}".format(tool_list)
         )
 
     return best_choice
@@ -602,7 +605,7 @@ def parsed_arguments(name, description):
                                 in parallel.
                                   @Example: --threads: 8
           -t, --tmp-dir TMP_DIR
-                                @Default: {7}/
+                                @Default: {6}/
                                 Temporary directory. Path on the filesystem
                                 for writing temporary output files. Ideally,
                                 this path should point to a dedicated space
@@ -619,19 +622,21 @@ def parsed_arguments(name, description):
 
           -v, --version         Displays version information and exits.
                                   @Example: --version
-        """.format(styled_name, description, name, c.bold, c.url, c.end, c.italic, temp)
+                """.format(styled_name, description, name, c.bold, c.url, c.end, temp)
     )
 
     # Display example usage in epilog
-    run_epilog = textwrap.dedent("""\
-        {2}{3}Example:{4}
+    run_epilog = textwrap.dedent(
+        """\
+        {0}{1}Example:{2}
         # Please avoid running jobby
         # on a cluster's head node!
         ./jobby -s slurm  -n 4 18627542 13627516 58627597 48627666
 
-        {2}{3}Version:{4}
-          {1}
-        """.format(name, __version__, c.bold, c.url, c.end))
+                {0}{1}Version:{2}
+                    {3}
+                """.format(c.bold, c.url, c.end, __version__)
+    )
 
     # Create a top-level parser
     parser = argparse.ArgumentParser(

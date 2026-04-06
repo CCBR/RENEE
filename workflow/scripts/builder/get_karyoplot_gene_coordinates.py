@@ -3,12 +3,12 @@ import sys
 
 def get_gene_name(j):
     searchfor = "gene_name"
-    if not searchfor in j:
+    if searchfor not in j:
         searchfor = "gene_id"
     k = j.split()
     ind = -1
-    for i, l in enumerate(k):
-        if l == searchfor:
+    for i, field in enumerate(k):
+        if field == searchfor:
             ind = i + 1
             break
     m = k[ind].split('"')[1]
@@ -24,6 +24,6 @@ for i in open(sys.argv[1]).readlines():
     if j[2] == "gene":
         coord = int((int(j[3]) + int(j[4])) * 0.5)
         gene_name = get_gene_name(j[-1])
-        if not gene_name in genelist:
+        if gene_name not in genelist:
             genelist.append(gene_name)
             print(j[0], coord, gene_name, j[6], sep="\t")
