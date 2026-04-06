@@ -4,7 +4,7 @@ We have compiled this FAQ from the most common problems. If you are running into
 
 ## Job Status
 
-**Q: How do I know if RENEE pipeline finished running? How to check status of each job?**
+### Q: How do I know if RENEE pipeline finished running? How to check status of each job?
 
 **A.** Once the pipeline is done running to completion, you will receive an email with header like
 
@@ -36,9 +36,9 @@ To check the status of each individual job submitted to the cluster, there are s
 
         Each job that RENEE submits to the cluster starts with the `pl:` prefix.
 
-**Q: What if the pipeline is finished running but I received a "FAILED" status? How do I identify failed jobs?**
+### Q: What if the pipeline is finished running but I received a "FAILED" status? How do I identify failed jobs?
 
-**A.** In case there was some error during the run, the easiest way to diagnose the problem is to go to logfiles folder within the RENEE output folder and look at the `snakemake.log.jobby.short` file. It contains three columns: jobname, state, and std_err. The jobs that completed successfully would have "COMPLETED" state and jobs that failed would have the FAILED state.
+**A.** In case there was some error during the run, the easiest way to diagnose the problem is to go to logfiles folder within the RENEE output directory (set by `--output`) and look at the `snakemake.log.jobby.short.tsv` file. It contains three columns: `JobName`, `JobState`, and `log_out_path`. The jobs that completed successfully would have "COMPLETED" state and jobs that failed would have the FAILED state.
 
 !!! tldr "Find Failed Jobs"
 === "SLURM output files"
@@ -46,16 +46,16 @@ To check the status of each individual job submitted to the cluster, there are s
         All the failed jobs would be listed with absolute paths to the error file (with extension `.err`). Go through the error files corresponding to the FAILED jobs (std_err) to explore why the job failed.
 
         ```bash
-        # Go to the renee output folder
-        cd renee_output
+        # Go to the renee output directory (set by the --output option)
+        cd /path/to/output/dir
 
         # List the files that failed
         grep "FAILED" logfiles/snakemake.log.jobby.short.tsv
         ```
 
-Many failures are caused by filesystem or network issues on Biowulf, and in such cases, simply re-starting the Pipeline should resolve the issue. Snakemake will dynamically determine which steps have been completed, and which steps still need to be run. If you are still running into problems after re-running the pipeline, there may be another issue. If that is the case, please feel free to [contact us](https://github.com/CCBR/RENEE/issues).
+Many failures are caused by filesystem or network issues on Biowulf, and in such cases, simply re-starting the Pipeline should resolve the issue. Snakemake will dynamically determine which steps have been completed, and which steps still need to be run. If you are still running into problems after re-running the pipeline, there may be another issue. If that is the case, please feel free to [contact us by opening an issue](https://github.com/CCBR/RENEE/issues).
 
-**Q. How do I cancel ongoing RENEE jobs?**
+### Q. How do I cancel ongoing RENEE jobs?
 
 **A.** Sometimes, you might need to manually stop a RENEE run prematurely, perhaps because the run was configured incorrectly or if a job is stalled. Although the walltime limits will eventually stop the workflow, this can take up to 5 or 10 days depending on the pipeline.
 
@@ -66,7 +66,7 @@ To stop RENEE jobs that are currently running, you can follow these options.
     === "Master Job"
         You can use the `sjobs` tool [provided by Biowulf](https://hpc.nih.gov/docs/biowulf_tools.html#sjobs) to monitor ongoing jobs.
 
-        Examine the `NAME` column of the `sjobs` output, one of them should match `pl:renee`. This is the "primary" job that orchestrates the submission of child jobs as the pipeline completes. Terminating this job will ensure that the pipeline is cancelled; however, you will likely need to unlock the working directory before re-running renee again. Please see our instructions below in `Error: Directory cannot be locked` for how to unlock a working directory.
+        Examine the `NAME` column of the `sjobs` output, one of them should match `pl:renee`. This is the "primary" job that orchestrates the submission of child jobs as the pipeline completes. Terminating this job will ensure that the pipeline is cancelled; however, you will likely need to unlock the output directory before re-running renee again. Please see our instructions below in `Error: Directory cannot be locked` for how to unlock a output directory.
 
         You can [manually cancel](https://hpc.nih.gov/docs/userguide.html#delete) the primary job using `scancel`.
 
@@ -89,33 +89,33 @@ To stop RENEE jobs that are currently running, you can follow these options.
 
         This script will NOT cancel the primary job, which you will still have to identify and cancel manually, as described in the previous tab.
 
-Once you've ensured that all running jobs have been stopped, you need to unlock the working directory (see below), and re-run RENEE to resume the pipeline.
+Once you've ensured that all running jobs have been stopped, you need to unlock the output directory (see below), and re-run RENEE to resume the pipeline.
 
 ## Job Errors
 
-**Q. Why am I getting `sbatch: command not found error`?**
+### Q. Why am I getting `sbatch: command not found error`?
 
-**A.** Are you running the `renee` on `helix.nih.gov` by mistake? [Helix](https://hpc.nih.gov/systems/) does not have a job scheduler. One may be able to fire up the singularity module, initial working directory and perform dry-run on `helix`. But to submit jobs, you need to log into `biowulf` using `ssh -Y username@biowulf.nih.gov`.
+**A.** Are you running the `renee` on `helix.nih.gov` by mistake? [Helix](https://hpc.nih.gov/systems/) does not have a job scheduler. One may be able to fire up the singularity module, initial output directory and perform dry-run on `helix`. But to submit jobs, you need to log into `biowulf` using `ssh -Y username@biowulf.nih.gov`.
 
-**Q. Why am I getting a message saying `Error: Directory cannot be locked. ...` when I do the dry-run?**
+### Q. Why am I getting a message saying `Error: Directory cannot be locked. ...` when I do the dry-run?
 
-**A.** This is caused when a run is stopped prematurely, either accidentally or on purpose, or the pipeline is still running in your working directory. Snakemake will lock a working directory to prevent two concurrent pipelines from writing to the same location. This can be remedied easily by running `renee unlock` sub command. Please check to see if the pipeline is still running prior to running the commands below. If you would like to cancel a submitted or running pipeline, please reference the instructions above.
+**A.** This is caused when a run is stopped prematurely, either accidentally or on purpose, or the pipeline is still running in your output directory. Snakemake will lock a output directory to prevent two concurrent pipelines from writing to the same location. This can be remedied easily by running `renee unlock` sub command. Please check to see if the pipeline is still running prior to running the commands below. If you would like to cancel a submitted or running pipeline, please reference the instructions above.
 
 ```bash
 # Load Dependencies
 module load ccbrpipeliner
 
-# Unlock the working directory
-renee unlock --output /path/to/working/dir
+# Unlock the output directory
+renee unlock --output /path/to/output/dir
 ```
 
-**Q. Why am I getting a message saying `MissingInputException in line ...` when I do the dry-run?**
+### Q. Why am I getting a message saying `MissingInputException in line ...` when I do the dry-run?
 
-**A.** This error usually occurs when snakemake is terminated ungracefully. Did you forcefully cancel a running pipeline? Or did one of your running pipelines abruptly end? Either way, the solution is straight-forward. Please go to your pipeline's output directory, and rename or delete the following hidden directory: `.snakemake/`. This directory contains metadata pertaining any snakemake runs inside that working directory. Sometimes when a pipeline is pre-maturely or forcefully terminated, a few files related to tracking temp() files are not deleted and snakemake raises a MissingInputException.
+**A.** This error usually occurs when snakemake is terminated ungracefully. Did you forcefully cancel a running pipeline? Or did one of your running pipelines abruptly end? Either way, the solution is straight-forward. Please go to your pipeline's output directory, and rename or delete the following hidden directory: `.snakemake/`. This directory contains metadata pertaining any snakemake runs inside that output directory. Sometimes when a pipeline is pre-maturely or forcefully terminated, a few files related to tracking temp() files are not deleted and snakemake raises a MissingInputException.
 
 ```bash
-# Navigate to working directory
-cd /path/to/working/dir
+# Navigate to output directory
+cd /path/to/output/dir
 
 # Rename .snakemake directory to something else
 # And try re-dry running the pipeline
