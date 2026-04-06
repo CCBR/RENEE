@@ -2,7 +2,6 @@
 from __future__ import print_function
 from Bio import SeqIO
 from Bio.Seq import Seq
-import sys
 import argparse
 import collections
 import gzip
@@ -60,7 +59,7 @@ def write_qualimap_info(args):
                 geneName = feature.attr["gene_id"]
                 exons_dict[geneName].append(feature)
     outFile = open(outFileName, "w")
-    outFile.write(f'"biotypes"\t"length"\t"gc"\n')
+    outFile.write('"biotypes"\t"length"\t"gc"\n')
 
     for geneId, exons in exons_dict.items():
         print("Processing %s" % geneId)

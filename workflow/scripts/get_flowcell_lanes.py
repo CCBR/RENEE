@@ -2,7 +2,8 @@
 # -*- coding: UTF-8 -*-
 
 from __future__ import print_function, division
-import sys, gzip
+import sys
+import gzip
 
 # USAGE
 # sys.argv[1] = sample_name.R1.fastq.gz

@@ -4,7 +4,6 @@ import os
 import tempfile
 
 from ccbr_tools.pipeline.util import (
-    get_tmp_dir,
     get_hpcname,
 )
 from ccbr_tools.pipeline.cache import get_sif_cache_dir

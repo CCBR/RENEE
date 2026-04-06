@@ -1,6 +1,5 @@
 overrides:
   - files:
-      - "*.md"
       - "*.cff"
       - ".prettierrc"
     options:

@@ -46,7 +46,11 @@ EXAMPLE:
 
 # Python standard library
 from __future__ import print_function, division
-import sys, os, subprocess, math, re
+import sys
+import os
+import subprocess
+import math
+import re
 from subprocess import PIPE
 import argparse  # added in python/3.5
 import textwrap  # added in python/3.5
@@ -164,8 +168,7 @@ def get_toolkit(tool_list):
     if not best_choice:
         err("Error: Did not find any tools to get job information!")
         fatal(
-            "Expected one of the following tools to be in $PATH:"
-            "\t{0}".format(tool_list)
+            "Expected one of the following tools to be in $PATH:\t{0}".format(tool_list)
         )
 
     return best_choice
@@ -623,7 +626,8 @@ def parsed_arguments(name, description):
     )
 
     # Display example usage in epilog
-    run_epilog = textwrap.dedent("""\
+    run_epilog = textwrap.dedent(
+        """\
         {2}{3}Example:{4}
         # Please avoid running jobby
         # on a cluster's head node!
@@ -631,7 +635,8 @@ def parsed_arguments(name, description):
 
         {2}{3}Version:{4}
           {1}
-        """.format(name, __version__, c.bold, c.url, c.end))
+        """.format(name, __version__, c.bold, c.url, c.end)
+    )
 
     # Create a top-level parser
     parser = argparse.ArgumentParser(

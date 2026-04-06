@@ -30,9 +30,9 @@ def test_run_init_partition_overrides_cluster_json():
         "--input .tests/*.fastq.gz --genome config/genomes/biowulf/hg38_38.json --partition long"
     )
     cluster = _run_cmd_in_tmp(base_cmd)
-    assert (
-        cluster.get("__default__", {}).get("partition") == "long"
-    ), "cluster.json __default__.partition should be set to 'long' from CLI"
+    assert cluster.get("__default__", {}).get("partition") == "long", (
+        "cluster.json __default__.partition should be set to 'long' from CLI"
+    )
 
 
 def test_build_partition_overrides_cluster_json():
@@ -46,9 +46,9 @@ def test_build_partition_overrides_cluster_json():
         "--partition short"
     )
     cluster = _run_cmd_in_tmp(base_cmd)
-    assert (
-        cluster.get("__default__", {}).get("partition") == "short"
-    ), "cluster.json __default__.partition should be set to 'short' from CLI"
+    assert cluster.get("__default__", {}).get("partition") == "short", (
+        "cluster.json __default__.partition should be set to 'short' from CLI"
+    )
 
 
 def test_run_init_time_overrides_cluster_json():
@@ -57,9 +57,9 @@ def test_run_init_time_overrides_cluster_json():
         "--input .tests/*.fastq.gz --genome config/genomes/biowulf/hg38_38.json --time 05:30:00"
     )
     cluster = _run_cmd_in_tmp(base_cmd)
-    assert (
-        cluster.get("__default__", {}).get("time") == "05:30:00"
-    ), "cluster.json __default__.time should be set to '05:30:00' from CLI"
+    assert cluster.get("__default__", {}).get("time") == "05:30:00", (
+        "cluster.json __default__.time should be set to '05:30:00' from CLI"
+    )
 
 
 def test_build_time_overrides_cluster_json():
@@ -72,9 +72,9 @@ def test_build_time_overrides_cluster_json():
         "--time 01:45:00"
     )
     cluster = _run_cmd_in_tmp(base_cmd)
-    assert (
-        cluster.get("__default__", {}).get("time") == "01:45:00"
-    ), "cluster.json __default__.time should be set to '01:45:00' from CLI"
+    assert cluster.get("__default__", {}).get("time") == "01:45:00", (
+        "cluster.json __default__.time should be set to '01:45:00' from CLI"
+    )
 
 
 def _write_executable(path: pathlib.Path, content: str):
@@ -157,18 +157,18 @@ def _assert_partition_propagated(lines):
     assert master_calls, "Expected at least one master sbatch submission"
     assert cleanup_calls, "Expected cleanup sbatch submission"
     assert "-p student" in master_calls[0], "Master sbatch command missing '-p student'"
-    assert (
-        "-p student" in cleanup_calls[0]
-    ), "Cleanup sbatch command missing '-p student'"
+    assert "-p student" in cleanup_calls[0], (
+        "Cleanup sbatch command missing '-p student'"
+    )
 
 
 def _assert_time_propagated(lines, walltime):
     master_calls = [line for line in lines if "--parsable" in line]
 
     assert master_calls, "Expected at least one master sbatch submission"
-    assert (
-        f"--time={walltime}" in master_calls[0]
-    ), "Master sbatch command missing requested --time override"
+    assert f"--time={walltime}" in master_calls[0], (
+        "Master sbatch command missing requested --time override"
+    )
 
 
 def test_runner_partition_propagated_to_sbatch_calls():

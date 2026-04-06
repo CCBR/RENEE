@@ -1,5 +1,8 @@
 from __future__ import print_function
-import sys, os, zipfile, glob
+import sys
+import os
+import zipfile
+import glob
 
 
 def get_max_read_length(f):

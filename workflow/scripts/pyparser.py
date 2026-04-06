@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from __future__ import print_function, division
-import sys, os, re
+import sys
+import os
+import re
 import pandas as pd
 
 # Configuration for defining valid files, cleaning sample names, parse fields, rename fields
