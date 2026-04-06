@@ -22,6 +22,13 @@ repos:
     hooks:
       - id: codespell
         args: ["--ignore-words=.github/WORDLIST.txt"]
+  # general linting
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        additional_dependencies:
+          - prettier@3.4.0
   # Python formatting
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.8
@@ -34,13 +41,6 @@ repos:
     rev: 0.8.2
     hooks:
       - id: air-format
-  # general linting
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
-    hooks:
-      - id: prettier
-        additional_dependencies:
-          - prettier@3.4.0
   # enforce commit format
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v4.4.0
