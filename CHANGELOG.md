@@ -2,6 +2,8 @@
 
 - Fix RSEM failure with custom references containing short sequences (e.g., HPV-integrated genomes) by removing incompatible STAR alignment parameters (`--alignEndsProtrude` and `--peOverlapNbasesMin`), which caused reads to protrude beyond transcript boundaries. (#261, @kelly-sovacool)
 - Added more memory to rule `validator` (#263, @samarth8392)
+- New `--time` option for `renee run` and `renee build` to override the default SLURM walltime. (#269, @kelly-sovacool)
+  - Also fix bug where `--partition` was not being propagated to the sbatch call.
 
 ## RENEE 2.7.4
 
@@ -185,4 +187,4 @@
 - `resources/gff3togtf.py`, `resources/jobby` and `resources/run_jobby_on_snakemake_log` added.
 - adding `jobby` related commands to `onsuccess` and `onerror` blocks in `Snakefile`.
 - **fastQValidator**: `-minReadLen 2` added to command line.
-- GTF now parsed at STAR command line. GTF-agnostic STAR index can be re-used saving significant disk space in the "resources" folder.
+- GTF now parsed at STAR command line. GTF-agnostic STAR index can be reused saving significant disk space in the "resources" folder.

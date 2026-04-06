@@ -3,7 +3,7 @@ import sys
 
 from ccbr_tools.pipeline.util import _cp_r_safe_, _sym_safe_
 
-from .util import update_cluster_partition
+from .util import update_cluster_partition, update_cluster_time
 
 
 def initialize(sub_args, repo_path, output_path):
@@ -47,6 +47,8 @@ def initialize(sub_args, repo_path, output_path):
         update_cluster_partition(
             output_path, sub_args.partition, context="after initialization"
         )
+    if hasattr(sub_args, "time") and sub_args.time:
+        update_cluster_time(output_path, sub_args.time, context="after initialization")
 
     # Create renamed symlinks to rawdata
     inputs = _sym_safe_(input_data=sub_args.input, target=output_path)

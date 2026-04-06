@@ -313,7 +313,7 @@ shared_metadata %>%
       columnDefs = list(
         list(
           visible = FALSE,
-          targets = c(1, 11, 14, 15, 18, 19, 21:23, 27, 31, 32, 33, 34, 35, 36) # hide columes
+          targets = c(1, 11, 14, 15, 18, 19, 21:23, 27, 31, 32, 33, 34, 35, 36) # hide columns
         )
       ),
       buttons = list(

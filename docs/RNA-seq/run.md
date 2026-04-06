@@ -15,6 +15,7 @@ $ renee run [--help] \
             [--small-rna] [--star-2-pass-basic] \
             [--dry-run] [--mode {slurm, local}] \
             [--partition PARTITION] \
+            [--time TIME] \
             [--shared-resources SHARED_RESOURCES] \
             [--singularity-cache SINGULARITY_CACHE] \
             [--sif-cache SIF_CACHE] \
@@ -142,12 +143,23 @@ Each of the following arguments are optional and do not need to be provided.
 
 ---
 
+`--time TIME`
+
+> **SLURM walltime for job submission.**
+> _type: string_
+>
+> Walltime to use when submitting the master job and downstream workflow jobs through SLURM. This option overrides the default `time` in the cluster configuration file. Common formats are `HH:MM:SS` and `D-HH:MM:SS`. This option is only applicable when using `--mode slurm`.
+>
+> **_Example:_** `--time 12:00:00`
+
+---
+
 `--shared-resources SHARED_RESOURCES`
 
 > **Local path to shared resources.**
 > _type: path_
 >
-> The pipeline uses a set of shared reference files that can be re-used across reference genomes. These currently include reference files for kraken and FQScreen. These reference files can be downloaded with the build sub command's `--shared-resources` option. With that being said, these files only need to be downloaded once. We recommend storing this files in a shared location on the filesystem that other people can access. If you are running the pipeline on Biowulf, you do NOT need to download these reference files! They already exist on the filesystem in a location that anyone can access; however, if you are running the pipeline on another cluster or target system, you will need to download the shared resources with the build sub command, and you will need to provide this option every time you run the pipeline. Please provide the same path that was provided to the build sub command's --shared-resources option. Again, if you are running the pipeline on Biowulf, you do NOT need to provide this option. For more information about how to download shared resources, please reference the build sub command's `--shared-resources` option.
+> The pipeline uses a set of shared reference files that can be reused across reference genomes. These currently include reference files for kraken and FQScreen. These reference files can be downloaded with the build sub command's `--shared-resources` option. With that being said, these files only need to be downloaded once. We recommend storing this files in a shared location on the filesystem that other people can access. If you are running the pipeline on Biowulf, you do NOT need to download these reference files! They already exist on the filesystem in a location that anyone can access; however, if you are running the pipeline on another cluster or target system, you will need to download the shared resources with the build sub command, and you will need to provide this option every time you run the pipeline. Please provide the same path that was provided to the build sub command's --shared-resources option. Again, if you are running the pipeline on Biowulf, you do NOT need to provide this option. For more information about how to download shared resources, please reference the build sub command's `--shared-resources` option.
 >
 > **_Example:_** `--shared-resources /data/shared/renee`
 
@@ -241,6 +253,7 @@ renee run --input .tests/*.R?.fastq.gz \
                --mode slurm \
                --sif-cache /data/OpenOmics/SIFs/ \
                --partition norm \
+               --time 12:00:00 \
                --star-2-pass-basic
 ```
 
@@ -285,6 +298,7 @@ renee run --input .tests/*.R?.fastq.gz \
                --mode slurm \
                --sif-cache /data/$USER/cache \
                --partition norm \
+               --time 08:00:00 \
                --star-2-pass-basic \
                --shared-resources /data/shared/renee \
                --tmp-dir /cluster_scratch/$USER/ \
