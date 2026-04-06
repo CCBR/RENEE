@@ -605,7 +605,7 @@ def parsed_arguments(name, description):
                                 in parallel.
                                   @Example: --threads: 8
           -t, --tmp-dir TMP_DIR
-                                                                @Default: {6}/
+                                @Default: {6}/
                                 Temporary directory. Path on the filesystem
                                 for writing temporary output files. Ideally,
                                 this path should point to a dedicated space
