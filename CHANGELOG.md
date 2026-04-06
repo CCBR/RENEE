@@ -1,6 +1,6 @@
 ## RENEE development version
 
-- Fix `ResourceWarning: unclosed <socket>` from PySimpleGUI being imported at module level. (#278, @copilot)
+- Fix `ResourceWarning: unclosed <socket>` from PySimpleGUI being imported at module level. (#276, @copilot)
 
 ## RENEE 2.7.5
 
