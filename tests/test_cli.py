@@ -2,12 +2,9 @@ import json
 import os.path
 import subprocess
 import tempfile
-from renee.src.renee.__main__ import main
 
 renee_run = (
-    "./main.py run "
-    "--mode local --runmode init --dry-run "
-    "--input .tests/*.fastq.gz "
+    "./main.py run --mode local --runmode init --dry-run --input .tests/*.fastq.gz "
 )
 
 
@@ -57,7 +54,7 @@ def test_run_error():
 def test_subcommands_help():
     assert all(
         [
-            f"renee {cmd } [--help]"
+            f"renee {cmd} [--help]"
             in subprocess.run(
                 f"./bin/renee {cmd} --help",
                 capture_output=True,

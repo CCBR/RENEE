@@ -4,7 +4,6 @@
 # j1=`python sum_lists.py $i1 $k|sed "s/ //g"`
 # echo -e "$a1\t$d\t$a\t$f\t$b\t$c\t$g\t$h\t$i1\t$j1"
 # done< genes.ref.bed|head
-import sys
 
 
 def add2all(a, b):

@@ -122,9 +122,7 @@ def abstract_location(file_address, *args, **kwargs):
     # Check if user provided any input
     if not file_address or file_address is None:
         raise IOError(
-            "Failed to provide any input files! Input(s) are required to resolve required files.".format(
-                file_address
-            )
+            "Failed to provide any input files! Input(s) are required to resolve required files."
         )
 
     # If given file path to one file, convert it a list[<str>]

@@ -1,9 +1,7 @@
 import tempfile
 import json
 import os.path
-import subprocess
 
-from ccbr_tools.pipeline.cache import get_sif_cache_dir, get_singularity_cachedir
 from ccbr_tools.shell import shell_run
 
 renee_run = (

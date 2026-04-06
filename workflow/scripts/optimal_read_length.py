@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import sys, glob, json, re
+import sys
+import glob
+import re
 
 
 def find_optimal_read_length(rl, dbrl):

@@ -30,21 +30,21 @@ bigdict["references"]["rnaseq"]["RSEMREF"] = (
 bigdict["references"]["rnaseq"]["RRNALIST"] = (
     params_workdir + "/" + params_genome + ".rRNA_interval_list"
 )
-bigdict["references"]["rnaseq"][
-    "FASTQ_SCREEN_CONFIG"
-] = "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf"
-bigdict["references"]["rnaseq"][
-    "FASTAWITHADAPTERSETC"
-] = "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa"
-bigdict["references"]["rnaseq"][
-    "adapter.file"
-] = "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat"
-bigdict["references"]["rnaseq"][
-    "trimmomatic.adapters"
-] = "/data/CCBR_Pipeliner/db/PipeDB/dev/adapters2.fa"
-bigdict["references"]["rnaseq"][
-    "fastqc.adapters"
-] = "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters"
+bigdict["references"]["rnaseq"]["FASTQ_SCREEN_CONFIG"] = (
+    "/data/CCBR_Pipeliner/db/PipeDB/lib/fastq_screen.conf"
+)
+bigdict["references"]["rnaseq"]["FASTAWITHADAPTERSETC"] = (
+    "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters_new.fa"
+)
+bigdict["references"]["rnaseq"]["adapter.file"] = (
+    "/data/CCBR_Pipeliner/db/PipeDB/dev/TruSeq_and_nextera_adapters.ngsqc.dat"
+)
+bigdict["references"]["rnaseq"]["trimmomatic.adapters"] = (
+    "/data/CCBR_Pipeliner/db/PipeDB/dev/adapters2.fa"
+)
+bigdict["references"]["rnaseq"]["fastqc.adapters"] = (
+    "/data/CCBR_Pipeliner/db/PipeDB/dev/fastqc.adapters"
+)
 bigdict["references"]["rnaseq"]["ORGANISM"] = "MOUSE"
 with open(output_json, "w") as fp:
     json.dump(bigdict, fp, indent=4)

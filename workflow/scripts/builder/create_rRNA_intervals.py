@@ -1,4 +1,6 @@
-import sys, os, pysam
+import sys
+import os
+import pysam
 
 fa = sys.argv[1]
 genomename = sys.argv[3]

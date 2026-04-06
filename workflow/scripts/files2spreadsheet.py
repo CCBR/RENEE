@@ -127,7 +127,7 @@ def excel_writer(files, spreadsheet="test.xlsx"):
         try:
             # Sheet name cannot exceed 31 characters in length
             df.to_excel(writer, sheet_name=sheet, index=False, freeze_panes=(1, 0))
-        except xlsxwriter.exceptions.InvalidWorksheetName as e:
+        except xlsxwriter.exceptions.InvalidWorksheetName:
             df.to_excel(writer, sheet_name=sheet[:31], index=False, freeze_panes=(1, 0))
 
     writer.save()

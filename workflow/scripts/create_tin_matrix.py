@@ -2,7 +2,9 @@
 # -*- coding: UTF-8 -*-
 
 from __future__ import print_function
-import sys, pandas, os
+import sys
+import pandas
+import os
 
 
 def create(file, tin_dict, key_index=0, parse_index=4):
