@@ -40,12 +40,13 @@ from .orchestrate import orchestrate
 # Lazy import GUI to avoid hard dependency on tkinter during CLI-only usage/tests
 try:
     from .gui import launch_gui
-except Exception:
+except Exception as exc:
+    _gui_import_error = exc
 
     def launch_gui(*args, **kwargs):  # type: ignore
         raise RuntimeError(
             "GUI dependencies are missing (requires tkinter). Install tkinter to use the GUI."
-        ) from exc
+        ) from _gui_import_error
 
 
 # Pipeline Metadata and globals
@@ -173,7 +174,7 @@ def unlock(sub_args):
     outdir = sub_args.output
 
     try:
-        unlock_output = subprocess.check_output(
+        subprocess.check_output(
             ["snakemake", "--unlock", "--cores", "1", "--configfile=config.json"],
             cwd=outdir,
             stderr=subprocess.STDOUT,
@@ -546,7 +547,6 @@ def parsed_arguments(name, description):
     """
     # Add styled name and description
     c = Colors
-    styled_name = "{0}RENEE{1}".format(c.bold, c.end)
     description = "{0}{1}{2}".format(c.bold, description, c.end)
 
     # Create a top-level parser

@@ -53,7 +53,6 @@ def write_qualimap_info(args):
     with open_func(gtfFileName) as gtf_file:
         gtf_file = HTSeq.GFF_Reader(gtf_file)
         exons_dict = collections.defaultdict(list)
-        other_features = []
         for feature in gtf_file:
             if feature.type == "exon":
                 geneName = feature.attr["gene_id"]

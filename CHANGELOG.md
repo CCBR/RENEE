@@ -2,20 +2,20 @@
 
 - Added more memory to rule `validator` (#263, @samarth8392)
 - New `--time` option for `renee run` and `renee build` to override the default SLURM walltime. (#269, @kelly-sovacool)
-    - Also fix bug where `--partition` was not being propagated to the sbatch call.
+  - Also fix bug where `--partition` was not being propagated to the sbatch call.
 
 ## RENEE 2.7.4
 
 - New `--partition` option for `renee run` and `renee build` to specify the SLURM partition. (#252, @kelly-sovacool)
-    - This feature is necessary for users who do not have access to the `norm` partition on biowulf, such as students.
+  - This feature is necessary for users who do not have access to the `norm` partition on biowulf, such as students.
 - Fix bug in `phred_encoding.py` that incorrectly detected Phred+33 files as Phred+64, causing BBMerge to fail. (#257, @kelly-sovacool)
 
 ## RENEE 2.7.3
 
 - Bug fixes: (#246, @kelly-sovacool)
-    - Increase memory for fastq screen.
-    - Do not proceed to trimming if fastq validator fails.
-    - Fix typo in docs.
+  - Increase memory for fastq screen.
+  - Do not proceed to trimming if fastq validator fails.
+  - Fix typo in docs.
 
 ## RENEE 2.7.2
 
@@ -25,8 +25,8 @@
 ## RENEE 2.7.1
 
 - Improvements for fastq validator: (#224, @kelly-sovacool)
-    - Increase default memory.
-    - Capture stdout in a log file so the output is not deleted on failure.
+  - Increase default memory.
+  - Capture stdout in a log file so the output is not deleted on failure.
 - Fix broken symlinks for genome reference files on biowulf. (#226, @kelly-sovacool)
 
 ## RENEE 2.7.0
@@ -34,9 +34,9 @@
 - RENEE now depends on ccbr_tools v0.4 for updated jobby & spooker utilities. (#207, @kelly-sovacool)
 - Add `mmul10_108` (rhesus macaque) to list of reference genomes. (#212, @kelly-sovacool)
 - Added support for new reference genomes on biowulf:
-    - `mm39_M36` (#199, @kelly-sovacool)
-    - `mm39_M37` (#220, @kelly-sovacool)
-    - `hg38_48` (#220, @kelly-sovacool)
+  - `mm39_M36` (#199, @kelly-sovacool)
+  - `mm39_M37` (#220, @kelly-sovacool)
+  - `hg38_48` (#220, @kelly-sovacool)
 - Fix `--sif-cache` example in docs. (#208, @kelly-sovacool)
 
 ## RENEE 2.6.8
@@ -87,10 +87,10 @@
 
 - Support hg38 release 45 on biowulf & FRCE. (#127, @kelly-sovacool)
 - hg38 genome index files now include decoy & virus sequences. (#136, @kelly-sovacool)
-    - Additionally, `--genome` is no longer required and is set to `hg38_36` by default.
+  - Additionally, `--genome` is no longer required and is set to `hg38_36` by default.
 - Set default shared singularity SIF directory for biowulf and frce. (#94, @kelly-sovacool)
 - Add `renee gui` subcommand to launch the graphical user interface. (#94, @kelly-sovacool)
-    - Previously, `renee_gui` (with an underscore) was a command in the `ccbrpipeliner` module.
+  - Previously, `renee_gui` (with an underscore) was a command in the `ccbrpipeliner` module.
 
 ### Bug fixes
 
@@ -109,9 +109,9 @@
 ## RENEE 2.5.13
 
 - Backport all genome config files from v2.6.5. (#196, @kelly-sovacool)
-    - Critical bug fix due to missing S3 bucket. (#191)
-    - Rebuild hg19 & hg38 references from GDC. (#136)
-    - Add marmoset genome. (#185)
+  - Critical bug fix due to missing S3 bucket. (#191)
+  - Rebuild hg19 & hg38 references from GDC. (#136)
+  - Add marmoset genome. (#185)
 
 ## RENEE 2.5.12
 
@@ -119,16 +119,16 @@
 - Fix RNA report bug, caused by hard-coding of PC1-3, when only PC1-2 were generated. (#104, @slsevilla)
 - Allow printing the version or help message even if singularity is not in the path. (#110, @kelly-sovacool)
 - Fix RSeQC environments:
-    - Set RSeQC envmodule version to 4.0.0, which synchronizes it with the version in the docker container used by singularity. (#122, @kelly-sovacool)
-    - Update docker with RSeQC's tools properly added to the path. (#123, @kelly-sovacool)
+  - Set RSeQC envmodule version to 4.0.0, which synchronizes it with the version in the docker container used by singularity. (#122, @kelly-sovacool)
+  - Update docker with RSeQC's tools properly added to the path. (#123, @kelly-sovacool)
 
 ## RENEE 2.5.11
 
 - Create a citation file to describe how to cite RENEE. (#86, @kelly-sovacool)
 - Set HPC-specific fastq screen config and kraken DB paths for Biowulf and FRCE. (#78, @kelly-sovacool)
-    - Previously, FRCE users were required to set `--shared-resources`,
-      which were kept in a location on FRCE not under version control.
-      This change brings the paths under version control so they're easier to recover if deleted.
+  - Previously, FRCE users were required to set `--shared-resources`,
+    which were kept in a location on FRCE not under version control.
+    This change brings the paths under version control so they're easier to recover if deleted.
 - Fix permissions to allow read/write access to the scripts dir which caused rNA report to fail (#91, @slsevilla)
 - Fix RSEM reference and rRNA interval list paths in FRCE-specific config files (#85, @kelly-sovacool & @slsevilla)
 - Fix bug which caused incorrect genome annotation JSON files to be used (#87, @kelly-sovacool)
@@ -158,8 +158,8 @@
 ## RENEE 2.3
 
 - `runner` orchestration script updated for:
-    - `--wait` and `--create-nidap-folder` options added for _frce_. Also work on _biowulf_. These are required when running **RENEE** with NIDAP API call.
-    - `--rerun-triggers mtime` set when _snakemake_ version is >= 7.8
+  - `--wait` and `--create-nidap-folder` options added for _frce_. Also work on _biowulf_. These are required when running **RENEE** with NIDAP API call.
+  - `--rerun-triggers mtime` set when _snakemake_ version is >= 7.8
 - `spooker` updated to track user info on _frce_.
 - _NIDAP_ folder related updates made to _Snakefile_. `rules/nidap.smk` added.
 - "\_2" suffix added to "FQscreen2" files to distinguish them from "FQscreen" files. Now two separate fqscreen plots per sample are reported in the multiqc report.

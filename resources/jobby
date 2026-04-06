@@ -605,7 +605,7 @@ def parsed_arguments(name, description):
                                 in parallel.
                                   @Example: --threads: 8
           -t, --tmp-dir TMP_DIR
-                                @Default: {7}/
+                                                                @Default: {6}/
                                 Temporary directory. Path on the filesystem
                                 for writing temporary output files. Ideally,
                                 this path should point to a dedicated space
@@ -622,20 +622,20 @@ def parsed_arguments(name, description):
 
           -v, --version         Displays version information and exits.
                                   @Example: --version
-        """.format(styled_name, description, name, c.bold, c.url, c.end, c.italic, temp)
+                """.format(styled_name, description, name, c.bold, c.url, c.end, temp)
     )
 
     # Display example usage in epilog
     run_epilog = textwrap.dedent(
         """\
-        {2}{3}Example:{4}
+        {0}{1}Example:{2}
         # Please avoid running jobby
         # on a cluster's head node!
         ./jobby -s slurm  -n 4 18627542 13627516 58627597 48627666
 
-        {2}{3}Version:{4}
-          {1}
-        """.format(name, __version__, c.bold, c.url, c.end)
+                {0}{1}Version:{2}
+                    {3}
+                """.format(c.bold, c.url, c.end, __version__)
     )
 
     # Create a top-level parser

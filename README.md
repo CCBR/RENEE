@@ -15,17 +15,17 @@ See the website for detailed information, documentation, and examples:
 ### Table of Contents
 
 - [RENEE - **R**na s**E**quencing a**N**alysis pip**E**lin**E**](#renee---rna-sequencing-analysis-pipeline)
-    - [Table of Contents](#table-of-contents)
-    - [1. Introduction](#1-introduction)
-    - [2. Overview](#2-overview)
-        - [2.1 RENEE Pipeline](#21-renee-pipeline)
-        - [2.2 Reference Genomes](#22-reference-genomes)
-        - [2.3 Dependencies](#23-dependencies)
-    - [3. Run RENEE pipeline](#3-run-renee-pipeline)
-        - [3.1 Biowulf](#31-biowulf)
-        - [3.2 FRCE](#32-frce)
-    - [4. References](#4-references)
-    - [5. Version Notes](https://github.com/CCBR/RENEE/blob/main/CHANGELOG.md)
+  - [Table of Contents](#table-of-contents)
+  - [1. Introduction](#1-introduction)
+  - [2. Overview](#2-overview)
+    - [2.1 RENEE Pipeline](#21-renee-pipeline)
+    - [2.2 Reference Genomes](#22-reference-genomes)
+    - [2.3 Dependencies](#23-dependencies)
+  - [3. Run RENEE pipeline](#3-run-renee-pipeline)
+    - [3.1 Biowulf](#31-biowulf)
+    - [3.2 FRCE](#32-frce)
+  - [4. References](#4-references)
+  - [5. Version Notes](https://github.com/CCBR/RENEE/blob/main/CHANGELOG.md)
 
 ### 1. Introduction
 

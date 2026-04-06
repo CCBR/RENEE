@@ -187,13 +187,13 @@ We recommend creating an artificial chromosome for the non-host sequence. The se
 Please ensure the non-host annotation contains the following features and/or constraints:
 
 - for a given `gene` feature
-    - each `gene` entry has at least one `transcript` feature
-    - and each `transcript` entry has at least one `exon` feature
-    - `gene_id`, `gene_name` and `gene_biotype` are required
+  - each `gene` entry has at least one `transcript` feature
+  - and each `transcript` entry has at least one `exon` feature
+  - `gene_id`, `gene_name` and `gene_biotype` are required
 - for a given `transcipt` feature
-    - along with `gene_id`, `gene_name` and `gene_biotype` ... `transcript_id` is also required
+  - along with `gene_id`, `gene_name` and `gene_biotype` ... `transcript_id` is also required
 - for a given `exon` feature
-    - `gene_id`, `gene_name`, `gene_biotype`, `transcript_id` are required
+  - `gene_id`, `gene_name`, `gene_biotype`, `transcript_id` are required
 
 If not, the GTF file may need to be manually curated until these conditions are satisfied.
 
@@ -209,9 +209,9 @@ In this tab-delimited example above,
 
 - **_line 1:_** the `gene` feature has 3 required attributes in column 9: `gene_id` and `gene_name` and `gene_biotype`
 - **_line 2:_** the `transcript` entry for the above `gene` repeats the same attributes with following required fields: `transcript_id ` and `transcript_name`
-    - _Please note:_ `transcript_type` is _optional_
+  - _Please note:_ `transcript_type` is _optional_
 - **_line 3:_** the `exon` entry for the above `transcript` has 3 required attributes: `gene_id` and `transcript_id` and `gene_biotype`
-    - _Please note:_ `transcript_type` is _optional_
+  - _Please note:_ `transcript_type` is _optional_
 
 For a given gene, the combination of the `gene_id` AND `gene_name` should form a unique string. There should be no instances where two different genes share the same `gene_id` AND `gene_name`.
 

@@ -27,18 +27,18 @@ tid2genename = {
     )
 }
 
-for l in map(lambda x: x.strip().split("\t"), open("genes.ref.bed").readlines()):
+for line in map(lambda x: x.strip().split("\t"), open("genes.ref.bed").readlines()):
     newl = []
-    newl.append(tid2genename['"' + l[3] + '"'].strip('"'))
-    newl.append(l[3])
-    newl.append(l[0])
-    newl.append(l[5])
-    newl.append(l[1])
-    newl.append(l[2])
-    newl.append(l[6])
-    newl.append(l[7])
-    newl.append(l[9])
-    lst = add2all(l[11], l[1])
+    newl.append(tid2genename['"' + line[3] + '"'].strip('"'))
+    newl.append(line[3])
+    newl.append(line[0])
+    newl.append(line[5])
+    newl.append(line[1])
+    newl.append(line[2])
+    newl.append(line[6])
+    newl.append(line[7])
+    newl.append(line[9])
+    lst = add2all(line[11], line[1])
     newl.append(lst)
-    newl.append(sum_lists(l[10], lst))
+    newl.append(sum_lists(line[10], lst))
     print("\t".join(newl))

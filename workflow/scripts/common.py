@@ -1,4 +1,6 @@
 # Common helper functions shared across the entire workflow
+import os
+import sys
 
 
 def check_existence(filename):

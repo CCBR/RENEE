@@ -148,17 +148,17 @@ Example:
 
 ```json
 {
-    "Insert CRAFT prompt": {
-        "prefix": "craft",
-        "body": [
-            "/* C: Context: Repo=${workspaceFolderBasename}; bioinformatics pipelines; NIH HPC (Biowulf/Helix); containers: quay.io/ccbr */",
-            "/* R: Rules: no PHI, no secrets, containerize, pin versions, follow style */",
-            "/* F: Flow: inputs/ -> results/, conf/, tests/ */",
-            "/* T: Tests: provide a one-line TEST_CMD and expected output */",
-            "",
-            "A: $1"
-        ],
-        "description": "Insert CRAFT prompt and place cursor at Actions"
-    }
+  "Insert CRAFT prompt": {
+    "prefix": "craft",
+    "body": [
+      "/* C: Context: Repo=${workspaceFolderBasename}; bioinformatics pipelines; NIH HPC (Biowulf/Helix); containers: quay.io/ccbr */",
+      "/* R: Rules: no PHI, no secrets, containerize, pin versions, follow style */",
+      "/* F: Flow: inputs/ -> results/, conf/, tests/ */",
+      "/* T: Tests: provide a one-line TEST_CMD and expected output */",
+      "",
+      "A: $1"
+    ],
+    "description": "Insert CRAFT prompt and place cursor at Actions"
+  }
 }
 ```

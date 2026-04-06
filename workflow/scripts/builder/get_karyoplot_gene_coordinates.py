@@ -7,8 +7,8 @@ def get_gene_name(j):
         searchfor = "gene_id"
     k = j.split()
     ind = -1
-    for i, l in enumerate(k):
-        if l == searchfor:
+    for i, field in enumerate(k):
+        if field == searchfor:
             ind = i + 1
             break
     m = k[ind].split('"')[1]
