@@ -22,6 +22,8 @@ FILES_TO_DELETE = list()
 
 
 def launch_gui(sub_args, debug=True):
+    # Deferred import: PySimpleGUI opens a network socket at import time,
+    # so importing here avoids ResourceWarning on non-GUI commands.
     import PySimpleGUI as sg
 
     # get drop down genome+annotation options
@@ -243,6 +245,7 @@ def launch_gui(sub_args, debug=True):
 
 
 def copy_to_clipboard(string):
+    # Deferred import: only needed when GUI clipboard feature is used.
     from tkinter import Tk
 
     r = Tk()
