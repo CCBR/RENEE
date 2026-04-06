@@ -2,9 +2,7 @@
 import argparse
 import glob
 import os
-import PySimpleGUI as sg
 import sys
-from tkinter import Tk
 
 from ccbr_tools.pipeline.util import (
     get_genomes_dict,
@@ -24,6 +22,10 @@ FILES_TO_DELETE = list()
 
 
 def launch_gui(sub_args, debug=True):
+    # Deferred import: PySimpleGUI opens a network socket at import time,
+    # so importing here avoids ResourceWarning on non-GUI commands.
+    import PySimpleGUI as sg
+
     # get drop down genome+annotation options
     jsons = get_genomes_dict(repo_base=renee_base, error_on_warnings=True)
     genome_annotation_combinations = list(jsons.keys())
@@ -243,6 +245,9 @@ def launch_gui(sub_args, debug=True):
 
 
 def copy_to_clipboard(string):
+    # Deferred import: only needed when GUI clipboard feature is used.
+    from tkinter import Tk
+
     r = Tk()
     r.withdraw()
     r.clipboard_clear()
