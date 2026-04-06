@@ -46,11 +46,11 @@ To check the status of each individual job submitted to the cluster, there are s
         All the failed jobs would be listed with absolute paths to the error file (with extension `.err`). Go through the error files corresponding to the FAILED jobs (std_err) to explore why the job failed.
 
         ```bash
-        # Go to the logfiles folder within the renee output folder
-        cd renee_output/logfiles
+        # Go to the renee output folder
+        cd renee_output
 
         # List the files that failed
-        grep "FAILED" snakemake.log.jobby.short | less
+        grep "FAILED" logfiles/snakemake.log.jobby.short.tsv
         ```
 
 Many failures are caused by filesystem or network issues on Biowulf, and in such cases, simply re-starting the Pipeline should resolve the issue. Snakemake will dynamically determine which steps have been completed, and which steps still need to be run. If you are still running into problems after re-running the pipeline, there may be another issue. If that is the case, please feel free to [contact us](https://github.com/CCBR/RENEE/issues).
