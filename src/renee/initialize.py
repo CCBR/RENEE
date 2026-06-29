@@ -1,9 +1,40 @@
 import os
+import stat
 import sys
 
 from ccbr_tools.pipeline.util import _cp_r_safe_, _sym_safe_
 
-from .util import update_cluster_partition, update_cluster_time
+from .util import update_cluster_partition, update_cluster_time, enforce_partition_limits
+
+
+def _ensure_owner_writable(path):
+    """Recursively apply owner write (and conditional execute) permissions to
+    all files and directories under *path*, equivalent to ``chmod -R u+wX``.
+
+    - Directories always receive owner write + execute (``u+wx``).
+    - Files receive owner write; owner execute is added only when any execute
+      bit (user/group/other) is already set (``u+wX``).
+
+    This corrects cases where the source installation has restrictive
+    permissions (e.g. -r--rw-r-- / dr-xrwxr-x) that get preserved by
+    shutil.copytree / _cp_r_safe_, causing PermissionError when RENEE later
+    tries to update cluster.json or other config files.
+
+    @param path <str>: Root directory to fix permissions under.
+    """
+    _ANY_EXEC = stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
+    for dirpath, dirnames, filenames in os.walk(path):
+        for fname in filenames:
+            fpath = os.path.join(dirpath, fname)
+            mode = os.stat(fpath).st_mode
+            new_mode = mode | stat.S_IWUSR
+            if mode & _ANY_EXEC:
+                new_mode |= stat.S_IXUSR
+            os.chmod(fpath, new_mode)
+        os.chmod(
+            dirpath,
+            os.stat(dirpath).st_mode | stat.S_IWUSR | stat.S_IXUSR,
+        )
 
 
 def initialize(sub_args, repo_path, output_path):
@@ -44,9 +75,19 @@ def initialize(sub_args, repo_path, output_path):
         resources=["workflow", "resources", "config"],
     )
 
+    # Ensure the output directory is owner-writable (equivalent to
+    # chmod -R u+wX). The pipeline installation may have restrictive
+    # permissions (e.g. -r--rw-r-- / dr-xrwxr-x) that _cp_r_safe_ preserves
+    # verbatim, causing PermissionError when RENEE later tries to update
+    # cluster.json or other config files.
+    _ensure_owner_writable(output_path)
+
     # If a partition was provided, update the copied cluster.json default partition
     if hasattr(sub_args, "partition") and sub_args.partition:
         update_cluster_partition(
+            output_path, sub_args.partition, context="after initialization"
+        )
+        enforce_partition_limits(
             output_path, sub_args.partition, context="after initialization"
         )
     if hasattr(sub_args, "time") and sub_args.time:

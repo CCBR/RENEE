@@ -22,6 +22,7 @@ def orchestrate(
     hpcname=get_hpcname(),
     partition=None,
     walltime=None,
+    max_jobs=None,
 ):
     """Runs RENEE pipeline via selected executor: local or slurm.
     If 'local' is selected, the pipeline is executed locally on a compute node/instance.
@@ -55,6 +56,8 @@ def orchestrate(
         SLURM partition to submit jobs to. If not provided, defaults to partition in cluster.json
     @param walltime <str>:
         SLURM walltime to submit jobs with. If not provided, defaults to time in cluster.json or wrapper default
+    @param max_jobs <int|None>:
+        Maximum number of concurrent Snakemake jobs submitted to SLURM.
     @return masterjob <subprocess.Popen() object>:
     """
     # Add additional singularity bind PATHs
@@ -136,7 +139,7 @@ def orchestrate(
         # snakemake --latency-wait 120  -s $R/Snakefile -d $R --printshellcmds
         #    --cluster-config $R/cluster.json --keep-going --restart-times 3
         #    --cluster "sbatch --gres {cluster.gres} --cpus-per-task {cluster.threads} -p {cluster.partition} -t {cluster.time} --mem {cluster.mem} --job-name={params.rname}"
-        #    -j 500 --rerun-incomplete --stats $R/Reports/initialqc.stats -T
+        #    -j <max_jobs> --rerun-incomplete --stats $R/Reports/initialqc.stats -T
         #    2>&1| tee -a $R/Reports/snakemake.log
 
         # Create log file for master job information
@@ -163,6 +166,9 @@ def orchestrate(
         if walltime is not None and str(walltime) != "":
             cmdlist.append("-T")
             cmdlist.append(str(walltime))
+        if max_jobs is not None:
+            cmdlist.append("--max-jobs")
+            cmdlist.append(str(max_jobs))
         if str(wait) == "--wait":
             cmdlist.append("-w")
         if str(hpcname) != "":
@@ -172,7 +178,12 @@ def orchestrate(
             cmdlist.append("-n")
             cmdlist.append("unknown")
 
-        print(" ".join(cmdlist))
+        print(
+            f"  Command:      {' '.join(cmdlist)}"
+            f"\n  Max jobs:     {max_jobs if max_jobs is not None else 'default'}"
+            f"\n  Master log:   {os.path.join(outdir, 'logfiles', 'master.log')}"
+            f"\n  Pipeline log: {os.path.join(outdir, 'logfiles', 'snakemake.log')}"
+        )
         masterjob = subprocess.Popen(
             cmdlist, cwd=outdir, stderr=subprocess.STDOUT, stdout=logfh, env=my_env
         )

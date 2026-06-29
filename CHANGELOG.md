@@ -1,5 +1,13 @@
 ## RENEE development version
 
+- Improve reliability and UX for reruns and student-partition usage: (#288, #289, @kopardev)
+  - Fix permissions when initializing output directories by normalizing copied resource permissions to be owner-writable/traversable (equivalent behavior to `chmod -R u+wX` on copied resources), preventing `PermissionError` when updating copied config files such as `config/cluster.json`.
+  - Add partition-aware cluster limit enforcement for known partitions (currently Biowulf `student`), capping per-rule walltime/CPU requests in `cluster.json` to avoid scheduler rejections.
+  - Add `--max-jobs` for `renee run` to control Snakemake SLURM fan-out; defaults to `10` for `--partition student` and `100` otherwise, with explicit user override taking priority.
+  - Remove hardcoded Snakemake `-j 500` from the runner path and propagate dynamic max-jobs through CLI → run orchestration → wrapper submission.
+  - Improve terminal messaging with clearer phase banners, resolved run-parameter summary, labeled submission command/log paths, and post-submission monitoring hints.
+  - Fix Python 3.12 regex escape warnings in `setup.py` by converting regex literals to raw strings.
+
 ## RENEE 2.7.6
 
 - Fix `ModuleNotFoundError: No module named 'rpds.rpds'` when running on Python 3.12. Upgraded `ccbr_tools` to v0.5.3 which includes a lazy-import fix for `cffconvert`. (#282, CCBR/Tools#182)

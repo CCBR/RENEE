@@ -27,11 +27,13 @@ def run(sub_args):
         os.path.join(sub_args.output, "config.json")
     ):
         # Initialize working directory, copy over required pipeline resources
+        print("\n→ Initializing output directory...")
         input_files = initialize(
             sub_args, repo_path=renee_base(), output_path=sub_args.output
         )
 
         # Step pipeline for execution, create config.json config file from templates
+        print("\n→ Generating pipeline configuration...")
         config = setup(
             sub_args,
             ifiles=input_files,
@@ -40,8 +42,41 @@ def run(sub_args):
         )
     # load config from existing file
     else:
+        print("\n→ Loading existing pipeline configuration...")
         with open(os.path.join(sub_args.output, "config.json"), "r") as config_file:
             config = json.load(config_file)
+
+    # Print a summary of the resolved run parameters so the user can sanity-check
+    # before any jobs are submitted.
+    nends_label = "paired-end" if config["project"]["nends"] == 2 else "single-end"
+    n_samples = len(config["project"]["groups"]["rsamps"])
+    resolved_partition = getattr(sub_args, "partition", None) or config.get(
+        "options", {}
+    ).get("partition", "norm")
+    partition = resolved_partition
+    if getattr(sub_args, "max_jobs", None) is not None:
+        effective_max_jobs = sub_args.max_jobs
+        max_jobs_source = "user"
+    elif str(resolved_partition).strip().lower() == "student":
+        effective_max_jobs = 10
+        max_jobs_source = "partition-default"
+    else:
+        effective_max_jobs = 100
+        max_jobs_source = "global-default"
+
+    sif_cache = getattr(sub_args, "singularity_cache", None) or "default"
+    print(
+        f"\n  Genome:    {config['project']['annotation']}"
+        f"\n  Samples:   {n_samples} ({nends_label})"
+        f"\n  Partition: {partition}"
+        f"\n  Max jobs:  {effective_max_jobs} ({max_jobs_source})"
+        f"\n  SIF cache: {sif_cache}"
+        f"\n  Config:    {os.path.join(sub_args.output, 'config.json')}"
+    )
+    print(
+        "\n  Note: lower max-jobs values reduce queue bursts and help avoid"
+        " PD(QOSMaxCpuPerUserLimit) pileups on student."
+    )
 
     # ensure the working dir is read/write friendly
     scripts_path = os.path.join(sub_args.output, "workflow", "scripts")
@@ -49,6 +84,7 @@ def run(sub_args):
 
     # Optional Step: Dry-run pipeline
     if sub_args.dry_run:
+        print("\n→ Validating pipeline (dry-run)...")
         dryrun_output = dryrun(
             outdir=sub_args.output
         )  # python3 returns byte-string representation
@@ -84,6 +120,8 @@ def run(sub_args):
         # end at dry run
     else:  # continue with real run
         # Run pipeline
+        _mode_label = "SLURM" if sub_args.mode == "slurm" else "local"
+        print(f"\n→ Submitting pipeline ({_mode_label} mode)...")
         masterjob = orchestrate(
             mode=sub_args.mode,
             outdir=sub_args.output,
@@ -95,6 +133,7 @@ def run(sub_args):
             hpcname=hpcname,
             partition=sub_args.partition,
             walltime=sub_args.time,
+            max_jobs=effective_max_jobs,
         )
 
         # Wait for subprocess to complete,
@@ -128,6 +167,17 @@ def run(sub_args):
                     )
                 )
             print(jobid)
+            _snakemake_log = os.path.join(
+                sub_args.output, "logfiles", "snakemake.log"
+            )
+            print(
+                "\n" + "-" * 66
+                + "\nJob submitted successfully!"
+                + f"\n  Monitor:   squeue -u $USER"
+                + f"\n  Progress:  tail -f {_snakemake_log}"
+                + f"\n  Results:   {sub_args.output}/"
+                + "\n" + "-" * 66
+            )
 
 
 def resolve_additional_bind_paths(search_paths):
