@@ -167,16 +167,16 @@ def run(sub_args):
                     )
                 )
             print(jobid)
-            _snakemake_log = os.path.join(
-                sub_args.output, "logfiles", "snakemake.log"
-            )
+            _snakemake_log = os.path.join(sub_args.output, "logfiles", "snakemake.log")
             print(
-                "\n" + "-" * 66
+                "\n"
+                + "-" * 66
                 + "\nJob submitted successfully!"
-                + f"\n  Monitor:   squeue -u $USER"
+                + "\n  Monitor:   squeue -u $USER"
                 + f"\n  Progress:  tail -f {_snakemake_log}"
                 + f"\n  Results:   {sub_args.output}/"
-                + "\n" + "-" * 66
+                + "\n"
+                + "-" * 66
             )
 
 
