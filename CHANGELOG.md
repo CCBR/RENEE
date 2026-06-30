@@ -1,6 +1,8 @@
 ## RENEE development version
 
-- Improve reliability and UX for reruns and student-partition usage: (#288, #289, @kopardev)
+## RENEE 2.7.7
+
+- Improve reliability and UX for reruns and student-partition usage: (#288, #289, #291, @kopardev)
   - Fix permissions when initializing output directories by normalizing copied resource permissions to be owner-writable/traversable (equivalent behavior to `chmod -R u+wX` on copied resources), preventing `PermissionError` when updating copied config files such as `config/cluster.json`.
   - Add partition-aware cluster limit enforcement for known partitions (currently Biowulf `student`), capping per-rule walltime/CPU requests in `cluster.json` to avoid scheduler rejections.
   - Add `--max-jobs` for `renee run` to control Snakemake SLURM fan-out; defaults to `10` for `--partition student` and `100` otherwise, with explicit user override taking priority.
