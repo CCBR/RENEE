@@ -61,6 +61,8 @@ OPTIONS:
                                 the job is submitted using HPC API. If not provided
                                 the API may interpret submission of master job as
                                 completion of the pipeline!
+    --max-jobs [Type: Int]   Maximum number of concurrent Snakemake jobs
+              submitted to SLURM [Default: 100]
   -h, --help     [Type: Bool]  Displays usage and help information.
 Example:
   $ runner slurm -h
@@ -93,6 +95,7 @@ function parser() {
       -c  | --cache)  provided "$key" "${2:-}"; Arguments["c"]="$2"; shift; shift;;
       -p  | --partition) provided "$key" "${2:-}"; Arguments["p"]="$2"; shift; shift;;
       -T  | --time) provided "$key" "${2:-}"; Arguments["T"]="$2"; shift; shift;;
+      --max-jobs) provided "$key" "${2:-}"; Arguments["m"]="$2"; shift; shift;;
       -n  | --hpc-name)  provided "$key" "${2:-}"; Arguments["h"]="$2"; shift; shift;;
       -w  | --wait)  Arguments["w"]="--wait"; shift;;
       -*  | --*) err "Error: Failed to parse unsupported argument: '${key}'."; usage && exit 1;;
@@ -145,6 +148,7 @@ function submit(){
   # INPUT $8 = HPC name... biowulf or frce or unknown
   # INPUT $9 = SLURM partition (optional)
   # INPUT ${10} = SLURM walltime (optional)
+  # INPUT ${11} = Maximum concurrent Snakemake jobs (optional)
 
   # SLURM inherits the environment from which the job was launched
   # Try to purge modules all modules from environment
@@ -177,6 +181,7 @@ function submit(){
   wait="$7"
   partition="${9:-}"
   walltime="${10:-}"
+  max_jobs="${11:-100}"
   partition_opts=()
   if [[ -n "$partition" ]]; then
     partition_opts=("-p" "$partition")
@@ -243,7 +248,7 @@ function submit(){
               --printshellcmds --cluster-config "$3"/config/cluster.json \
               --cluster "${CLUSTER_OPTS}" \
               $triggeroptions \
-              --keep-going --restart-times 3 -j 500 --rerun-incomplete --stats "$3"/logfiles/runtime_statistics.json \
+              --keep-going --restart-times 3 -j "${max_jobs}" --rerun-incomplete --stats "$3"/logfiles/runtime_statistics.json \
               --keep-remote 2>&1 | tee -a "$3"/logfiles/master.log)
           else
             job_id=$(sbatch --wait --parsable -J "$2" "${walltime_opts[@]}" --mail-type=BEGIN,END,FAIL "${partition_opts[@]}" \
@@ -253,7 +258,7 @@ function submit(){
               --printshellcmds --cluster-config "$3"/config/cluster.json \
               --cluster "${CLUSTER_OPTS}" \
               $triggeroptions \
-              --keep-going --restart-times 3 -j 500 --rerun-incomplete --stats "$3"/logfiles/runtime_statistics.json \
+              --keep-going --restart-times 3 -j "${max_jobs}" --rerun-incomplete --stats "$3"/logfiles/runtime_statistics.json \
               --keep-remote 2>&1 | tee -a "$3"/logfiles/master.log)
           fi
           # Clean-up working directory after completion
@@ -303,6 +308,7 @@ function main(){
 
   default_wait="--nowait"
   Arguments[w]="${Arguments[w]:-$default_wait}" # wait is a blank string if not provided.
+  Arguments[m]="${Arguments[m]:-100}" # default max concurrent Snakemake jobs
 
   # Print pipeline metadata prior to running
   echo -e "\nRENEE\t$(date)"
@@ -311,7 +317,7 @@ function main(){
 
   # Step 1. Run pipeline and submit jobs to cluster using the defined executor
   mkdir -p "${Arguments[o]}/logfiles/"
-  job_id=$(submit "${Arguments[e]}" "${Arguments[j]}" "${Arguments[o]}" "${Arguments[b]}" "${Arguments[c]}" "${Arguments[t]}" "${Arguments[w]}" "${Arguments[h]}" "${Arguments[p]:-}" "${Arguments[T]:-}")
+  job_id=$(submit "${Arguments[e]}" "${Arguments[j]}" "${Arguments[o]}" "${Arguments[b]}" "${Arguments[c]}" "${Arguments[t]}" "${Arguments[w]}" "${Arguments[h]}" "${Arguments[p]:-}" "${Arguments[T]:-}" "${Arguments[m]:-100}")
   echo -e "[$(date)] Pipeline submitted to cluster.\nMaster Job ID: $job_id"
   echo "${job_id}" > "${Arguments[o]}/logfiles/mjobid.log"
 
