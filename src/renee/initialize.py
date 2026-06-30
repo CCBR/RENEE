@@ -4,7 +4,11 @@ import sys
 
 from ccbr_tools.pipeline.util import _cp_r_safe_, _sym_safe_
 
-from .util import update_cluster_partition, update_cluster_time, enforce_partition_limits
+from .util import (
+    update_cluster_partition,
+    update_cluster_time,
+    enforce_partition_limits,
+)
 
 
 def _ensure_owner_writable(path):
