@@ -34,7 +34,13 @@ from ccbr_tools.pipeline.cache import get_sif_cache_dir, image_cache
 from .run import run
 from .dryrun import dryrun
 from .conditions import fatal
-from .util import renee_base, get_version, update_cluster_partition, update_cluster_time
+from .util import (
+    renee_base,
+    get_version,
+    update_cluster_partition,
+    update_cluster_time,
+    enforce_partition_limits,
+)
 from .orchestrate import orchestrate
 
 # Lazy import GUI to avoid hard dependency on tkinter during CLI-only usage/tests
@@ -118,6 +124,16 @@ def permissions(parser, filename, *args, **kwargs):
         )
 
     return filename
+
+
+def positive_int(value):
+    """Argparse type validator for positive integer options."""
+    ivalue = int(value)
+    if ivalue <= 0:
+        raise argparse.ArgumentTypeError(
+            "Invalid value '{}': expected a positive integer".format(value)
+        )
+    return ivalue
 
 
 def check_cache(parser, cache, *args, **kwargs):
@@ -310,6 +326,9 @@ def configure_build(sub_args, git_repo, output_path):
     # If a partition was provided, update the copied cluster.json default partition
     if hasattr(sub_args, "partition") and sub_args.partition:
         update_cluster_partition(
+            output_path, sub_args.partition, context="after build configuration"
+        )
+        enforce_partition_limits(
             output_path, sub_args.partition, context="after build configuration"
         )
     if hasattr(sub_args, "time") and sub_args.time:
@@ -574,6 +593,7 @@ def parsed_arguments(name, description):
                               [--small-rna] [--star-2-pass-basic] \\
                               [--dry-run] [--mode {{slurm, local}}] \\
                               [--partition PARTITION] \
+                              [--max-jobs MAX_JOBS] \
                               [--time TIME] \
                               [--shared-resources SHARED_RESOURCES] \\
                               [--singularity-cache SINGULARITY_CACHE] \\
@@ -725,6 +745,12 @@ def parsed_arguments(name, description):
                                                                 defaults to time specified in config/cluster.json.
                                                                 Common formats include HH:MM:SS and D-HH:MM:SS.
                                                                     Example: --time 12:00:00
+
+                    --max-jobs MAX_JOBS
+                                                                Maximum number of concurrent Snakemake jobs submitted
+                                                                to SLURM. If not provided, defaults to 10 for
+                                                                partition=student, otherwise defaults to 100.
+                                                                    Example: --max-jobs 25
 
           --create-nidap-folder
                                 Create folder called "NIDAP" with file to-be-moved back to NIDAP
@@ -990,6 +1016,15 @@ def parsed_arguments(name, description):
         required=False,
         default=None,
         help="SLURM walltime (for example: 4-00:00:00 or 12:00:00). If not provided, defaults to time specified in config/cluster.json",
+    )
+
+    # Maximum number of concurrent jobs submitted by Snakemake to SLURM
+    subparser_run.add_argument(
+        "--max-jobs",
+        type=positive_int,
+        required=False,
+        default=None,
+        help="Maximum number of concurrent Snakemake jobs submitted to SLURM. If not provided, defaults to 10 for partition=student, otherwise 100.",
     )
 
     # Number of threads for the
