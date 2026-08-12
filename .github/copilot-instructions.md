@@ -11,7 +11,7 @@
 
 1. **Pull Request template**: include optional AI-assistance disclosure fields (model used, high-level prompt intent, manual review confirmation).
 2. **Pre-merge check (GitHub Action)**: verify `.github/copilot-instructions.md` is present in the repository and that new pipeline files include a `# CRAFT:` header.
-3. **Lint jobs**: `ruff` for Python, `shellcheck` for shell, `lintr` for R, and `nf-core lint` for Snakemake, or Snakemake lint checks where applicable.
+3. **Lint jobs**: `ruff` for Python, `shellcheck` for shell, `lintr` for R, `nf-core lint` for Nextflow, or Snakemake lint checks where applicable.
 4. **Secrets scan**: run `TruffleHog` or `Gitleaks` on PRs to detect accidental credentials.
 5. **AI usage label**: if AI usage is declared, an Action should add `generated-by-AI` label (create this label if it does not exist); the PR body should end with the italicized Markdown line: _Generated using AI_, and any associated commit messages should end with the plain footer line: `Generated using AI`.
 
