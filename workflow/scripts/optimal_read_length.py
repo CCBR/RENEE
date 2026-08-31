@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-from __future__ import print_function
-import sys
 import glob
 import re
+import sys
 
 
 def find_optimal_read_length(rl, dbrl):
@@ -31,9 +30,7 @@ if __name__ == "__main__":
     except IndexError:
         print("Failed to provide all required positional args!")
         print(
-            "Example Usage: python {} QC/readlength.txt /data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_30/STAR/2.7.0f/genes-".format(
-                sys.argv[0]
-            )
+            f"Example Usage: python {sys.argv[0]} QC/readlength.txt /data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_30/STAR/2.7.0f/genes-"
         )
         sys.exit(1)
 
@@ -44,7 +41,7 @@ if __name__ == "__main__":
     star_read_lengths = sorted(
         list(
             map(
-                lambda x: int(re.findall("genes-(\d+)", x)[0]),
+                lambda x: int(re.findall(r"genes-(\d+)", x)[0]),
                 glob.glob(stardir + "*/"),
             )
         )

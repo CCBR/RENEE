@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
 # Python standard library
-from __future__ import print_function
-import sys
 import re
+import sys
 
 _help = """clean_gtf.py: Takes a gtf file from agat_convert_sp_gff2gtf.pl
 to add extra required fields in the 9th column containing key,
@@ -218,7 +217,7 @@ def formatted(metadata):
     """
     out = ""
     for k, v in metadata.items():
-        out += '{} "{}"; '.format(k, v)
+        out += f'{k} "{v}"; '
     out = out.rstrip(" ")
     return out
 
@@ -226,7 +225,7 @@ def formatted(metadata):
 def main():
     if len(sys.argv) != 2:
         print(_help)
-        print("Usage: python {} genes.gtf > clean.gtf".format(sys.argv[0]))
+        print(f"Usage: python {sys.argv[0]} genes.gtf > clean.gtf")
         print("Error: failed to provide all positional arguments!", file=sys.stderr)
         sys.exit(1)
 

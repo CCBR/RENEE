@@ -22,9 +22,7 @@ for i in list(
             gene_id = j[k + 1]
         elif j[k] == "gene_name":
             gene_name = j[k + 1]
-        elif j[k] == "gene_biotype":
-            gene_biotype = j[k + 1]
-        elif j[k] == "gene_type":
+        elif j[k] == "gene_biotype" or j[k] == "gene_type":
             gene_biotype = j[k + 1]
     if gene_name == unknown and gene_id != unknown:
         gene_name = gene_id

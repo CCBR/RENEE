@@ -3,16 +3,15 @@ import io
 import json
 import os
 import pathlib
-import pytest
 import tempfile
 import warnings
 
+import pytest
 from ccbr_tools.pipeline.util import (
     _cp_r_safe_,
     get_genomes_dict,
     get_genomes_list,
 )
-
 from renee.src.renee.util import renee_base, update_cluster_partition
 
 
