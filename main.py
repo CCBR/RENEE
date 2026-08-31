@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+
 from src.renee.__main__ import main
 
 # add script directory to the path to allow the CLI to work out-of-the-box

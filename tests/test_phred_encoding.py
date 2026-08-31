@@ -8,22 +8,23 @@ Tests ensure correct detection of Phred+33 and Phred+64 quality score encodings
 in FastQ files.
 """
 
-import pytest
-import sys
-import os
 import gzip
+import os
+import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
+
+import pytest
 
 # Add the workflow/scripts directory to the path
 sys.path.insert(0, str(Path(__file__).parent.parent / "workflow" / "scripts"))
 
 from phred_encoding import (
     detect_encoding_from_qscore,
-    reader,
-    main,
     get_min_ascii_in_string,
+    main,
+    reader,
     usage,
 )
 
@@ -333,9 +334,8 @@ class TestUsageFunction:
 
     def test_usage_custom_message(self):
         """Test usage function displays custom message."""
-        with pytest.raises(SystemExit) as exc_info:
-            with patch("sys.stdout"):
-                usage("Custom error")
+        with pytest.raises(SystemExit) as exc_info, patch("sys.stdout"):
+            usage("Custom error")
         # Exit code should be 0 (default)
         assert exc_info.value.code == 0
 

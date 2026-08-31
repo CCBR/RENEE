@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 import pysam
 
 fa = sys.argv[1]
@@ -9,7 +10,7 @@ if not os.path.exists(fa + ".fai"):
     pysam.faidx(fa)
 unknown = '"Unknown";'
 # out=open(genomename+".rRNA_interval_list",'w')
-for f in open(fa + ".fai").readlines():
+for f in open(fa + ".fai"):
     f = f.strip().split("\t")
     # 	out.write("@SQ\tSN:%s\tLN:%s\tAS:%s\n"%(f[0],f[1],genomename))
     print("@SQ\tSN:%s\tLN:%s\tAS:%s" % (f[0], f[1], genomename))
@@ -34,9 +35,7 @@ for i in list(
             gene_id = j[k + 1][1:-2]
         elif j[k] == "gene_name":
             gene_name = j[k + 1][1:-2]
-        elif j[k] == "gene_biotype":
-            gene_biotype = j[k + 1][1:-2]
-        elif j[k] == "gene_type":
+        elif j[k] == "gene_biotype" or j[k] == "gene_type":
             gene_biotype = j[k + 1][1:-2]
     if gene_biotype.lower() == "rrna":
         # out.write("%s\t%s\t%s\t%s\t%s\n"%(i[0],i[3],i[4],i[6],gene_id))

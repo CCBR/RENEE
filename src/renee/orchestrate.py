@@ -1,12 +1,12 @@
 import os
 import subprocess
 
+from ccbr_tools.pipeline.cache import get_singularity_cachedir
 from ccbr_tools.pipeline.util import (
+    _get_file_mtime,
     get_hpcname,
     get_tmp_dir,
-    _get_file_mtime,
 )
-from ccbr_tools.pipeline.cache import get_singularity_cachedir
 
 
 def orchestrate(
@@ -91,8 +91,8 @@ def orchestrate(
     if additional_bind_paths:
         # Add Bind PATHs for outdir and tmp dir
         if bindpaths:
-            bindpaths = ",{}".format(bindpaths)
-        bindpaths = "{}{}".format(additional_bind_paths, bindpaths)
+            bindpaths = f",{bindpaths}"
+        bindpaths = f"{additional_bind_paths}{bindpaths}"
 
     if not os.path.exists(os.path.join(outdir, "logfiles")):
         # Create directory for logfiles
@@ -122,7 +122,7 @@ def orchestrate(
                 "-pr",
                 "--use-singularity",
                 "--singularity-args",
-                "'-B {}'".format(bindpaths),
+                f"'-B {bindpaths}'",
                 "--cores",
                 str(threads),
                 "--configfile=config.json",

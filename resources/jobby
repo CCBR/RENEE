@@ -45,16 +45,15 @@ EXAMPLE:
 """
 
 # Python standard library
-from __future__ import print_function, division
-import sys
-import os
-import subprocess
-import math
-import re
-from subprocess import PIPE
 import argparse  # added in python/3.5
-import textwrap  # added in python/3.5
+import math
+import os
+import re
+import subprocess
+import sys
 import tempfile  # added in python/3.5
+import textwrap  # added in python/3.5
+from subprocess import PIPE
 
 # Jobby metadata
 __version__ = "v0.2.0"
@@ -167,9 +166,7 @@ def get_toolkit(tool_list):
     # to potentially use
     if not best_choice:
         err("Error: Did not find any tools to get job information!")
-        fatal(
-            "Expected one of the following tools to be in $PATH:\t{0}".format(tool_list)
-        )
+        fatal(f"Expected one of the following tools to be in $PATH:\t{tool_list}")
 
     return best_choice
 
@@ -223,7 +220,7 @@ def convert_size(size_bytes):
     i = int(math.floor(math.log(size_bytes, 1024)))
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)
-    return "{0}{1}".format(s, size_name[i])
+    return f"{s}{size_name[i]}"
 
 
 def to_bytes(size):
@@ -285,7 +282,6 @@ def sge(jobs, threads, tmp_dir):
     @return None
     """
     # NOTE: add later for SGE cluster
-    pass
 
 
 def uge(jobs, threads, tmp_dir):
@@ -295,7 +291,6 @@ def uge(jobs, threads, tmp_dir):
     @return None
     """
     # NOTE: add later for LOCUS cluster
-    pass
 
 
 def dashboard_cli(jobs, threads=1, tmp_dir=None):
@@ -347,7 +342,7 @@ def dashboard_cli(jobs, threads=1, tmp_dir=None):
         ),
         stdout=PIPE,
         stderr=PIPE,
-        universal_newlines=True,
+        text=True,
         shell=True,
     )
 
@@ -432,7 +427,7 @@ def sacct(jobs, threads=1, tmp_dir=None):
         ),
         stdout=PIPE,
         stderr=PIPE,
-        universal_newlines=True,
+        text=True,
         shell=True,
     )
 
@@ -534,7 +529,7 @@ def jobby(args):
     else:
         # Unsupported job scheduler,
         # needs to be implemented
-        fatal('Error: "{0}" is an unsupported job scheduler!'.format(scheduler))
+        fatal(f'Error: "{scheduler}" is an unsupported job scheduler!')
 
     # Display job(s) information
     # to standard output
@@ -556,26 +551,26 @@ def parsed_arguments(name, description):
     """
     # Add styled name and description
     c = Colors
-    styled_name = "{0}{1}{2}{3}{4}".format(c.bold, c.bg_black, c.cyan, name, c.end)
-    description = "{0}{1}{2}".format(c.bold, description, c.end)
+    styled_name = f"{c.bold}{c.bg_black}{c.cyan}{name}{c.end}"
+    description = f"{c.bold}{description}{c.end}"
     temp = tempfile.gettempdir()
 
     # Please note: update the usage statement
     # below if a new option is added!
     usage_statement = textwrap.dedent(
-        """\
-        {0}: {1}
+        f"""\
+        {styled_name}: {description}
 
-        {3}{4}Synopsis:{5}
-          $ {2} [--version] [--help] \\
+        {c.bold}{c.url}Synopsis:{c.end}
+          $ {name} [--version] [--help] \\
                 [--scheduler {{slurm | ...}}] \\
                 [--threads THREADS] [--tmp-dir TMP_DIR] \\
                 <JOB_ID [JOB_ID ...]>
 
-        {3}{4}Description:{5}
-          {2} will take your past jobs and display their job information
+        {c.bold}{c.url}Description:{c.end}
+          {name} will take your past jobs and display their job information
         in a standardized format. Why???! We have pipelines running on several
-        different clusters (using different job schedulers). {2} centralizes
+        different clusters (using different job schedulers). {name} centralizes
         and abstracts the process of querying different job schedulers within
         a unified command-line interface.
 
@@ -583,7 +578,7 @@ def parsed_arguments(name, description):
         on a given target system for getting job information to return to the
         user in a common output format.
 
-        {3}{4}Required Positional Arguments:{5}
+        {c.bold}{c.url}Required Positional Arguments:{c.end}
           <JOB_ID [JOB_ID ...]>
                                Identifiers of past jobs. One or more JOB_IDs
                                can be provided. Multiple JOB_IDs should be
@@ -592,7 +587,7 @@ def parsed_arguments(name, description):
                                output. Please see example section below for
                                more information.
 
-        {3}{4}Options:{5}
+        {c.bold}{c.url}Options:{c.end}
           -s,--scheduler {{slurm | ...}}
                                 @Default: slurm
                                 Job scheduler. Defines the job scheduler
@@ -605,7 +600,7 @@ def parsed_arguments(name, description):
                                 in parallel.
                                   @Example: --threads: 8
           -t, --tmp-dir TMP_DIR
-                                @Default: {6}/
+                                @Default: {temp}/
                                 Temporary directory. Path on the filesystem
                                 for writing temporary output files. Ideally,
                                 this path should point to a dedicated space
@@ -622,20 +617,20 @@ def parsed_arguments(name, description):
 
           -v, --version         Displays version information and exits.
                                   @Example: --version
-                """.format(styled_name, description, name, c.bold, c.url, c.end, temp)
+                """
     )
 
     # Display example usage in epilog
     run_epilog = textwrap.dedent(
-        """\
-        {0}{1}Example:{2}
+        f"""\
+        {c.bold}{c.url}Example:{c.end}
         # Please avoid running jobby
         # on a cluster's head node!
         ./jobby -s slurm  -n 4 18627542 13627516 58627597 48627666
 
-                {0}{1}Version:{2}
-                    {3}
-                """.format(c.bold, c.url, c.end, __version__)
+                {c.bold}{c.url}Version:{c.end}
+                    {__version__}
+                """
     )
 
     # Create a top-level parser
@@ -657,7 +652,7 @@ def parsed_arguments(name, description):
         "-v",
         "--version",
         action="version",
-        version="%(prog)s {}".format(__version__),
+        version=f"%(prog)s {__version__}",
         help=argparse.SUPPRESS,
     )
 
@@ -709,13 +704,13 @@ def main():
     # Sanity check for usage
     if len(sys.argv) == 1:
         # Nothing was provided
-        fatal("Invalid usage: {} [-h] [--version] ...".format(_name))
+        fatal(f"Invalid usage: {_name} [-h] [--version] ...")
 
     # Collect args for sub-command
     args = parsed_arguments(name=_name, description=_description)
 
     # Display version information
-    err("{} ({})".format(_name, __version__))
+    err(f"{_name} ({__version__})")
     # Mediator method to call the
     # default handler function
     args.func(args)

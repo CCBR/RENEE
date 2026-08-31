@@ -14,9 +14,8 @@ Purpose:
     for each gene and other required functionality.
 """
 
-from __future__ import print_function, division
-import re
 import argparse
+import re
 
 
 def readGff3(inputName):

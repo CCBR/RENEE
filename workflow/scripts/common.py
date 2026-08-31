@@ -8,7 +8,7 @@ def check_existence(filename):
     :param filename <str>: Name of file to check
     """
     if not os.path.exists(filename):
-        sys.exit("File: {} does not exists!".format(filename))
+        sys.exit(f"File: {filename} does not exists!")
 
 
 def check_readaccess(filename):
@@ -18,9 +18,7 @@ def check_readaccess(filename):
     check_existence(filename)
     if not os.access(filename, os.R_OK):
         sys.exit(
-            "File: {} exists, but user cannot read from file due to permissions!".format(
-                filename
-            )
+            f"File: {filename} exists, but user cannot read from file due to permissions!"
         )
 
 
@@ -31,9 +29,7 @@ def check_writeaccess(filename):
     check_existence(filename)
     if not os.access(filename, os.W_OK):
         sys.exit(
-            "File: {} exists, but user cannot write to file due to permissions!".format(
-                filename
-            )
+            f"File: {filename} exists, but user cannot write to file due to permissions!"
         )
 
 
@@ -88,9 +84,10 @@ def s3_configured(uri):
     :return accessible <boolean>:
         True if user can access S3 object, False if user cannot access the object (403)
     """
+    import re
+
     import boto3
     import botocore
-    import re
 
     # Get bucket and key from s3 uri
     parsed = re.match(r"s3:\/\/(.+?)\/(.+)", uri)
@@ -123,7 +120,7 @@ def abstract_location(file_address, *args, **kwargs):
 
     # Check if user provided any input
     if not file_address or file_address is None:
-        raise IOError(
+        raise OSError(
             "Failed to provide any input files! Input(s) are required to resolve required files."
         )
 
@@ -135,8 +132,8 @@ def abstract_location(file_address, *args, **kwargs):
     for i, uri in enumerate(file_list):
         if uri.lower().startswith("s3://"):
             # Remote option for S3 storage
-            import snakemake.remote.S3
             import botocore.session
+            import snakemake.remote.S3
 
             if botocore.session.get_session().get_credentials() and s3_configured(uri):
                 # AWS cli or boto has been configured on target system

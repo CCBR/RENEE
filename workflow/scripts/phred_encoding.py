@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from __future__ import print_function, division
-import sys
 import gzip
+import sys
 from argparse import ArgumentParser
 
 # Constants for Phred encoding detection
@@ -23,7 +22,7 @@ def usage(message="", exitcode=0):
         message: Optional error message to display
         exitcode: Exit code to use (0 for help, 1 for error)
     """
-    print("Usage: python {} fastq_file".format(sys.argv[0]))
+    print(f"Usage: python {sys.argv[0]} fastq_file")
     if message:
         print(message)
     sys.exit(exitcode)

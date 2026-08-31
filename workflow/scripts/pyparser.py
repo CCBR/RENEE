@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-from __future__ import print_function, division
-import sys
 import os
 import re
+import sys
+
 import pandas as pd
 
 # Configuration for defining valid files, cleaning sample names, parse fields, rename fields
@@ -48,7 +48,7 @@ config = {
     },
     "multiqc_cutadapt.txt": {
         "delimiter": "\t",
-        "clean_sample_name": ["\.R1$", "\.R2$"],
+        "clean_sample_name": [r"\.R1$", r"\.R2$"],
         "parse_column": ["Sample", "pairs_processed", "r_processed"],
         "rename_field": {
             "pairs_processed": "total_read_pairs",
@@ -58,7 +58,13 @@ config = {
     },
     "multiqc_fastqc.txt": {
         "delimiter": "\t",
-        "clean_sample_name": ["^QC \\| ", "^rawQC \\| ", "\.trim$", "\.R1$", "\.R2$"],
+        "clean_sample_name": [
+            "^QC \\| ",
+            "^rawQC \\| ",
+            r"\.trim$",
+            r"\.R1$",
+            r"\.R2$",
+        ],
         "collapse": True,
         "parse_column": [
             "Sample",
@@ -81,11 +87,11 @@ config = {
             "^FQscreen \\| ",
             "^FQscreen2 \\| ",
             "_screen$",
-            "\.trim$",
-            "\.R1$",
-            "\.R2$",
-            "\.R1_2$",
-            "\.R2_2$",
+            r"\.trim$",
+            r"\.R1$",
+            r"\.R2$",
+            r"\.R1_2$",
+            r"\.R2_2$",
         ],
         "parse_column": [
             "Sample",
@@ -118,7 +124,7 @@ config = {
     },
     "multiqc_picard_dups.txt": {
         "delimiter": "\t",
-        "clean_sample_name": ["\.p2$"],
+        "clean_sample_name": [r"\.p2$"],
         "parse_column": ["Sample", "PERCENT_DUPLICATION"],
         "rename_field": {"PERCENT_DUPLICATION": "percent_duplication"},
         "typecast": {"percent_duplication": float},
@@ -126,7 +132,7 @@ config = {
     },
     "multiqc_picard_RnaSeqMetrics.txt": {
         "delimiter": "\t",
-        "clean_sample_name": ["\.p2$"],
+        "clean_sample_name": [r"\.p2$"],
         "parse_column": [
             "Sample",
             "PCT_CODING_BASES",
@@ -166,10 +172,10 @@ config = {
         "delimiter": "\t",
         "clean_sample_name": [
             "^RSeQC \\| ",
-            "\.strand\.info$",
-            "\.info\.strand$",
-            "^output\.",
-            "\.p2$",
+            r"\.strand\.info$",
+            r"\.info\.strand$",
+            r"^output\.",
+            r"\.p2$",
         ],
         "parse_column": [
             "Sample",
@@ -192,14 +198,14 @@ config = {
     },
     "rseqc_inner_distances.txt": {
         "delimiter": "\t",
-        "clean_sample_name": ["\.inner_distance_freq\.txt$"],
+        "clean_sample_name": [r"\.inner_distance_freq\.txt$"],
         "parse_column": ["Sample", "Inner_Dist_Maxima"],
         "rename_field": {"Inner_Dist_Maxima": "inner_distance_maxima"},
         "typecast": {"inner_distance_maxima": float},
     },
     "rseqc_median_tin.txt": {
         "delimiter": "\t",
-        "clean_sample_name": ["\.star_rg_added\.sorted\.dmark\.bam$"],
+        "clean_sample_name": [r"\.star_rg_added\.sorted\.dmark\.bam$"],
         "parse_column": ["Sample", "median_tin"],
         "typecast": {"median_tin": float},
     },
@@ -215,7 +221,7 @@ config = {
     },
     "multiqc_star.txt": {
         "delimiter": "\t",
-        "clean_sample_name": ["\.p2$"],
+        "clean_sample_name": [r"\.p2$"],
         "parse_column": ["Sample", "uniquely_mapped_percent", "avg_input_read_length"],
         "rename_field": {
             "uniquely_mapped_percent": "percent_aligned",
@@ -225,7 +231,7 @@ config = {
     },
     "multiqc_qualimap_bamqc_genome_results.txt": {
         "delimiter": "\t",
-        "clean_sample_name": ["\.p2$"],
+        "clean_sample_name": [r"\.p2$"],
         "parse_column": [
             "Sample",
             "mean_insert_size",
@@ -317,9 +323,7 @@ def isvalid(file):
     if os.path.basename(file) not in supported:
         cstart, cend = config[".warning"]
         print(
-            "{}Warning:{} {} is a not supported file to parse... Skipping over file!".format(
-                cstart, cend, file
-            )
+            f"{cstart}Warning:{cend} {file} is a not supported file to parse... Skipping over file!"
         )
         return False
 
@@ -335,12 +339,10 @@ def exists(file):
         fh = open(file)
         fh.close()
     # File cannot be opened for reading (may not exist) or permissions problem
-    except IOError:
+    except OSError:
         cstart, cend = config[".warning"]
         print(
-            "{}Warning:{} Cannot open {}... File may not exist... Skipping over file!".format(
-                cstart, cend, file
-            )
+            f"{cstart}Warning:{cend} Cannot open {file}... File may not exist... Skipping over file!"
         )
         return False
 
@@ -370,9 +372,7 @@ def column_indexes(line, filename, verbose=True):
         for field in fields_not_found:
             cstart, cend = config[".warning"]
             print(
-                "{}Warning:{} Cannot find expected field '{}' in {}... skipping over parsing that field!".format(
-                    cstart, cend, field, filename
-                )
+                f"{cstart}Warning:{cend} Cannot find expected field '{field}' in {filename}... skipping over parsing that field!"
             )
 
     return indices
@@ -388,7 +388,7 @@ def clean(linelist, sample_name_index, filename):
     # Remove file's PATH before cross-referencing config
     filename = os.path.basename(filename)
     for suffix in config[filename]["clean_sample_name"]:
-        regex = "{}".format(suffix)
+        regex = f"{suffix}"
         samplename = re.sub(regex, "", samplename)
 
     # Update linelist with new sample name
@@ -451,9 +451,7 @@ def scaled(value, column, filename):
         # Remove warning by typecasting value as float or int
         cstart, cend = config[".warning"]
         print(
-            "{}Warning:{} Attribute {} in {} is NOT defined in config... defaulting to float".format(
-                cstart, cend, column, filename
-            )
+            f"{cstart}Warning:{cend} Attribute {column} in {filename} is NOT defined in config... defaulting to float"
         )
         if value:  # case for when row/column is empty string
             value = float(value) * scaling_unit

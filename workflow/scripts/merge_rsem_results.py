@@ -1,8 +1,8 @@
-from __future__ import print_function
-from os.path import join
-from functools import reduce
 import os
 import sys
+from functools import reduce
+from os.path import join
+
 import pandas as pd
 
 
@@ -34,9 +34,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 4:
         print(os.path.basename(__file__) + ": Fail to provide all required arguments!")
         exit(
-            "USAGE: python {} /path/to/annotate.genes.txt /path/to/rsem/genecounts/ /path/to/isoformcounts/".format(
-                sys.argv[0]
-            )
+            f"USAGE: python {sys.argv[0]} /path/to/annotate.genes.txt /path/to/rsem/genecounts/ /path/to/isoformcounts/"
         )
 
     ens2genefile = sys.argv[1]
