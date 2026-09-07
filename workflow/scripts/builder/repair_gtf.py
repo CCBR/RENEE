@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-import sys
-import gzip
-import HTSeq
 import functools
+import gzip
+import sys
+
+import HTSeq
 
 
 def get_open_func(filename):

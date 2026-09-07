@@ -1,4 +1,3 @@
-from __future__ import print_function
 import sys
 
 # USAGE:
@@ -17,9 +16,7 @@ def get_len(s):
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print(
-            "Usage: python {} gene2transcripts.protein_coding_only genes.gtf.genePred.bed".format(
-                sys.argv[0]
-            )
+            f"Usage: python {sys.argv[0]} gene2transcripts.protein_coding_only genes.gtf.genePred.bed"
         )
         print("\nError: failed to provide all positional arguments!", file=sys.stderr)
         sys.exit(1)

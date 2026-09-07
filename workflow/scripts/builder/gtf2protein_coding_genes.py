@@ -1,4 +1,3 @@
-from __future__ import print_function
 import sys
 
 # USAGE
@@ -42,9 +41,7 @@ def get_id_and_type(last_column):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print(
-            "Usage: python {} genes.gtf > protein_coding_genes.lst".format(sys.argv[0])
-        )
+        print(f"Usage: python {sys.argv[0]} genes.gtf > protein_coding_genes.lst")
         print("\nError: failed to provide all positional arguments!", file=sys.stderr)
         sys.exit(1)
 

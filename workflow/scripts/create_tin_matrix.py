@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from __future__ import print_function
-import sys
-import pandas
 import os
+import sys
+
+import pandas
 
 
 def create(file, tin_dict, key_index=0, parse_index=4):
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     # Check if at least two files were provided
     if not len(args) >= 2:
         print("FATAL: Failed to provide more than one input file!")
-        sys.exit("Usage:\n python {} *.tin.xls > combinedTIN.tsv".format(args[0]))
+        sys.exit(f"Usage:\n python {args[0]} *.tin.xls > combinedTIN.tsv")
 
     # Populate tins with TINS values for all transcripts across all samples
     tins = {}

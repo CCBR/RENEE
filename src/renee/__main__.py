@@ -12,36 +12,37 @@ Example:
 """
 
 # Python standard library
-from shutil import copy
+# 3rd party imports from pypi
+import argparse
 import json
 import os
 import subprocess
 import sys
 import textwrap
+from shutil import copy
 
-# 3rd party imports from pypi
-import argparse
+from ccbr_tools.pipeline.cache import get_sif_cache_dir, image_cache
 from ccbr_tools.pipeline.util import (
+    _cp_r_safe_,
+    check_python_version,
+    get_genomes_list,
     get_hpcname,
     get_tmp_dir,
-    get_genomes_list,
-    check_python_version,
-    _cp_r_safe_,
 )
-from ccbr_tools.pipeline.cache import get_sif_cache_dir, image_cache
+
+from .conditions import fatal
+from .dryrun import dryrun
+from .orchestrate import orchestrate
 
 # local imports
 from .run import run
-from .dryrun import dryrun
-from .conditions import fatal
 from .util import (
-    renee_base,
+    enforce_partition_limits,
     get_version,
+    renee_base,
     update_cluster_partition,
     update_cluster_time,
-    enforce_partition_limits,
 )
-from .orchestrate import orchestrate
 
 # Lazy import GUI to avoid hard dependency on tkinter during CLI-only usage/tests
 try:
@@ -113,14 +114,12 @@ def permissions(parser, filename, *args, **kwargs):
     """
     if not os.path.exists(filename):
         parser.error(
-            "File '{}' does not exists! Failed to provide valid input.".format(filename)
+            f"File '{filename}' does not exists! Failed to provide valid input."
         )
 
     if not os.access(filename, *args, **kwargs):
         parser.error(
-            "File '{}' exists, but cannot read file due to permissions!".format(
-                filename
-            )
+            f"File '{filename}' exists, but cannot read file due to permissions!"
         )
 
     return filename
@@ -131,7 +130,7 @@ def positive_int(value):
     ivalue = int(value)
     if ivalue <= 0:
         raise argparse.ArgumentTypeError(
-            "Invalid value '{}': expected a positive integer".format(value)
+            f"Invalid value '{value}': expected a positive integer"
         )
     return ivalue
 
@@ -153,10 +152,10 @@ def check_cache(parser, cache, *args, **kwargs):
     elif os.path.isfile(cache):
         # Cache directory exists as file, raise error
         parser.error(
-            """\n\t\x1b[6;37;41mFatal: Failed to provided a valid singularity cache!\x1b[0m
+            f"""\n\t\x1b[6;37;41mFatal: Failed to provided a valid singularity cache!\x1b[0m
         The provided --singularity-cache already exists on the filesystem as a file.
-        Please run {} again with a different --singularity-cache location.
-        """.format(sys.argv[0])
+        Please run {sys.argv[0]} again with a different --singularity-cache location.
+        """
         )
     elif os.path.isdir(cache):
         # Provide cache exists as directory
@@ -168,11 +167,11 @@ def check_cache(parser, cache, *args, **kwargs):
         ):
             # User does NOT own the cache directory, raise error
             parser.error(
-                """\n\t\x1b[6;37;41mFatal: Failed to provided a valid singularity cache!\x1b[0m
+                f"""\n\t\x1b[6;37;41mFatal: Failed to provided a valid singularity cache!\x1b[0m
                 The provided --singularity-cache already exists on the filesystem with a different owner.
                 Singularity strictly enforces that the cache directory is not shared across users.
-                Please run {} again with a different --singularity-cache location.
-                """.format(sys.argv[0])
+                Please run {sys.argv[0]} again with a different --singularity-cache location.
+                """
             )
 
     return cache
@@ -199,7 +198,7 @@ def unlock(sub_args):
         subprocess.CalledProcessError
     ) as e:  # TODO: why capture this exception at all?
         # Unlocking process returned a non-zero exit code
-        sys.exit("{}\n{}".format(e, e.output))
+        sys.exit(f"{e}\n{e.output}")
 
     print("Successfully unlocked the pipeline's working directory!")
 
@@ -251,30 +250,26 @@ def _configure(sub_args, filename, git_repo):
         Path to renee github repository installation
     """
     # Save config to output directory
-    print("\nGenerating config file in '{}'... ".format(filename), end="")
+    print(f"\nGenerating config file in '{filename}'... ", end="")
     # Resolves if an image needs to be pulled from an OCI registry or
     # a local SIF generated from the renee cache subcommand exists
     sif_config = image_cache(sub_args, {})
     # Creates config file /path/to/output/config/build.yml
     with open(filename, "w") as fh:
-        fh.write('GENOME: "{}"\n'.format(sub_args.ref_name))
+        fh.write(f'GENOME: "{sub_args.ref_name}"\n')
         fh.write(
-            'REFFA: "{}"\n'.format(
-                os.path.join(sub_args.output, os.path.basename(sub_args.ref_fa))
-            )
+            f'REFFA: "{os.path.join(sub_args.output, os.path.basename(sub_args.ref_fa))}"\n'
         )
         fh.write(
-            'GTFFILE: "{}"\n'.format(
-                os.path.join(sub_args.output, os.path.basename(sub_args.ref_gtf))
-            )
+            f'GTFFILE: "{os.path.join(sub_args.output, os.path.basename(sub_args.ref_gtf))}"\n'
         )
-        fh.write('GTFVER: "{}"\n'.format(sub_args.gtf_ver))
-        fh.write('OUTDIR: "{}"\n'.format(sub_args.output))
-        fh.write('SCRIPTSDIR: "{}/workflow/scripts/builder"\n'.format(sub_args.output))
-        fh.write('BUILD_HOME: "{}"\n'.format(git_repo))
-        fh.write('SMALL_GENOME: "{}"\n'.format(sub_args.small_genome))
-        fh.write('TMP_DIR: "{}"\n'.format(sub_args.tmp_dir))
-        fh.write('SHARED_RESOURCES: "{}"\n'.format(sub_args.shared_resources))
+        fh.write(f'GTFVER: "{sub_args.gtf_ver}"\n')
+        fh.write(f'OUTDIR: "{sub_args.output}"\n')
+        fh.write(f'SCRIPTSDIR: "{sub_args.output}/workflow/scripts/builder"\n')
+        fh.write(f'BUILD_HOME: "{git_repo}"\n')
+        fh.write(f'SMALL_GENOME: "{sub_args.small_genome}"\n')
+        fh.write(f'TMP_DIR: "{sub_args.tmp_dir}"\n')
+        fh.write(f'SHARED_RESOURCES: "{sub_args.shared_resources}"\n')
         # fh.write('READLENGTHS:\n')
         # read_lengths = ['50', '75', '100', '125', '150']
         # for rl in read_lengths:
@@ -282,9 +277,8 @@ def _configure(sub_args, filename, git_repo):
         # Add singularity images URIs or local SIFs
         # Converts a nested json file to yaml format
         for k in sif_config.keys():
-            fh.write("{}: \n".format(k))
-            for tag, uri in sif_config[k].items():
-                fh.write('  {}: "{}"\n'.format(tag, uri))
+            fh.write(f"{k}: \n")
+            fh.writelines(f'  {tag}: "{uri}"\n' for tag, uri in sif_config[k].items())
     print("Done!")
 
 
@@ -310,10 +304,10 @@ def configure_build(sub_args, git_repo, output_path):
     elif os.path.exists(output_path) and os.path.isfile(output_path):
         # Provided Path for pipeline output directory exists as file
         raise OSError(
-            """\n\tFatal: Failed to create provided pipeline output directory!
+            f"""\n\tFatal: Failed to create provided pipeline output directory!
         User provided --output PATH already exists on the filesystem as a file.
-        Please run {} again with a different --output PATH.
-        """.format(sys.argv[0])
+        Please run {sys.argv[0]} again with a different --output PATH.
+        """
         )
 
     # Copy over templates are other required resources, overwriting if they exist
@@ -462,10 +456,10 @@ def cache(sub_args):
     elif os.path.exists(sif_cache) and os.path.isfile(sif_cache):
         # Provided Path for pipeline output directory exists as file
         raise OSError(
-            """\n\tFatal: Failed to create provided sif cache directory!
+            f"""\n\tFatal: Failed to create provided sif cache directory!
         User provided --sif-cache PATH already exists on the filesystem as a file.
-        Please {} cache again with a different --sif-cache PATH.
-        """.format(sys.argv[0])
+        Please {sys.argv[0]} cache again with a different --sif-cache PATH.
+        """
         )
 
     # Check if local SIFs already exist on the filesystem
@@ -480,7 +474,7 @@ def cache(sub_args):
         if not os.path.exists(sif):
             # If local sif does not exist on in cache, print warning
             # and default to pulling from URI in config/containers/images.json
-            print('Image will be pulled from "{}".'.format(uri), file=sys.stderr)
+            print(f'Image will be pulled from "{uri}".', file=sys.stderr)
             pull.append(uri)
 
     if not pull:
@@ -496,9 +490,9 @@ def cache(sub_args):
                 "sbatch --parsable -J pl:cache --time=10:00:00 --mail-type=BEGIN,END,FAIL "
                 + str(os.path.join(RENEE_PATH, "resources", "cacher"))
                 + " slurm "
-                + " -s '{}' ".format(sif_cache)
+                + f" -s '{sif_cache}' "
                 + " -i '{}' ".format(",".join(pull))
-                + " -t '{0}/{1}/.singularity/' ".format(sif_cache, username),
+                + f" -t '{sif_cache}/{username}/.singularity/' ",
                 cwd=sif_cache,
                 shell=True,
                 stderr=subprocess.STDOUT,
@@ -507,9 +501,7 @@ def cache(sub_args):
 
             masterjob.communicate()
             print(
-                "RENEE reference cacher submitted master job with exit-code: {}".format(
-                    masterjob.returncode
-                )
+                f"RENEE reference cacher submitted master job with exit-code: {masterjob.returncode}"
             )
 
 
@@ -540,11 +532,11 @@ def genome_options(parser, user_option, prebuilt):
     elif user_option not in prebuilt:
         # User did NOT provide a valid choice
         parser.error(
-            """provided invalid choice, '{}', to --genome argument!\n
+            f"""provided invalid choice, '{user_option}', to --genome argument!\n
         Choose from one of the following pre-built genome options: \n
-        \t{}\n
+        \t{prebuilt}\n
         or supply a custom reference genome JSON file generated from renee build.
-        """.format(user_option, prebuilt)
+        """
         )
 
     return user_option
@@ -566,15 +558,13 @@ def parsed_arguments(name, description):
     """
     # Add styled name and description
     c = Colors
-    description = "{0}{1}{2}".format(c.bold, description, c.end)
+    description = f"{c.bold}{description}{c.end}"
 
     # Create a top-level parser
     parser = argparse.ArgumentParser(prog="renee", description=description)
 
     # Adding Version information
-    parser.add_argument(
-        "--version", action="version", version="renee {}".format(__version__)
-    )
+    parser.add_argument("--version", action="version", version=f"renee {__version__}")
     # Create sub-command parser
     subparsers = parser.add_subparsers(help="List of available sub-commands")
 
@@ -1589,7 +1579,7 @@ def main():
     args = parsed_arguments(name=_name, description=_description)
 
     # Display version information
-    print("RENEE ({})".format(__version__))
+    print(f"RENEE ({__version__})")
 
     # Mediator method to call sub-command's set handler function
     args.func(args)

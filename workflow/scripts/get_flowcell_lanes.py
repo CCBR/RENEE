@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-from __future__ import print_function, division
-import sys
 import gzip
+import sys
 
 # USAGE
 # sys.argv[1] = sample_name.R1.fastq.gz
@@ -36,9 +35,7 @@ def usage(message="", exitcode=0):
     the 'message' parameter.
     """
     print(
-        "Usage: python {} sampleName.R1.fastq.gz  sampleName > sampleName.flowcell_lanes.txt".format(
-            sys.argv[0]
-        )
+        f"Usage: python {sys.argv[0]} sampleName.R1.fastq.gz  sampleName > sampleName.flowcell_lanes.txt"
     )
     if message:
         print(message)
@@ -135,7 +132,7 @@ if __name__ == "__main__":
             if i % 4 == 0:  # read id or sequence identifier
                 fc, lane = get_flowcell_lane(line)
                 fc = fc.lstrip("@")
-                fc_lane = "{}_{}".format(fc, lane)
+                fc_lane = f"{fc}_{lane}"
                 if fc not in meta["flowcell"]:
                     meta["flowcell"].append(fc)
                 if lane not in meta["lane"]:

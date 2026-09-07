@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-from __future__ import print_function
-from Bio import SeqIO
-from Bio.Seq import Seq
 import argparse
 import collections
-import gzip
-import HTSeq
 import functools
+import gzip
+
+import HTSeq
 import numpy as np
+from Bio import SeqIO
+from Bio.Seq import Seq
 
 # GC was deprecated in favor of gc_fraction from Biopython 1.82
 # https://github.com/nextgenusfs/funannotate/issues/1000
@@ -92,9 +92,7 @@ def write_qualimap_info(args):
                 tSeq += buf
             else:
                 print(
-                    "Can not locate sequence {} in {}, skipping region...".format(
-                        seqName, fastaFileName
-                    )
+                    f"Can not locate sequence {seqName} in {fastaFileName}, skipping region..."
                 )
             transcripts[transcriptId] = tSeq
 
@@ -102,7 +100,7 @@ def write_qualimap_info(args):
         lengths = [len(tSeq) for tSeq in transcripts.values()]
 
         gene_length_mean = int(np.mean(lengths))
-        gene_gc_mean = "{:.2f}".format(round(np.mean(gc_array), 2))
+        gene_gc_mean = f"{round(np.mean(gc_array), 2):.2f}"
 
         outFile.write(f'"{geneId}"\t"{biotype}"\t{gene_length_mean}\t{gene_gc_mean}\n')
 

@@ -27,7 +27,7 @@ def dryrun(
                 "--rerun-incomplete",
                 "--cores",
                 "4",
-                "--configfile={}".format(config),
+                f"--configfile={config}",
             ],
             cwd=outdir,
             stderr=subprocess.STDOUT,
@@ -49,7 +49,7 @@ def dryrun(
                 "\x1b[6;37;41m\nError: Are snakemake AND singularity in your $PATH?\nPlease check before proceeding again!\x1b[0m",
                 file=sys.stderr,
             )
-            sys.exit("{}".format(e))
+            sys.exit(f"{e}")
         else:
             # Failure caused by unknown cause, raise error
             raise e

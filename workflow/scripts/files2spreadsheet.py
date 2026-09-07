@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
-from __future__ import print_function
+import os
+import sys
+
 import pandas as pd
 import xlsxwriter
-import sys
-import os
 
 
 def reader(filename, subset=[], skip="#", **kwargs):
@@ -121,7 +121,7 @@ def excel_writer(files, spreadsheet="test.xlsx"):
 
     # Create a spreadsheet from the contents of each file
     for file in files:
-        print("Reading in {}".format(file))
+        print(f"Reading in {file}")
         df = reader(file)
         sheet = os.path.splitext(os.path.basename(file))[0]
         try:

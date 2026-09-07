@@ -4,16 +4,16 @@ import glob
 import os
 import sys
 
+from ccbr_tools.pipeline.cache import get_sif_cache_dir, get_singularity_cachedir
 from ccbr_tools.pipeline.util import (
     get_genomes_dict,
-    get_tmp_dir,
     get_hpcname,
+    get_tmp_dir,
 )
-from ccbr_tools.pipeline.cache import get_sif_cache_dir, get_singularity_cachedir
 from ccbr_tools.shell import exec_in_context
 
-from .util import get_version, renee_base, get_shared_resources_dir
 from .run import run
+from .util import get_shared_resources_dir, get_version, renee_base
 
 # TODO: get rid of  all the global variables
 # TODO: let's use a tmp dir and put these files there instead. see for inspiration:https://github.com/CCBR/RENEE/blob/16d13dca1d5f0f43c7dfda379efb882a67635d17/tests/test_cache.py#L14-L28
