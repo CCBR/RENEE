@@ -1,14 +1,14 @@
-import os
 import json
+import os
 import re
 import subprocess
 import sys
 
+from ccbr_tools.pipeline.cache import image_cache
 from ccbr_tools.pipeline.util import (
     get_hpcname,
     get_tmp_dir,
 )
-from ccbr_tools.pipeline.cache import image_cache
 
 from .util import get_version
 
@@ -209,19 +209,19 @@ def get_nends(ifiles):
         if missing_mates:
             # Missing an R1 or R2 for a provided input sample
             raise NameError(
-                """\n\tFatal: Detected pair-end data but user failed to provide
-               both mates (R1 and R2) for the following samples:\n\t\t{}\n
+                f"""\n\tFatal: Detected pair-end data but user failed to provide
+               both mates (R1 and R2) for the following samples:\n\t\t{missing_mates}\n
             Please check that the basename for each sample is consistent across mates.
             Here is an example of a consistent basename across mates:
               consistent_basename.R1.fastq.gz
               consistent_basename.R2.fastq.gz
 
             Please do not run the pipeline with a mixture of single-end and paired-end
-            samples. This feature is currently not supported within {}, and it is
+            samples. This feature is currently not supported within {sys.argv[0]}, and it is
             not recommended either. If this is a priority for your project, please run
             paired-end samples and single-end samples separately (in two separate output directories).
             If you feel like this functionality should exist, feel free to open an issue on Github.
-            """.format(missing_mates, sys.argv[0])
+            """
             )
 
     return nends_status

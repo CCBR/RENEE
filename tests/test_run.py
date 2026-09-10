@@ -3,14 +3,13 @@ import glob
 import os
 import tempfile
 
+from ccbr_tools.pipeline.cache import get_sif_cache_dir
 from ccbr_tools.pipeline.util import (
     get_hpcname,
 )
-from ccbr_tools.pipeline.cache import get_sif_cache_dir
 from ccbr_tools.shell import exec_in_context
-
-from renee.src.renee.util import renee_base, get_shared_resources_dir
 from renee.src.renee.run import run
+from renee.src.renee.util import get_shared_resources_dir, renee_base
 
 
 def test_dryrun():

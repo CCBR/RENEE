@@ -1,4 +1,5 @@
 import sys
+
 import pysam
 
 infile = pysam.Samfile(sys.argv[1], "rb")

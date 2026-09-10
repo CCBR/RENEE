@@ -1,14 +1,15 @@
 import json
 import os
 import pathlib
+
 from ccbr_tools.pipeline.util import get_hpcname, get_tmp_dir
 
-from .util import renee_base
 from .conditions import fatal
-from .initialize import initialize
-from .setup import setup
 from .dryrun import dryrun
+from .initialize import initialize
 from .orchestrate import orchestrate
+from .setup import setup
+from .util import renee_base
 
 
 def run(sub_args):
@@ -116,7 +117,7 @@ def run(sub_args):
     all_bind_paths = "{},{}".format(",".join(genome_bind_paths), rawdata_bind_paths)
 
     if sub_args.dry_run:  # print singularity bind baths and exit
-        print("\nSingularity Bind Paths:{}".format(all_bind_paths))
+        print(f"\nSingularity Bind Paths:{all_bind_paths}")
         # end at dry run
     else:  # continue with real run
         # Run pipeline
@@ -162,9 +163,7 @@ def run(sub_args):
                 print("Submitted master job: ", end="")
             else:
                 fatal(
-                    "Error occurred when submitting the master job. Error code = {}".format(
-                        masterjob.returncode
-                    )
+                    f"Error occurred when submitting the master job. Error code = {masterjob.returncode}"
                 )
             print(jobid)
             _snakemake_log = os.path.join(sub_args.output, "logfiles", "snakemake.log")

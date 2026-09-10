@@ -18,7 +18,7 @@ def get_gene_name(j):
 genelist = []
 chrs = []
 f = open("karyobed.bed", "w")
-for i in open(sys.argv[1]).readlines():
+for i in open(sys.argv[1]):
     if i.startswith("#"):
         continue
     j = i.strip().split("\t")
@@ -40,7 +40,7 @@ f.close()
 chrs = list(set(chrs))
 for c in chrs:
     f = open("karyobed." + c + ".bed", "w")
-    for i in open("karyobed.bed").readlines():
+    for i in open("karyobed.bed"):
         j = i.strip().split("\t")
         if j[0] == c:
             f.write(i)

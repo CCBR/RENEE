@@ -17,7 +17,7 @@ def get_gene_name(j):
 
 print("chr", "coord", "gene_name", "strand", sep="\t")
 genelist = []
-for i in open(sys.argv[1]).readlines():
+for i in open(sys.argv[1]):
     if i.startswith("#"):
         continue
     j = i.strip().split("\t")
