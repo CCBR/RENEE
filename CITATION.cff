@@ -25,7 +25,7 @@ authors:
     affiliation:
       Advanced Biomedical Computational Science, Frederick National Laboratory
       for Cancer Research, Frederick, MD 21702, USA
-title: "RENEE: Rna sEquencing aNalysis pipElinE"
+title: "RENEE: Rna sEquencing aNalysis pipElinE (Snakemake)"
 url: https://ccbr.github.io/RENEE
 repository-code: https://github.com/CCBR/RENEE
 license: MIT
