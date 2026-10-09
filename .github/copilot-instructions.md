@@ -94,7 +94,7 @@ _Sample GH Action check (concept): if AI usage is declared, require an AI-assist
 - If mixed changes are present, split into multiple logical commits; the number of commits does not need to equal the number of files changed.
 - Subject format must be: `<type>(optional-scope): short imperative summary` (<=72 chars), e.g., `fix(profile): update release table parser`.
 - Add a body only when needed to explain **why** and notable impact; never include secrets, tokens, PHI, or large diffs.
-- For AI-assisted commits, add this final italicized footer line in the commit message body: _commit message is ai-generated_
+- For AI-assisted commits, add this final italicized footer line to the end commit message body:  `_AI-assisted_: <model>` (fill in <model> with the actual model, e.g. Claude Sonnet 5, if known.
 
 Suggested prompt for AI tools:
 
