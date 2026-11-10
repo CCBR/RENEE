@@ -53,11 +53,22 @@ cd RENEE
   pip install .
   ```
 
-  If you're developing on biowulf, you can use our shared conda environment which already has these dependencies installed
+  If you're developing on biowulf, you can use our shared mamba environment which already has these dependencies installed.
+
+  >[!NOTE]
+  > You will first need to initialize your shell with mamba if you haven't already:
+  >
+  > ```sh
+  > /data/CCBR_Pipeliner/db/PipeDB/miniforge3/bin/mamba shell init \
+  >   --shell zsh --root-prefix=/data/$USER/mamba
+  > source ~/.zshrc
+  > ```
+  >
+  > See more details here:
+  > <https://ccbr.github.io/HowTos/docs/conda-mamba/ccbr-mamba-biowulf.html#initialize-your-shell>
 
   ```sh
-  . "/data/CCBR_Pipeliner/db/PipeDB/Conda/etc/profile.d/conda.sh"
-  conda activate py311
+  mamba activate py3.11-8
   ```
 
 - Install [`pre-commit`](https://pre-commit.com/#install) if you don't already
