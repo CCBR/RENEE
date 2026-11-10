@@ -55,7 +55,7 @@ cd RENEE
 
   If you're developing on biowulf, you can use our shared mamba environment which already has these dependencies installed.
 
-  >[!NOTE]
+  > [!NOTE]
   > You will first need to initialize your shell with mamba if you haven't already:
   >
   > ```sh
