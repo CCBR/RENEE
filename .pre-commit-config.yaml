@@ -31,19 +31,19 @@ repos:
           - prettier@3.4.0
   # Python formatting
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.6
+    rev: v0.17.4
     hooks:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
   # R formatting
   - repo: https://github.com/posit-dev/air-pre-commit
-    rev: 0.11.0
+    rev: 0.13.0
     hooks:
       - id: air-format
   # enforce commit format
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
